@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block extra_styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+{% endblock %}
+
+{% block content %}
+  <h1>Welcome to ViSuReNa</h1>
+  <p>This is the homepage. Use the navigation above to explore different sections.</p>
+{% endblock %}

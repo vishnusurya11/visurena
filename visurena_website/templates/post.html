@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block extra_styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='blog.css') }}">
+{% endblock %}
+
+{% block content %}
+  <article>
+    <h1>{{ slug.replace('-', ' ').title() }}</h1>
+    <div>
+      {{ content | safe }}
+    </div>
+  </article>
+{% endblock %}

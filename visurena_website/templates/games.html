@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block extra_styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='games.css') }}">
+{% endblock %}
+
+{% block content %}
+  <h1>Games</h1>
+  <p>Watch gaming clips and highlights.</p>
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allowfullscreen></iframe>
+{% endblock %}

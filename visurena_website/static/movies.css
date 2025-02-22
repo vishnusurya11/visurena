@@ -1,0 +1,11 @@
+/* movies.css */
+body {
+    background-color: #ffe6e6; /* Light red/pink background */
+  }
+  h1 {
+    color: #e74c3c;
+  }
+  iframe {
+    border: 2px solid #e74c3c;
+  }
+  
