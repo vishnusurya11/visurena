@@ -36,5 +36,5 @@ jobs:
       - name: Sync Website Files to S3
         run: |
           echo "Syncing contents of the 'visurena_website' folder to S3..."
-          aws s3 sync build/ s3://visurena.com-visurena-bucket --delete
+          aws s3 sync visurena_website/build/ s3://visurena.com-visurena-bucket --delete
 
