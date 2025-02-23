@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Infrastructure for Visurena Website.
+  Creates an S3 bucket for static website hosting, a CloudFront distribution,
+  and a Route 53 record to point your domain to CloudFront.
+  
+Parameters:
+  DomainName:
+    Description: The domain name (e.g., visurena.com)
+    Type: String
+  HostedZoneId:
+    Description: The Route 53 Hosted Zone ID for your domain.
+    Type: String
+  StackNameSuffix:
+    Description: A unique suffix for resource names (to ensure bucket names are unique).
+    Type: String
+    Default: "visurena"
+  ProjectTag:
+    Description: A tag value to identify all resources for this project.
+    Type: String
+    Default: "VisurenaWebsite"
+
+Resources:
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${DomainName}-${StackNameSuffix}-bucket"
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Environment
+          Value: Production
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebsiteBucket
+      PolicyDocument:
+        Statement:
+          - Action: 's3:GetObject'
+            Effect: Allow
+            Resource: !Sub "arn:aws:s3:::${WebsiteBucket}/*"
+            Principal: "*"
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !GetAtt WebsiteBucket.DomainName
+            Id: S3Origin
+            S3OriginConfig: {}
+        Enabled: true
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          ForwardedValues:
+            QueryString: false
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Environment
+          Value: Production
+
+  DNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Sub "www.${DomainName}"
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt CloudFrontDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2  # Fixed CloudFront hosted zone ID
+
+Outputs:
+  WebsiteBucketName:
+    Description: "S3 Bucket name for the website"
+    Value: !Ref WebsiteBucket
+  CloudFrontDomainName:
+    Description: "CloudFront Distribution Domain Name"
+    Value: !GetAtt CloudFrontDistribution.DomainName
