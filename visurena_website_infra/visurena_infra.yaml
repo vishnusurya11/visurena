@@ -57,7 +57,6 @@ Resources:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
-        # Set the website endpoint as the origin domain name
         Origins:
           - DomainName: !Select [2, !Split ["/", !GetAtt WebsiteBucket.WebsiteURL]]
             Id: S3Origin
@@ -74,6 +73,10 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
           ForwardedValues:
             QueryString: false
+          # TTL settings to force minimal caching (default is 86400 seconds if not specified)
+          MinTTL: 3600
+          DefaultTTL: 3600
+          MaxTTL: 3600
         ViewerCertificate:
           AcmCertificateArn: !Ref AcmCertificateArn
           SslSupportMethod: sni-only
