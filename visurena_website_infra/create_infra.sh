@@ -4,9 +4,9 @@
 STACK_NAME="visurena-website-infra"
 TEMPLATE_FILE="visurena_infra.yaml"
 DOMAIN_NAME="visurena.com"         # Replace with your domain name
-HOSTED_ZONE_ID="Z0222553K89E0MXH3187"     # Replace with your actual Hosted Zone ID
+HOSTED_ZONE_ID="Z0222553K89E0MXH3187"  # Replace with your actual Hosted Zone ID
 STACK_SUFFIX="visurena"
-PROJECT_TAG="VisurenaWebsite"      # Tag value to identify this project
+PROJECT_TAG="VisurenaWebsite"       # Tag value to identify this project
 
 echo "Creating CloudFormation stack: $STACK_NAME..."
 

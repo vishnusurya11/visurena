@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: >
   Infrastructure for Visurena Website.
   Creates an S3 bucket for static website hosting, a CloudFront distribution,
-  and a Route 53 record to point your domain to CloudFront.
+  and Route 53 records to point both the apex domain (visurena.com) and the www subdomain to CloudFront.
   
 Parameters:
   DomainName:
@@ -72,7 +72,7 @@ Resources:
         - Key: Environment
           Value: Production
 
-  DNSRecord:
+  DNSRecordWWW:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneId: !Ref HostedZoneId
@@ -80,7 +80,17 @@ Resources:
       Type: A
       AliasTarget:
         DNSName: !GetAtt CloudFrontDistribution.DomainName
-        HostedZoneId: Z2FDTNDATAQYW2  # Fixed CloudFront hosted zone ID
+        HostedZoneId: Z2FDTNDATAQYW2
+
+  DNSRecordApex:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref DomainName
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt CloudFrontDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
 
 Outputs:
   WebsiteBucketName:

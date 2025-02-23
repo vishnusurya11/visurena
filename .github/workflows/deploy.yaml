@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # Uncomment the next steps if you need to build your site (e.g., using a static site generator)
+      # Uncomment these steps if your website needs a build process:
       #- name: Set up Node.js
       #  uses: actions/setup-node@v2
       #  with:
@@ -35,5 +35,5 @@ jobs:
 
       - name: Sync Website Files to S3
         run: |
-          echo "Syncing contents of the 'visurena_website' folder to the S3 bucket..."
+          echo "Syncing contents of the 'visurena_website' folder to S3..."
           aws s3 sync visurena_website s3://visurena.com-visurena-bucket --delete
