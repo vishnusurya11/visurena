@@ -1,0 +1,39 @@
+name: Deploy Website
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # Uncomment the next steps if you need to build your site (e.g., using a static site generator)
+      #- name: Set up Node.js
+      #  uses: actions/setup-node@v2
+      #  with:
+      #    node-version: '14'
+      #
+      #- name: Build Website
+      #  run: |
+      #    cd visurena_website
+      #    npm install
+      #    npm run build
+      #    cd ..
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Sync Website Files to S3
+        run: |
+          echo "Syncing contents of the 'visurena_website' folder to the S3 bucket..."
+          aws s3 sync visurena_website s3://visurena.com-visurena-bucket --delete
