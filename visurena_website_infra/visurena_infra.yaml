@@ -57,10 +57,17 @@ Resources:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
+        # Set the website endpoint as the origin domain name
         Origins:
-          - DomainName: !GetAtt WebsiteBucket.DomainName
+          - DomainName: !Select [2, !Split ["/", !GetAtt WebsiteBucket.WebsiteURL]]
             Id: S3Origin
-            S3OriginConfig: {}
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: http-only
+        Aliases:
+          - !Ref DomainName
+          - !Sub "www.${DomainName}"
         Enabled: true
         DefaultCacheBehavior:
           TargetOriginId: S3Origin
