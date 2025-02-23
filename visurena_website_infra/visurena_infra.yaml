@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: >
   Infrastructure for Visurena Website.
   Creates an S3 bucket for static website hosting, a CloudFront distribution,
-  and Route 53 records to point both the apex domain (visurena.com) and the www subdomain to CloudFront.
+  and Route 53 records to point both the apex domain and www subdomain to CloudFront.
   
 Parameters:
   DomainName:
@@ -19,6 +19,9 @@ Parameters:
     Description: A tag value to identify all resources for this project.
     Type: String
     Default: "VisurenaWebsite"
+  AcmCertificateArn:
+    Description: "The ARN of the ACM certificate for your custom domain (in us-east-1)."
+    Type: String
 
 Resources:
   WebsiteBucket:
@@ -65,7 +68,8 @@ Resources:
           ForwardedValues:
             QueryString: false
         ViewerCertificate:
-          CloudFrontDefaultCertificate: true
+          AcmCertificateArn: !Ref AcmCertificateArn
+          SslSupportMethod: sni-only
       Tags:
         - Key: Project
           Value: !Ref ProjectTag

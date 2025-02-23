@@ -11,7 +11,7 @@ ACM_CERTIFICATE_ARN="arn:aws:acm:us-east-1:597088058256:certificate/647c8d33-374
 
 echo "Creating CloudFormation stack: $STACK_NAME..."
 
-aws cloudformation create-stack \
+aws cloudformation update-stack \
   --stack-name "$STACK_NAME" \
   --template-body "file://$TEMPLATE_FILE" \
   --parameters ParameterKey=DomainName,ParameterValue="$DOMAIN_NAME" \
@@ -21,7 +21,7 @@ aws cloudformation create-stack \
                ParameterKey=AcmCertificateArn,ParameterValue="$ACM_CERTIFICATE_ARN" \
   --capabilities CAPABILITY_NAMED_IAM
 
-echo "Waiting for stack creation to complete..."
-aws cloudformation wait stack-create-complete --stack-name "$STACK_NAME"
+echo "Waiting for stack update to complete..."
+aws cloudformation wait stack-update-complete --stack-name "$STACK_NAME"
 
-echo "Stack created successfully."
+echo "Stack Updated successfully."
