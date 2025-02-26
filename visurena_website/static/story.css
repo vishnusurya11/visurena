@@ -1,8 +1,10 @@
 /* story.css */
 body {
-    background-color: #eafaf1; /* Light green background */
-  }
-  h1 {
-    color: #27ae60;
-  }
-  
+  /* Darker variant of #eafaf1 (light green) */
+  background-color: #bbc8c1; /* Approximate 20% darker */
+}
+
+h1 {
+  /* Darker variant of #27ae60 */
+  color: #1f8b4d; /* Approximate 20% darker */
+}

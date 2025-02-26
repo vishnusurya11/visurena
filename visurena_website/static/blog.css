@@ -1,22 +1,28 @@
 /* blog.css */
 body {
-    background-color: #fff7e6; /* Light yellow background */
-  }
-  h1 {
-    color: #f39c12;
-  }
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  li {
-    margin: 0.5em 0;
-  }
-  a {
-    text-decoration: none;
-    color: #f39c12;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
-  
+  background-color: #ccc6b8; /* Darker version of light yellow (#fff7e6) */
+  color: #333; /* Dark text for readability on a lighter background */
+  font-family: 'Roboto', sans-serif;
+}
+
+h1 {
+  color: #C27D0E; /* Darker variant of #f39c12 */
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin: 0.5em 0;
+}
+
+a {
+  text-decoration: none;
+  color: #C27D0E; /* Use the same darker accent color for links */
+}
+
+a:hover {
+  text-decoration: underline;
+}

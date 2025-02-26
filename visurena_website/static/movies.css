@@ -1,11 +1,14 @@
 /* movies.css */
 body {
-    background-color: #ffe6e6; /* Light red/pink background */
-  }
-  h1 {
-    color: #e74c3c;
-  }
-  iframe {
-    border: 2px solid #e74c3c;
-  }
-  
+  /* Darker variant of #ffe6e6 (light red/pink) */
+  background-color: #ccb8b8; /* Approx. 20% darker */
+}
+
+h1 {
+  /* Darker variant of #e74c3c */
+  color: #b93d30; /* Approx. 20% darker */
+}
+
+iframe {
+  border: 2px solid #b93d30; /* Matching the darker accent color */
+}

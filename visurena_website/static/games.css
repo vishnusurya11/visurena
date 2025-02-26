@@ -1,11 +1,14 @@
 /* games.css */
 body {
-    background-color: #e8f4fd; /* Light blue background */
-  }
-  h1 {
-    color: #3498db;
-  }
-  iframe {
-    border: 2px solid #3498db;
-  }
-  
+  /* Darker version of #e8f4fd (RGB:232,244,253) reduced by ~20% */
+  background-color: #bac3ca; /* Approx. RGB:186,195,202 */
+}
+
+h1 {
+  /* Darker version of #3498db (RGB:52,152,219) reduced by ~20% */
+  color: #2a7aaf; /* Approx. RGB:42,122,175 */
+}
+
+iframe {
+  border: 2px solid #2a7aaf; /* Matching the darker accent color */
+}
