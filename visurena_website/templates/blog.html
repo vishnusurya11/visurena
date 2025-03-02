@@ -6,7 +6,7 @@
 {% block content %}
   <h1>Blog</h1>
   <div class="posts-container">
-    {% for post in posts %}
+    {% for post in posts|sort(attribute='date')|reverse %}
       <div class="post-card">
         {% if post.image %}
           <div class="post-image">
