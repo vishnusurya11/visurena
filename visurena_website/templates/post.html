@@ -4,10 +4,16 @@
 {% endblock %}
 
 {% block content %}
+  {% if metadata.image %}
+    <div class="post-banner">
+      <img src="{{ metadata.image }}" alt="{{ metadata.title }} Banner">
+    </div>
+  {% endif %}
   <article>
-    <!-- <h1>{{ slug.replace('_', ' ').title() }}</h1> -->
-    <div>
-      {{ content | safe }}
+    <h1>{{ metadata.title }}</h1>
+    <p class="post-date"><small><b>Published on {{ metadata.date }}</b></small></p>
+    <div class="post-content">
+      {{ content|safe }}
     </div>
   </article>
 {% endblock %}

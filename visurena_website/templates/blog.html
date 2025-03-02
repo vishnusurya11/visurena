@@ -5,13 +5,24 @@
 
 {% block content %}
   <h1>Blog</h1>
-  <ul>
+  <div class="posts-container">
     {% for post in posts %}
-      <li>
-        <a href="{{ url_for('blog_post', slug=post) }}">
-          {{ post.replace('_', ' ').title() }}
-        </a>
-      </li>
+      <div class="post-card">
+        {% if post.image %}
+          <div class="post-image">
+            <img src="{{ post.image }}" alt="{{ post.title }} Banner">
+          </div>
+        {% endif %}
+        <div class="post-info">
+          <h2><a href="{{ url_for('blog_post', slug=post.slug) }}">{{ post.title }}</a></h2>
+          {% if post.date %}
+            <p class="post-date"><small><b>Published on {{ post.date }}</b></small></p>
+          {% endif %}
+          {% if post.introduction %}
+            <p class="post-intro">{{ post.introduction }}</p>
+          {% endif %}
+        </div>
+      </div>
     {% endfor %}
-  </ul>
+  </div>
 {% endblock %}

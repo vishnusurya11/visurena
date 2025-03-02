@@ -1,12 +1,85 @@
-/* blog.css */
+/* Base styling for the blog page */
 body {
-  background-color: #ccc6b8; /* Darker version of light yellow (#fff7e6) */
+  background-color: #E0E0DA;  /* A light, neutral background */
+  font-family: 'Roboto', sans-serif;
+  color: #2C3E50;  /* Dark blue-gray for body text */
 }
 
-h1 {
-  color: #C27D0E; /* Darker variant of #f39c12 */
+/* Container for the post cards */
+.posts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5em;
+  padding: 1em 0;
 }
 
-iframe {
-  border: 2px solid #C27D0E; /* Matching the darker accent color */
+/* Styling each post card */
+.post-card {
+  background: #ccc6b8;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: calc(33.333% - 1em); /* Three columns */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Banner image inside the post card */
+.post-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* Info section of the post card */
+.post-info {
+  padding: 1em;
+}
+
+/* Headings - Orange shade */
+.post-info h1, 
+.post-info h2, 
+.post-info h3 {
+  margin-top: 0;
+  font-size: 1.5em;
+  color: #C27D0E; /* Warm orange for headings */
+}
+
+/* Links and hover effects */
+.post-info h2 a {
+  text-decoration: none;
+  color: #C27D0E; /* Base orange */
+  transition: color 0.3s ease;
+}
+
+.post-info h2 a:hover {
+  color: #E67E22;  /* Brighter orange on hover */
+}
+
+/* Date Styling */
+.post-date {
+  font-size: 0.8em;
+  color: #555;
+  margin-bottom: 0.5em;
+}
+
+/* Paragraphs - Dark Blue-Gray */
+.post-intro, 
+.post-content {
+  font-size: 1em;
+  color: #2C3E50; /* Dark blue-gray for readability */
+}
+
+/* Banner styles for individual posts */
+.post-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }

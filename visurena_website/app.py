@@ -5,11 +5,33 @@ import markdown
 from flask import Flask, render_template, abort
 from flask_frozen import Freezer
 from datetime import datetime
+import frontmatter
 
 app = Flask(__name__)
 freezer = Freezer(app)
 
 POSTS_DIR = 'posts'
+
+def get_posts():
+    posts = []
+    for filename in os.listdir(POSTS_DIR):
+        if filename.endswith('.md'):
+            slug = filename[:-3]
+            filepath = os.path.join(POSTS_DIR, filename)
+            with open(filepath, 'r', encoding='utf-8') as f:
+                post = frontmatter.load(f)
+            post_data = {
+                "slug": slug,
+                "title": post.get("title", slug.replace('_', ' ').title()),
+                "date": post.get("date", ""),
+                "introduction": post.get("introduction", ""),
+                "image": post.get("image", ""),
+                "content": markdown.markdown(post.content)
+            }
+            posts.append(post_data)
+    # Sort posts by date in reverse order (assuming ISO date format YYYY-MM-DD)
+    posts.sort(key=lambda p: p.get("date", ""), reverse=True)
+    return posts
 
 def get_post_list():
     posts = []
@@ -48,18 +70,27 @@ def games():
 def story():
     return render_template('story.html')
 
-# Update the blog routes to include trailing slashes
+# Blog routes with trailing slashes
 @app.route('/blog/')
 def blog():
-    posts = get_post_list()
+    posts = get_posts()
     return render_template('blog.html', posts=posts)
 
 @app.route('/blog/<slug>/')
 def blog_post(slug):
-    content = get_post_content(slug)
-    if content is None:
+    filepath = os.path.join(POSTS_DIR, f'{slug}.md')
+    if not os.path.exists(filepath):
         abort(404)
-    return render_template('post.html', content=content, slug=slug)
+    with open(filepath, 'r', encoding='utf-8') as f:
+        post = frontmatter.load(f)
+    post_data = {
+        "title": post.get("title", slug.replace('_', ' ').title()),
+        "date": post.get("date", ""),
+        "introduction": post.get("introduction", ""),
+        "image": post.get("image", ""),
+        "content": markdown.markdown(post.content)
+    }
+    return render_template('post.html', content=post_data['content'], metadata=post_data, slug=slug)
 
 if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'freeze':

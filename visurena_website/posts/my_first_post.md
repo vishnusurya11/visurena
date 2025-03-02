@@ -1,6 +1,16 @@
-# Welcome to ViSuReNa
 ---
-<small><b>2025-02-25</b></small>
+title: "Roadmap 2025"
+date: "2025-02-25"
+updated: "2025-03-05"  # Last updated date
+introduction: "This is about the launch of ViSuReNa and Roadmap for 2025"
+image: "/static/images/roadmap_2025.png"
+category: "Announcements"  # Main category (e.g., AI, Development, Music, etc.)
+subcategories: ["AI", "Roadmap", "Future Plans"]  # Subcategories for filtering
+tags: ["AI Art", "Books", "Music", "Videos", "Competitions"]  # Keywords for search
+author: "ViSuReNa"  # Add author name
+featured: true  # If you want to highlight certain posts
+---
+
 
 Welcome to the official launch of **ViSuReNa**! I'm thrilled to have you on board as we embark on a journey to explore the incredible possibilities of AI in transforming creativity and technology.
 
