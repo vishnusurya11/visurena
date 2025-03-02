@@ -1,7 +1,7 @@
 ---
 title: "Roadmap 2025"
 date: "2025-02-25"
-updated: "2025-03-05"  # Last updated date
+updated: "2025-03-01"  # Last updated date
 introduction: "This is about the launch of ViSuReNa and Roadmap for 2025"
 image: "/static/images/roadmap_2025.png"
 category: "Announcements"  # Main category (e.g., AI, Development, Music, etc.)
