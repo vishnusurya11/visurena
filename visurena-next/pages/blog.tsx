@@ -15,7 +15,7 @@ export default function Blog({ blogPosts }) {
     setIsModalOpen(true);
   };
 
-  const allTags = ['all', ...new Set(blogPosts.flatMap(item => item.tags || []))];
+  const allTags = ['all', ...Array.from(new Set(blogPosts.flatMap(item => item.tags || [])))];
   const filteredPosts = filter === 'all' 
     ? blogPosts 
     : blogPosts.filter(item => item.tags?.includes(filter));
