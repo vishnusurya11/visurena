@@ -1,0 +1,71 @@
+{
+  "featured": [
+    {
+      "id": "feat-1",
+      "type": "movie",
+      "title": "Latest Visual Creation",
+      "description": "My newest video project showcasing creative storytelling",
+      "thumbnail": "https://img.youtube.com/vi/YfsdEYdr7Fs/maxresdefault.jpg",
+      "videoUrl": "https://www.youtube.com/watch?v=YfsdEYdr7Fs",
+      "duration": "8 min",
+      "releaseDate": "2025-01-15",
+      "tags": ["creative", "visual", "storytelling"],
+      "featured": true
+    }
+  ],
+  "movies": [
+    {
+      "id": "mov-1",
+      "type": "movie",
+      "title": "Creative Visual Project",
+      "description": "Latest video creation showcasing unique storytelling",
+      "thumbnail": "https://img.youtube.com/vi/YfsdEYdr7Fs/maxresdefault.jpg",
+      "videoUrl": "https://www.youtube.com/watch?v=YfsdEYdr7Fs",
+      "duration": "8 min",
+      "releaseDate": "2025-01-15",
+      "tags": ["creative", "visual", "storytelling"],
+      "rating": 4.8
+    },
+    {
+      "id": "mov-2",
+      "type": "movie",
+      "title": "Second Visual Work",
+      "description": "Another engaging video project",
+      "thumbnail": "https://img.youtube.com/vi/-eR1aW4WgPI/maxresdefault.jpg",
+      "videoUrl": "https://www.youtube.com/watch?v=-eR1aW4WgPI",
+      "duration": "12 min",
+      "releaseDate": "2025-01-10",
+      "tags": ["creative", "video", "production"],
+      "rating": 4.6
+    }
+  ],
+  "music": [
+    {
+      "id": "mus-1",
+      "type": "music",
+      "title": "Musical Creation #1",
+      "description": "Original music composition and production",
+      "thumbnail": "https://img.youtube.com/vi/7p4Lusyuoa8/maxresdefault.jpg",
+      "videoUrl": "https://www.youtube.com/watch?v=7p4Lusyuoa8",
+      "duration": "4:20",
+      "releaseDate": "2025-01-10",
+      "tags": ["original", "composition", "music"],
+      "rating": 4.7
+    },
+    {
+      "id": "mus-2",
+      "type": "music",
+      "title": "Musical Creation #2",
+      "description": "Another original musical piece",
+      "thumbnail": "https://img.youtube.com/vi/GLrnybyJKDo/maxresdefault.jpg",
+      "videoUrl": "https://www.youtube.com/watch?v=GLrnybyJKDo",
+      "duration": "3:45",
+      "releaseDate": "2025-01-05",
+      "tags": ["original", "music", "creative"],
+      "rating": 4.9
+    }
+  ],
+  "games": [],
+  "stories": [],
+  "blog": []
+}
