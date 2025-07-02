@@ -69,11 +69,11 @@ const ContentCard: React.FC<ContentCardProps> = ({
           <img
             src={thumbnail}
             alt={title}
-            className="w-full h-48 object-cover"
+            className="w-full h-36 sm:h-40 md:h-48 object-cover"
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className={`w-full h-48 bg-gradient-to-br ${getTypeColor()} to-gray-900 flex items-center justify-center`}>
+          <div className={`w-full h-36 sm:h-40 md:h-48 bg-gradient-to-br ${getTypeColor()} to-gray-900 flex items-center justify-center`}>
             <div className="text-white/50">
               {getTypeIcon()}
             </div>

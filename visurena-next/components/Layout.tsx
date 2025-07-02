@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface LayoutProps {
@@ -13,9 +13,12 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
@@ -111,6 +114,22 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
                   <MagnifyingGlassIcon className="h-6 w-6" />
                 )}
               </motion.button>
+              
+              {/* Mobile Menu Button */}
+              {isMounted && (
+                <motion.button
+                  className="md:hidden text-netflix-gray hover:text-netflix-text p-2 transition-colors duration-200"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  {isMobileMenuOpen ? (
+                    <XMarkIcon className="h-6 w-6" />
+                  ) : (
+                    <Bars3Icon className="h-6 w-6" />
+                  )}
+                </motion.button>
+              )}
             </div>
           </div>
 
@@ -134,6 +153,40 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
               </motion.form>
             )}
           </AnimatePresence>
+
+          {/* Mobile Menu */}
+          {isMounted && (
+            <AnimatePresence>
+              {isMobileMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="md:hidden mt-4 bg-netflix-dark/95 backdrop-blur-sm rounded-lg p-4"
+                >
+                  <ul className="space-y-4">
+                    {navItems.map((item) => (
+                      <li key={item.path}>
+                        <Link href={item.path}>
+                          <motion.span
+                            className={`block cursor-pointer text-lg font-medium transition-colors duration-200 ${
+                              router.pathname === item.path
+                                ? getAccentColor()
+                                : 'text-netflix-gray hover:text-netflix-text'
+                            }`}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            {item.name}
+                          </motion.span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
         </nav>
       </header>
 

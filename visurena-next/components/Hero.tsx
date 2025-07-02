@@ -96,7 +96,7 @@ const Hero: React.FC<HeroProps> = ({ featuredContent, onPlay, onMoreInfo }) => {
               className="max-w-2xl"
             >
               <motion.h1 
-                className="text-5xl md:text-7xl font-bold mb-4 text-white"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 text-white"
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
@@ -105,7 +105,7 @@ const Hero: React.FC<HeroProps> = ({ featuredContent, onPlay, onMoreInfo }) => {
               </motion.h1>
               
               <motion.p 
-                className="text-lg md:text-xl text-gray-200 mb-8 line-clamp-3"
+                className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 mb-6 sm:mb-8 line-clamp-3"
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
@@ -114,24 +114,24 @@ const Hero: React.FC<HeroProps> = ({ featuredContent, onPlay, onMoreInfo }) => {
               </motion.p>
 
               <motion.div 
-                className="flex space-x-4"
+                className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
               >
                 <button
                   onClick={() => onPlay(current)}
-                  className="flex items-center space-x-2 px-8 py-3 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+                  className="flex items-center justify-center space-x-2 px-6 sm:px-8 py-3 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition-colors text-sm sm:text-base"
                 >
-                  <PlayIcon className="h-6 w-6" />
+                  <PlayIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                   <span>Play</span>
                 </button>
                 
                 <button
                   onClick={() => onMoreInfo(current)}
-                  className="flex items-center space-x-2 px-8 py-3 bg-gray-500/50 backdrop-blur-sm text-white rounded-lg font-semibold hover:bg-gray-500/70 transition-colors"
+                  className="flex items-center justify-center space-x-2 px-6 sm:px-8 py-3 bg-gray-500/50 backdrop-blur-sm text-white rounded-lg font-semibold hover:bg-gray-500/70 transition-colors text-sm sm:text-base"
                 >
-                  <InformationCircleIcon className="h-6 w-6" />
+                  <InformationCircleIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                   <span>More Info</span>
                 </button>
               </motion.div>

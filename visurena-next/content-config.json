@@ -3,8 +3,8 @@
     {
       "id": "feat-1",
       "type": "movie",
-      "title": "Latest Visual Creation",
-      "description": "My newest video project showcasing creative storytelling",
+      "title": "Your Actual YouTube Video Title Here",
+      "description": "Replace with actual video description from YouTube",
       "thumbnail": "https://img.youtube.com/vi/YfsdEYdr7Fs/maxresdefault.jpg",
       "videoUrl": "https://www.youtube.com/watch?v=YfsdEYdr7Fs",
       "duration": "8 min",

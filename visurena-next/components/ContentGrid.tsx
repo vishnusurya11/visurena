@@ -133,7 +133,7 @@ const ContentGrid: React.FC<ContentGridProps> = ({
             <motion.div
               key={item.id}
               variants={itemVariants}
-              className="flex-none w-64"
+              className="flex-none w-48 sm:w-56 md:w-64"
               style={{ scrollSnapAlign: 'start' }}
             >
               <ContentCard {...item} onClick={() => onItemClick(item)} />
