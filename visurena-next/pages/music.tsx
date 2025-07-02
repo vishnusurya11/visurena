@@ -15,7 +15,7 @@ export default function Music() {
     setIsModalOpen(true);
   };
 
-  const allTags = ['all', ...new Set(contentData.music.flatMap(item => item.tags || []))];
+  const allTags = ['all', ...Array.from(new Set(contentData.music.flatMap(item => item.tags || [])))] as string[];
   const filteredMusic = filter === 'all' 
     ? contentData.music 
     : contentData.music.filter(item => item.tags?.includes(filter));

@@ -36,13 +36,14 @@ export function getAllPosts() {
             image: (metaImage && metaImage[1]) || '/images/blog-default.jpg',
             date: (metaDate && metaDate[1]) || new Date().toISOString().split('T')[0],
             tags: (metaTags && metaTags[1].split(',').map(t => t.trim())) || [],
-            author: 'ViSuReNa'
+            author: 'ViSuReNa',
+            isHtml: true
           };
           content = fileContents;
         } else {
           // For markdown files (backward compatibility)
           const matterResult = matter(fileContents);
-          postData = matterResult.data;
+          postData = { ...matterResult.data, isHtml: false };
           content = matterResult.content;
         }
 

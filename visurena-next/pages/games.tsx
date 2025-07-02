@@ -15,7 +15,7 @@ export default function Games() {
     setIsModalOpen(true);
   };
 
-  const allTags = ['all', ...new Set(contentData.games.flatMap(item => item.tags || []))];
+  const allTags = ['all', ...Array.from(new Set(contentData.games.flatMap(item => item.tags || [])))] as string[];
   const filteredGames = filter === 'all' 
     ? contentData.games 
     : contentData.games.filter(item => item.tags?.includes(filter));

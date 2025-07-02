@@ -5,7 +5,7 @@ import { ClockIcon, StarIcon } from '@heroicons/react/24/outline';
 
 interface ContentCardProps {
   id: string;
-  type: 'movie' | 'music' | 'game' | 'story' | 'blog';
+  type: string;
   title: string;
   description: string;
   thumbnail: string;

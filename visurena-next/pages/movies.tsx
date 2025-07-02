@@ -16,7 +16,7 @@ export default function Movies() {
   };
 
   // Get unique tags from movies
-  const allTags = ['all', ...new Set(contentData.movies.flatMap(movie => movie.tags || []))];
+  const allTags = ['all', ...Array.from(new Set(contentData.movies.flatMap(movie => movie.tags || [])))] as string[];
 
   // Filter movies based on selected tag
   const filteredMovies = filter === 'all' 

@@ -9,7 +9,7 @@ interface HeroContent {
   description: string;
   videoUrl?: string;
   thumbnail: string;
-  type: 'movie' | 'music' | 'game' | 'story';
+  type: string;
 }
 
 interface HeroProps {

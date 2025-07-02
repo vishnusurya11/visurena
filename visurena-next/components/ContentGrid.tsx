@@ -6,7 +6,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 interface Content {
   id: string;
-  type: 'movie' | 'music' | 'game' | 'story' | 'blog';
+  type: string;
   title: string;
   description: string;
   thumbnail: string;

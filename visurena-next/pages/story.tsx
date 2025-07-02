@@ -17,7 +17,7 @@ export default function Story() {
     setIsModalOpen(true);
   };
 
-  const allTags = ['all', ...new Set(contentData.stories.flatMap(item => item.tags || []))];
+  const allTags = ['all', ...Array.from(new Set(contentData.stories.flatMap(item => item.tags || [])))] as string[];
   const filteredStories = filter === 'all' 
     ? contentData.stories 
     : contentData.stories.filter(item => item.tags?.includes(filter));
