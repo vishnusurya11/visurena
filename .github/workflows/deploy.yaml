@@ -30,7 +30,6 @@ jobs:
         run: |
           cd visurena-next
           npm run build
-          npm run export
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
