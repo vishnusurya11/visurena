@@ -57,14 +57,13 @@ export default function Home({ blogPosts }) {
         <div className="text-center py-16">
           <h2 className="text-3xl font-bold mb-4 text-netflix-text">More Coming Soon</h2>
           <p className="text-lg text-netflix-gray mb-8">
-            Movies, Games, Stories, VR World, and Wiki sections are currently under development.
+            Movies, Games, Stories, and VR World sections are currently under development.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <div className="px-4 py-2 bg-netflix-dark rounded-lg text-netflix-gray">Movies</div>
             <div className="px-4 py-2 bg-netflix-dark rounded-lg text-netflix-gray">Games</div>
             <div className="px-4 py-2 bg-netflix-dark rounded-lg text-netflix-gray">Stories</div>
             <div className="px-4 py-2 bg-netflix-dark rounded-lg text-netflix-gray">VR World</div>
-            <div className="px-4 py-2 bg-netflix-dark rounded-lg text-netflix-gray">Wiki</div>
           </div>
         </div>
       </div>

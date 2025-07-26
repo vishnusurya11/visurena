@@ -13,7 +13,7 @@ const orbitron = Orbitron({
 
 interface LayoutProps {
   children: React.ReactNode;
-  pageTheme?: 'home' | 'movies' | 'music' | 'games' | 'story' | 'blog' | 'wiki' | 'vr';
+  pageTheme?: 'home' | 'movies' | 'music' | 'games' | 'story' | 'blog' | 'vr';
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
@@ -48,7 +48,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
     { name: 'Games', path: '/games', theme: 'games' },
     { name: 'Story', path: '/story', theme: 'story' },
     { name: 'VR World', path: '/vr-world', theme: 'vr' },
-    { name: 'Wiki', path: '/wiki', theme: 'wiki' },
+    { name: 'Blog', path: '/blog', theme: 'blog' },
   ];
 
   const handleSearch = (e: React.FormEvent) => {
@@ -71,7 +71,6 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
       games: 'text-theme-games-primary',
       story: 'text-theme-story-primary',
       blog: 'text-theme-blog-primary',
-      wiki: 'text-theme-wiki-primary',
       vr: 'text-theme-vr-primary',
       home: 'text-netflix-text',
     };
@@ -233,11 +232,6 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
                 <li>
                   <Link href="/blog">
                     <span className="hover:text-white cursor-pointer">Blog</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/wiki">
-                    <span className="hover:text-white cursor-pointer">Wiki Analysis</span>
                   </Link>
                 </li>
                 <li className="hover:text-white cursor-pointer">Movie Research</li>
