@@ -25,7 +25,6 @@ export default function Home({ blogPosts }) {
   };
 
   // Get recent content from all categories
-  const recentMovies = contentData.movies.slice(0, 5);
   const recentMusic = contentData.music.slice(0, 5);
   const recentGames = contentData.games.slice(0, 5);
   const recentStories = contentData.stories.slice(0, 5);
@@ -57,10 +56,9 @@ export default function Home({ blogPosts }) {
         <div className="text-center py-16">
           <h2 className="text-3xl font-bold mb-4 text-netflix-text">More Coming Soon</h2>
           <p className="text-lg text-netflix-gray mb-8">
-            Movies, Games, Stories, and VR World sections are currently under development.
+            Games, Stories, and VR World sections are currently under development.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <div className="px-4 py-2 bg-netflix-dark rounded-lg text-netflix-gray">Movies</div>
             <div className="px-4 py-2 bg-netflix-dark rounded-lg text-netflix-gray">Games</div>
             <div className="px-4 py-2 bg-netflix-dark rounded-lg text-netflix-gray">Stories</div>
             <div className="px-4 py-2 bg-netflix-dark rounded-lg text-netflix-gray">VR World</div>

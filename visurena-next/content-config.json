@@ -1,15 +1,27 @@
 {
   "featured": [
     {
-      "id": "feat-1",
-      "type": "movie",
-      "title": "Your Actual YouTube Video Title Here",
-      "description": "Replace with actual video description from YouTube",
-      "thumbnail": "https://img.youtube.com/vi/YfsdEYdr7Fs/maxresdefault.jpg",
-      "videoUrl": "https://www.youtube.com/watch?v=YfsdEYdr7Fs",
-      "duration": "8 min",
-      "releaseDate": "2025-01-15",
-      "tags": ["creative", "visual", "storytelling"],
+      "id": "feat-mus-1",
+      "type": "music",
+      "title": "Musical Creation #1",
+      "description": "Original music composition and production - Featured track showcasing creative musical arrangements",
+      "thumbnail": "https://img.youtube.com/vi/7p4Lusyuoa8/maxresdefault.jpg",
+      "videoUrl": "https://www.youtube.com/watch?v=7p4Lusyuoa8",
+      "duration": "4:20",
+      "releaseDate": "2025-01-10",
+      "tags": ["original", "composition", "music", "featured"],
+      "featured": true
+    },
+    {
+      "id": "feat-mus-2",
+      "type": "music",
+      "title": "Musical Creation #2",
+      "description": "Another original musical piece featuring innovative soundscapes and melodies",
+      "thumbnail": "https://img.youtube.com/vi/GLrnybyJKDo/maxresdefault.jpg",
+      "videoUrl": "https://www.youtube.com/watch?v=GLrnybyJKDo",
+      "duration": "3:45",
+      "releaseDate": "2025-01-05",
+      "tags": ["original", "music", "creative", "featured"],
       "featured": true
     }
   ],
