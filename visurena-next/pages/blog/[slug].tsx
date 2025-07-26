@@ -67,7 +67,7 @@ export default function BlogPost({ post }: BlogPostProps) {
               <div className="flex items-center space-x-4">
                 <span>By {post.author || 'ViSuReNa'}</span>
                 <span>•</span>
-                <time>{new Date(post.date).toLocaleDateString()}</time>
+                <time>{post.date}</time>
               </div>
               
               {post.tags && post.tags.length > 0 && (

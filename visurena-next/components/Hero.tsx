@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlayIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
-import ReactPlayer from 'react-player';
+import dynamic from 'next/dynamic';
+
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
 interface HeroContent {
   id: string;

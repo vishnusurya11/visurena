@@ -34,7 +34,7 @@ export function getAllPosts() {
             title: (metaTitle && metaTitle[1]) || (titleMatch && titleMatch[1]) || slug.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
             introduction: (metaDescription && metaDescription[1]) || 'Blog post',
             image: (metaImage && metaImage[1]) || '/images/blog-default.jpg',
-            date: (metaDate && metaDate[1]) || new Date().toISOString().split('T')[0],
+            date: (metaDate && metaDate[1]) || '2025-01-01',
             tags: (metaTags && metaTags[1].split(',').map(t => t.trim())) || [],
             author: 'ViSuReNa',
             isHtml: true
@@ -57,7 +57,7 @@ export function getAllPosts() {
           readUrl: `/blog/${slug}`,
           content: content,
           duration: `${Math.ceil(content.replace(/<[^>]*>/g, '').split(' ').length / 200)} min read`,
-          releaseDate: postData.date || new Date().toISOString().split('T')[0],
+          releaseDate: postData.date || '2025-01-01',
           tags: postData.tags || [],
           rating: 5.0,
           featured: postData.featured || false,

@@ -26,9 +26,17 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
 
   useEffect(() => {
     setIsMounted(true);
+    
+    // Only access window after component is mounted
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (typeof window !== 'undefined') {
+        setIsScrolled(window.scrollY > 50);
+      }
     };
+    
+    // Initial check
+    handleScroll();
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -164,7 +172,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
 
           {/* Mobile Menu */}
           <AnimatePresence>
-            {isMobileMenuOpen && (
+            {isMounted && isMobileMenuOpen && (
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}

@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import ReactPlayer from 'react-player';
+import dynamic from 'next/dynamic';
+
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,13 +15,18 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, videoUrl }) => {
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
+    // Only run on client side
+    if (typeof document !== 'undefined') {
+      if (isOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = 'unset';
+      }
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = 'unset';
+      }
     };
   }, [isOpen]);
 
