@@ -48,6 +48,18 @@ module.exports = {
             primary: '#3b82f6',
             secondary: '#60a5fa',
             muted: '#1e40af'
+          },
+          // Wiki - Research purple for knowledge/analysis
+          wiki: {
+            primary: '#8b5cf6',
+            secondary: '#a78bfa',
+            muted: '#5b21b6'
+          },
+          // VR - Futuristic cyan for virtual reality
+          vr: {
+            primary: '#06b6d4',
+            secondary: '#22d3ee',
+            muted: '#0891b2'
           }
         }
       },

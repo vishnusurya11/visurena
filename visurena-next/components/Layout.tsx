@@ -3,10 +3,17 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { MagnifyingGlassIcon, XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Orbitron } from 'next/font/google';
+
+const orbitron = Orbitron({ 
+  subsets: ['latin'],
+  weight: ['400', '700', '900'],
+  display: 'swap',
+});
 
 interface LayoutProps {
   children: React.ReactNode;
-  pageTheme?: 'home' | 'movies' | 'music' | 'games' | 'story' | 'blog';
+  pageTheme?: 'home' | 'movies' | 'music' | 'games' | 'story' | 'blog' | 'wiki' | 'vr';
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
@@ -32,7 +39,8 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
     { name: 'Music', path: '/music', theme: 'music' },
     { name: 'Games', path: '/games', theme: 'games' },
     { name: 'Story', path: '/story', theme: 'story' },
-    { name: 'Blog', path: '/blog', theme: 'blog' },
+    { name: 'VR World', path: '/vr-world', theme: 'vr' },
+    { name: 'Wiki', path: '/wiki', theme: 'wiki' },
   ];
 
   const handleSearch = (e: React.FormEvent) => {
@@ -55,6 +63,8 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
       games: 'text-theme-games-primary',
       story: 'text-theme-story-primary',
       blog: 'text-theme-blog-primary',
+      wiki: 'text-theme-wiki-primary',
+      vr: 'text-theme-vr-primary',
       home: 'text-netflix-text',
     };
     return colors[pageTheme] || colors.home;
@@ -72,7 +82,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
             <div className="flex items-center space-x-8">
               <Link href="/">
                 <motion.h1 
-                  className={`text-3xl font-bold cursor-pointer ${getAccentColor()}`}
+                  className={`text-3xl font-bold cursor-pointer ${getAccentColor()} ${orbitron.className}`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -116,20 +126,18 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
               </motion.button>
               
               {/* Mobile Menu Button */}
-              {isMounted && (
-                <motion.button
-                  className="md:hidden text-netflix-gray hover:text-netflix-text p-2 transition-colors duration-200"
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  {isMobileMenuOpen ? (
-                    <XMarkIcon className="h-6 w-6" />
-                  ) : (
-                    <Bars3Icon className="h-6 w-6" />
-                  )}
-                </motion.button>
-              )}
+              <motion.button
+                className="md:hidden text-netflix-gray hover:text-netflix-text p-2 transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                {isMobileMenuOpen ? (
+                  <XMarkIcon className="h-6 w-6" />
+                ) : (
+                  <Bars3Icon className="h-6 w-6" />
+                )}
+              </motion.button>
             </div>
           </div>
 
@@ -155,38 +163,36 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
           </AnimatePresence>
 
           {/* Mobile Menu */}
-          {isMounted && (
-            <AnimatePresence>
-              {isMobileMenuOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="md:hidden mt-4 bg-netflix-dark/95 backdrop-blur-sm rounded-lg p-4"
-                >
-                  <ul className="space-y-4">
-                    {navItems.map((item) => (
-                      <li key={item.path}>
-                        <Link href={item.path}>
-                          <motion.span
-                            className={`block cursor-pointer text-lg font-medium transition-colors duration-200 ${
-                              router.pathname === item.path
-                                ? getAccentColor()
-                                : 'text-netflix-gray hover:text-netflix-text'
-                            }`}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            {item.name}
-                          </motion.span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          )}
+          <AnimatePresence>
+            {isMobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="md:hidden mt-4 bg-netflix-dark/95 backdrop-blur-sm rounded-lg p-4"
+              >
+                <ul className="space-y-4">
+                  {navItems.map((item) => (
+                    <li key={item.path}>
+                      <Link href={item.path}>
+                        <motion.span
+                          className={`block cursor-pointer text-lg font-medium transition-colors duration-200 ${
+                            router.pathname === item.path
+                              ? getAccentColor()
+                              : 'text-netflix-gray hover:text-netflix-text'
+                          }`}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          {item.name}
+                        </motion.span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </nav>
       </header>
 
@@ -198,7 +204,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className={`text-lg font-semibold mb-4 ${getAccentColor()}`}>ViSuReNa</h3>
+              <h3 className={`text-lg font-semibold mb-4 ${getAccentColor()} ${orbitron.className}`}>ViSuReNa</h3>
               <p className="text-sm">Your gateway to visual, auditory, and narrative experiences.</p>
             </div>
             <div>
@@ -214,6 +220,24 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
               </ul>
             </div>
             <div>
+              <h4 className="text-lg font-semibold mb-4">Research & Analysis</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/blog">
+                    <span className="hover:text-white cursor-pointer">Blog</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/wiki">
+                    <span className="hover:text-white cursor-pointer">Wiki Analysis</span>
+                  </Link>
+                </li>
+                <li className="hover:text-white cursor-pointer">Movie Research</li>
+                <li className="hover:text-white cursor-pointer">Music Analysis</li>
+                <li className="hover:text-white cursor-pointer">Game Studies</li>
+              </ul>
+            </div>
+            <div>
               <h4 className="text-lg font-semibold mb-4">Categories</h4>
               <ul className="space-y-2 text-sm">
                 <li className="hover:text-white cursor-pointer">Featured</li>
@@ -221,10 +245,6 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTheme = 'home' }) => {
                 <li className="hover:text-white cursor-pointer">Popular</li>
                 <li className="hover:text-white cursor-pointer">Coming Soon</li>
               </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Connect</h4>
-              <p className="text-sm">Stay updated with our latest releases and updates.</p>
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm">
