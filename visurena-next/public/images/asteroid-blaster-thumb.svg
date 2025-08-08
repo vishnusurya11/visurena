@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <defs>
+    <linearGradient id="asteroid-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#000033;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#asteroid-bg)"/>
+  
+  <text x="400" y="80" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="#00ffff">
+    ASTEROID BLASTER
+  </text>
+  
+  <!-- Spaceship -->
+  <g transform="translate(400, 250)">
+    <path d="M 0 -30 L -15 20 L 0 10 L 15 20 Z" fill="#00ffff" stroke="#00ffff" stroke-width="2"/>
+  </g>
+  
+  <!-- Asteroids -->
+  <circle cx="200" cy="200" r="30" fill="none" stroke="#888888" stroke-width="3"/>
+  <circle cx="600" cy="150" r="25" fill="none" stroke="#999999" stroke-width="3"/>
+  <circle cx="250" cy="350" r="20" fill="none" stroke="#777777" stroke-width="3"/>
+  <circle cx="550" cy="320" r="35" fill="none" stroke="#666666" stroke-width="3"/>
+  
+  <!-- Stars -->
+  <circle cx="100" cy="100" r="2" fill="white" opacity="0.8"/>
+  <circle cx="700" cy="80" r="2" fill="white" opacity="0.8"/>
+  <circle cx="150" cy="300" r="1" fill="white" opacity="0.6"/>
+  <circle cx="650" cy="250" r="1" fill="white" opacity="0.6"/>
+</svg>

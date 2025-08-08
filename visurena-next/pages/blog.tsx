@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import ContentGrid from '../components/ContentGrid';
-import Modal from '../components/Modal';
 import { getAllPosts } from '../lib/blog';
 import { motion } from 'framer-motion';
 
 export default function Blog({ blogPosts }) {
-  const [selectedContent, setSelectedContent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
   const [filter, setFilter] = useState('all');
 
   const handleItemClick = (item) => {
-    setSelectedContent(item);
-    setIsModalOpen(true);
+    // Navigate directly to the blog post
+    router.push(`/blog/${item.slug}`);
   };
 
   const allTags = ['all', ...Array.from(new Set(blogPosts.flatMap(item => item.tags || [])))] as string[];
@@ -61,37 +60,6 @@ export default function Blog({ blogPosts }) {
           </div>
         )}
       </div>
-
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedContent(null);
-        }}
-      >
-        <div className="p-6">
-          <h2 className="text-2xl font-bold mb-4">{selectedContent?.title}</h2>
-          <p className="text-gray-300 mb-4">{selectedContent?.description}</p>
-          <p className="text-sm text-gray-500 mb-4">Reading time: {selectedContent?.duration}</p>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {selectedContent?.tags?.map((tag, index) => (
-              <span key={index} className="px-3 py-1 bg-netflix-dark text-netflix-gray rounded text-sm">
-                {tag}
-              </span>
-            ))}
-          </div>
-          {selectedContent?.readUrl && (
-            <a 
-              href={selectedContent.readUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-block px-6 py-3 bg-theme-blog-primary text-white rounded hover:opacity-90 transition-opacity"
-            >
-              Read Post
-            </a>
-          )}
-        </div>
-      </Modal>
     </Layout>
   );
 }

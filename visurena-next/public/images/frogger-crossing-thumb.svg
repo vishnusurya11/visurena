@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <defs>
+    <linearGradient id="frogger-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#003300;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#frogger-bg)"/>
+  
+  <text x="400" y="60" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="#00ff00">
+    FROGGER CROSSING
+  </text>
+  
+  <!-- River -->
+  <rect x="0" y="100" width="800" height="100" fill="#0044aa" opacity="0.8"/>
+  
+  <!-- Logs -->
+  <rect x="100" y="120" width="120" height="30" fill="#8B4513" rx="15"/>
+  <rect x="400" y="150" width="120" height="30" fill="#8B4513" rx="15"/>
+  <rect x="600" y="120" width="120" height="30" fill="#8B4513" rx="15"/>
+  
+  <!-- Road -->
+  <rect x="0" y="250" width="800" height="100" fill="#333333"/>
+  <rect x="0" y="295" width="800" height="10" fill="#ffff00" opacity="0.5"/>
+  
+  <!-- Cars -->
+  <rect x="150" y="260" width="60" height="30" fill="#ff0000" rx="5"/>
+  <rect x="350" y="310" width="60" height="30" fill="#0000ff" rx="5"/>
+  <rect x="550" y="260" width="60" height="30" fill="#ff00ff" rx="5"/>
+  
+  <!-- Frog -->
+  <circle cx="400" cy="400" r="15" fill="#00ff00"/>
+  <circle cx="392" cy="395" r="3" fill="white"/>
+  <circle cx="408" cy="395" r="3" fill="white"/>
+  
+  <!-- Goal area -->
+  <rect x="0" y="0" width="800" height="50" fill="#00aa00" opacity="0.5"/>
+</svg>

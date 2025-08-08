@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import Hero from '../components/Hero';
 import ContentGrid from '../components/ContentGrid';
@@ -7,6 +8,7 @@ import contentData from '../content-config.json';
 import { getAllPosts } from '../lib/blog';
 
 export default function Home({ blogPosts }) {
+  const router = useRouter();
   const [selectedContent, setSelectedContent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -22,6 +24,11 @@ export default function Home({ blogPosts }) {
 
   const handleItemClick = (item) => {
     handlePlay(item);
+  };
+
+  const handleBlogClick = (item) => {
+    // Navigate directly to blog post
+    router.push(`/blog/${item.slug}`);
   };
 
   // Get recent content from all categories
@@ -49,7 +56,7 @@ export default function Home({ blogPosts }) {
           <ContentGrid
             title="Latest Blog Posts"
             items={recentBlogs}
-            onItemClick={handleItemClick}
+            onItemClick={handleBlogClick}
           />
         )}
         

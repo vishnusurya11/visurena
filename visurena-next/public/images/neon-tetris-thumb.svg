@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#tetris-bg)"/>
+  
+  <!-- Grid overlay -->
+  <g opacity="0.1">
+    <path d="M 0 30 L 800 30 M 0 60 L 800 60 M 0 90 L 800 90 M 0 120 L 800 120 M 0 150 L 800 150 M 0 180 L 800 180 M 0 210 L 800 210 M 0 240 L 800 240 M 0 270 L 800 270 M 0 300 L 800 300 M 0 330 L 800 330 M 0 360 L 800 360 M 0 390 L 800 390 M 0 420 L 800 420" stroke="white" stroke-width="1"/>
+    <path d="M 30 0 L 30 450 M 60 0 L 60 450 M 90 0 L 90 450 M 120 0 L 120 450 M 150 0 L 150 450 M 180 0 L 180 450 M 210 0 L 210 450 M 240 0 L 240 450 M 270 0 L 270 450 M 300 0 L 300 450 M 330 0 L 330 450 M 360 0 L 360 450 M 390 0 L 390 450 M 420 0 L 420 450 M 450 0 L 450 450 M 480 0 L 480 450 M 510 0 L 510 450 M 540 0 L 540 450 M 570 0 L 570 450 M 600 0 L 600 450 M 630 0 L 630 450 M 660 0 L 660 450 M 690 0 L 690 450 M 720 0 L 720 450 M 750 0 L 750 450 M 780 0 L 780 450" stroke="white" stroke-width="1"/>
+  </g>
+  
+  <!-- Title -->
+  <text x="400" y="80" font-family="Arial, sans-serif" font-size="56" font-weight="bold" text-anchor="middle" fill="url(#tetris-title)">
+    NEON TETRIS
+  </text>
+  
+  <!-- Tetris Blocks -->
+  <!-- I piece (cyan) -->
+  <g filter="url(#glow-cyan)">
+    <rect x="150" y="150" width="30" height="30" fill="#00ffff" stroke="#00ffff" stroke-width="2"/>
+    <rect x="180" y="150" width="30" height="30" fill="#00ffff" stroke="#00ffff" stroke-width="2"/>
+    <rect x="210" y="150" width="30" height="30" fill="#00ffff" stroke="#00ffff" stroke-width="2"/>
+    <rect x="240" y="150" width="30" height="30" fill="#00ffff" stroke="#00ffff" stroke-width="2"/>
+  </g>
+  
+  <!-- O piece (yellow) -->
+  <g filter="url(#glow-yellow)">
+    <rect x="350" y="200" width="30" height="30" fill="#ffff00" stroke="#ffff00" stroke-width="2"/>
+    <rect x="380" y="200" width="30" height="30" fill="#ffff00" stroke="#ffff00" stroke-width="2"/>
+    <rect x="350" y="230" width="30" height="30" fill="#ffff00" stroke="#ffff00" stroke-width="2"/>
+    <rect x="380" y="230" width="30" height="30" fill="#ffff00" stroke="#ffff00" stroke-width="2"/>
+  </g>
+  
+  <!-- T piece (magenta) -->
+  <g filter="url(#glow-magenta)">
+    <rect x="520" y="150" width="30" height="30" fill="#ff00ff" stroke="#ff00ff" stroke-width="2"/>
+    <rect x="490" y="180" width="30" height="30" fill="#ff00ff" stroke="#ff00ff" stroke-width="2"/>
+    <rect x="520" y="180" width="30" height="30" fill="#ff00ff" stroke="#ff00ff" stroke-width="2"/>
+    <rect x="550" y="180" width="30" height="30" fill="#ff00ff" stroke="#ff00ff" stroke-width="2"/>
+  </g>
+  
+  <!-- S piece (green) -->
+  <g filter="url(#glow-green)">
+    <rect x="220" y="250" width="30" height="30" fill="#00ff00" stroke="#00ff00" stroke-width="2"/>
+    <rect x="250" y="250" width="30" height="30" fill="#00ff00" stroke="#00ff00" stroke-width="2"/>
+    <rect x="190" y="280" width="30" height="30" fill="#00ff00" stroke="#00ff00" stroke-width="2"/>
+    <rect x="220" y="280" width="30" height="30" fill="#00ff00" stroke="#00ff00" stroke-width="2"/>
+  </g>
+  
+  <!-- Z piece (red) -->
+  <g filter="url(#glow-red)">
+    <rect x="450" y="300" width="30" height="30" fill="#ff0000" stroke="#ff0000" stroke-width="2"/>
+    <rect x="480" y="300" width="30" height="30" fill="#ff0000" stroke="#ff0000" stroke-width="2"/>
+    <rect x="480" y="330" width="30" height="30" fill="#ff0000" stroke="#ff0000" stroke-width="2"/>
+    <rect x="510" y="330" width="30" height="30" fill="#ff0000" stroke="#ff0000" stroke-width="2"/>
+  </g>
+  
+  <!-- L piece (orange) -->
+  <g filter="url(#glow-orange)">
+    <rect x="580" y="270" width="30" height="30" fill="#ff8800" stroke="#ff8800" stroke-width="2"/>
+    <rect x="580" y="300" width="30" height="30" fill="#ff8800" stroke="#ff8800" stroke-width="2"/>
+    <rect x="580" y="330" width="30" height="30" fill="#ff8800" stroke="#ff8800" stroke-width="2"/>
+    <rect x="610" y="330" width="30" height="30" fill="#ff8800" stroke="#ff8800" stroke-width="2"/>
+  </g>
+  
+  <!-- J piece (blue) -->
+  <g filter="url(#glow-blue)">
+    <rect x="320" y="340" width="30" height="30" fill="#0000ff" stroke="#0000ff" stroke-width="2"/>
+    <rect x="350" y="340" width="30" height="30" fill="#0000ff" stroke="#0000ff" stroke-width="2"/>
+    <rect x="350" y="370" width="30" height="30" fill="#0000ff" stroke="#0000ff" stroke-width="2"/>
+    <rect x="350" y="400" width="30" height="30" fill="#0000ff" stroke="#0000ff" stroke-width="2"/>
+  </g>
+  
+  <!-- Falling piece preview (ghost) -->
+  <g opacity="0.3">
+    <rect x="150" y="350" width="30" height="30" fill="#00ffff" stroke="#00ffff" stroke-width="1"/>
+    <rect x="150" y="380" width="30" height="30" fill="#00ffff" stroke="#00ffff" stroke-width="1"/>
+    <rect x="150" y="410" width="30" height="30" fill="#00ffff" stroke="#00ffff" stroke-width="1"/>
+    <rect x="180" y="410" width="30" height="30" fill="#00ffff" stroke="#00ffff" stroke-width="1"/>
+  </g>
+  
+  <!-- Score display -->
+  <text x="650" y="250" font-family="Arial, sans-serif" font-size="20" fill="white" opacity="0.8">
+    SCORE
+  </text>
+  <text x="650" y="280" font-family="Arial, sans-serif" font-size="28" fill="#00ffff">
+    12,450
+  </text>
+  
+  <!-- Definitions -->
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="tetris-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a0033;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0a0a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Title gradient -->
+    <linearGradient id="tetris-title" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff00ff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#00ffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffff00;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow filters -->
+    <filter id="glow-cyan">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="glow-yellow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="glow-magenta">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="glow-green">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="glow-red">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="glow-orange">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="glow-blue">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>

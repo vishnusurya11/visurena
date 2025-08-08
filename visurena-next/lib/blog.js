@@ -24,15 +24,15 @@ export function getAllPosts() {
         if (fileName.endsWith('.html')) {
           // For HTML files, extract metadata from HTML comments or use filename
           const titleMatch = fileContents.match(/<title>(.*?)<\/title>/i);
-          const metaTitle = fileContents.match(/<meta\s+name="title"\s+content="(.*?)"/i);
-          const metaDescription = fileContents.match(/<meta\s+name="description"\s+content="(.*?)"/i);
-          const metaDate = fileContents.match(/<meta\s+name="date"\s+content="(.*?)"/i);
-          const metaImage = fileContents.match(/<meta\s+name="image"\s+content="(.*?)"/i);
-          const metaTags = fileContents.match(/<meta\s+name="tags"\s+content="(.*?)"/i);
+          const metaTitle = fileContents.match(/<meta\s+name="title"\s+content="([^"]+)"/i);
+          const metaDescription = fileContents.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
+          const metaDate = fileContents.match(/<meta\s+name="date"\s+content="([^"]+)"/i);
+          const metaImage = fileContents.match(/<meta\s+name="image"\s+content="([^"]+)"/i);
+          const metaTags = fileContents.match(/<meta\s+name="tags"\s+content="([^"]+)"/i);
           
           postData = {
-            title: (metaTitle && metaTitle[1]) || (titleMatch && titleMatch[1]) || slug.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-            introduction: (metaDescription && metaDescription[1]) || 'Blog post',
+            title: (metaTitle && metaTitle[1]) || (titleMatch && titleMatch[1]) || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            description: (metaDescription && metaDescription[1]) || 'Blog post',
             image: (metaImage && metaImage[1]) || '/images/blog-default.jpg',
             date: (metaDate && metaDate[1]) || '2025-01-01',
             tags: (metaTags && metaTags[1].split(',').map(t => t.trim())) || [],
@@ -51,8 +51,8 @@ export function getAllPosts() {
           id: slug,
           slug,
           type: 'blog',
-          title: postData.title || slug.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-          description: postData.introduction || 'Blog post',
+          title: postData.title || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+          description: postData.description || 'Blog post',
           thumbnail: postData.image || '/images/blog-default.jpg',
           readUrl: `/blog/${slug}`,
           content: content,
@@ -96,17 +96,17 @@ export function getPostBySlug(slug) {
     if (isHtml) {
       // Extract metadata from HTML
       const titleMatch = fileContents.match(/<title>(.*?)<\/title>/i);
-      const metaTitle = fileContents.match(/<meta\s+name="title"\s+content="(.*?)"/i);
-      const metaDescription = fileContents.match(/<meta\s+name="description"\s+content="(.*?)"/i);
-      const metaDate = fileContents.match(/<meta\s+name="date"\s+content="(.*?)"/i);
-      const metaImage = fileContents.match(/<meta\s+name="image"\s+content="(.*?)"/i);
-      const metaTags = fileContents.match(/<meta\s+name="tags"\s+content="(.*?)"/i);
+      const metaTitle = fileContents.match(/<meta\s+name="title"\s+content="([^"]+)"/i);
+      const metaDescription = fileContents.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
+      const metaDate = fileContents.match(/<meta\s+name="date"\s+content="([^"]+)"/i);
+      const metaImage = fileContents.match(/<meta\s+name="image"\s+content="([^"]+)"/i);
+      const metaTags = fileContents.match(/<meta\s+name="tags"\s+content="([^"]+)"/i);
       
       return {
         slug,
         content: fileContents,
-        title: (metaTitle && metaTitle[1]) || (titleMatch && titleMatch[1]) || slug.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-        introduction: (metaDescription && metaDescription[1]) || 'Blog post',
+        title: (metaTitle && metaTitle[1]) || (titleMatch && titleMatch[1]) || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        description: (metaDescription && metaDescription[1]) || 'Blog post',
         image: (metaImage && metaImage[1]) || '/images/blog-default.jpg',
         date: (metaDate && metaDate[1]) || new Date().toISOString().split('T')[0],
         tags: (metaTags && metaTags[1].split(',').map(t => t.trim())) || [],
@@ -119,7 +119,7 @@ export function getPostBySlug(slug) {
       return {
         slug,
         content: matterResult.content,
-        title: matterResult.data.title || slug.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        title: matterResult.data.title || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
         isHtml: false,
         ...matterResult.data
       };

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <defs>
+    <linearGradient id="centipede-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#220033;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#centipede-bg)"/>
+  
+  <text x="400" y="60" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="#ff00ff">
+    CENTIPEDE GARDEN
+  </text>
+  
+  <!-- Centipede segments -->
+  <circle cx="300" cy="150" r="15" fill="#00ff00" stroke="#00ff00" stroke-width="2"/>
+  <circle cx="330" cy="150" r="15" fill="#00ff00" stroke="#00ff00" stroke-width="2"/>
+  <circle cx="360" cy="150" r="15" fill="#00ff00" stroke="#00ff00" stroke-width="2"/>
+  <circle cx="390" cy="150" r="15" fill="#00ff00" stroke="#00ff00" stroke-width="2"/>
+  <circle cx="420" cy="150" r="15" fill="#00ff00" stroke="#00ff00" stroke-width="2"/>
+  <circle cx="450" cy="150" r="18" fill="#ff0000" stroke="#ff0000" stroke-width="2"/>
+  
+  <!-- Mushrooms -->
+  <ellipse cx="200" cy="250" rx="20" ry="25" fill="#ff00ff" opacity="0.8"/>
+  <rect x="190" y="270" width="20" height="20" fill="#ff88ff"/>
+  
+  <ellipse cx="400" cy="280" rx="20" ry="25" fill="#ff00ff" opacity="0.8"/>
+  <rect x="390" y="300" width="20" height="20" fill="#ff88ff"/>
+  
+  <ellipse cx="600" cy="260" rx="20" ry="25" fill="#ff00ff" opacity="0.8"/>
+  <rect x="590" y="280" width="20" height="20" fill="#ff88ff"/>
+  
+  <!-- Player shooter -->
+  <g transform="translate(400, 400)">
+    <rect x="-5" y="-20" width="10" height="20" fill="#00ffff"/>
+    <path d="M -10 0 L 0 -10 L 10 0" fill="#00ffff"/>
+  </g>
+  
+  <!-- Spider -->
+  <circle cx="150" cy="350" r="10" fill="#ff0000"/>
+  <line x1="140" y1="350" x2="130" y2="340" stroke="#ff0000" stroke-width="2"/>
+  <line x1="160" y1="350" x2="170" y2="340" stroke="#ff0000" stroke-width="2"/>
+  <line x1="140" y1="350" x2="130" y2="360" stroke="#ff0000" stroke-width="2"/>
+  <line x1="160" y1="350" x2="170" y2="360" stroke="#ff0000" stroke-width="2"/>
+</svg>
