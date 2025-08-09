@@ -11,6 +11,10 @@ interface TouchControlsProps {
   showDirectional?: boolean;
   showAction?: boolean;
   showPause?: boolean;
+  showUp?: boolean;
+  showDown?: boolean;
+  showLeft?: boolean;
+  showRight?: boolean;
   variant?: 'cosmic' | 'tetris' | 'snake' | 'pong' | 'brick' | 'missile';
 }
 
@@ -25,6 +29,10 @@ const TouchControls: React.FC<TouchControlsProps> = ({
   showDirectional = true,
   showAction = true,
   showPause = true,
+  showUp = true,
+  showDown = true,
+  showLeft = true,
+  showRight = true,
   variant = 'cosmic'
 }) => {
   const colors = {
@@ -45,7 +53,7 @@ const TouchControls: React.FC<TouchControlsProps> = ({
         <div className="fixed bottom-4 left-4 z-50 md:hidden">
           <div className="relative w-32 h-32">
             {/* Up */}
-            {onUp && (
+            {onUp && showUp && (
               <button
                 onTouchStart={onUp}
                 onTouchEnd={onRelease}
@@ -55,7 +63,7 @@ const TouchControls: React.FC<TouchControlsProps> = ({
               </button>
             )}
             {/* Left */}
-            {onLeft && (
+            {onLeft && showLeft && (
               <button
                 onTouchStart={onLeft}
                 onTouchEnd={onRelease}
@@ -65,7 +73,7 @@ const TouchControls: React.FC<TouchControlsProps> = ({
               </button>
             )}
             {/* Right */}
-            {onRight && (
+            {onRight && showRight && (
               <button
                 onTouchStart={onRight}
                 onTouchEnd={onRelease}
@@ -75,7 +83,7 @@ const TouchControls: React.FC<TouchControlsProps> = ({
               </button>
             )}
             {/* Down */}
-            {onDown && (
+            {onDown && showDown && (
               <button
                 onTouchStart={onDown}
                 onTouchEnd={onRelease}
