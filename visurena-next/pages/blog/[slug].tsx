@@ -1,6 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import Layout from '../../components/Layout';
 import { getAllPosts, getPostBySlug } from '../../lib/blog';
 import { marked } from 'marked';
 import { motion } from 'framer-motion';
@@ -18,188 +17,323 @@ interface BlogPostProps {
   };
 }
 
+// Configure marked for better rendering
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+});
+
 export default function BlogPost({ post }: BlogPostProps) {
   const router = useRouter();
 
   if (router.isFallback) {
     return (
-      <Layout pageTheme="blog">
-        <div className="container mx-auto px-6 py-8">
-          <div className="text-center">Loading...</div>
-        </div>
-      </Layout>
+      <div className="min-h-screen bg-comfy-bg flex items-center justify-center">
+        <div className="text-comfy-text">Loading...</div>
+      </div>
     );
   }
 
   if (!post) {
     return (
-      <Layout pageTheme="blog">
-        <div className="container mx-auto px-6 py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-netflix-text">Post not found</h1>
-          </div>
+      <div className="min-h-screen bg-comfy-bg flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-comfy-heading mb-4">Post not found</h1>
+          <button
+            onClick={() => router.push('/blog')}
+            className="text-comfy-accent hover:underline"
+          >
+            ← Back to Blog
+          </button>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   return (
-    <Layout pageTheme="blog">
-      <div className="container mx-auto px-6 py-8 max-w-4xl">
+    <div className="min-h-screen bg-comfy-bg">
+      {/* Back Button - Fixed at top */}
+      <div className="sticky top-0 z-10 bg-comfy-bg/95 backdrop-blur-sm border-b border-comfy-border">
+        <div className="container mx-auto px-4 sm:px-6 py-4 max-w-4xl">
+          <button
+            onClick={() => router.push('/blog')}
+            className="text-comfy-muted hover:text-comfy-accent transition-colors text-sm font-sans flex items-center gap-2"
+          >
+            <span>←</span>
+            <span>Back to Blog</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 py-12 max-w-4xl">
         <motion.article
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-netflix-card rounded-lg p-8"
         >
           {/* Header */}
-          <header className="mb-8">
-            <h1 className="text-4xl font-bold text-theme-blog-primary mb-4">
+          <header className="mb-12">
+            <h1 className="text-4xl sm:text-5xl font-bold text-comfy-heading mb-6 leading-tight font-serif">
               {post.title}
             </h1>
-            
-            {post.introduction && (
-              <p className="text-xl text-netflix-muted mb-6 leading-relaxed">
-                {post.introduction}
-              </p>
-            )}
 
-            <div className="flex items-center justify-between text-sm text-netflix-gray border-b border-netflix-gray/20 pb-4">
-              <div className="flex items-center space-x-4">
-                <span>By {post.author || 'ViSuReNa'}</span>
-                <span>•</span>
-                <time>{post.date}</time>
-              </div>
-              
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-comfy-muted border-b border-comfy-border pb-6 font-sans">
+              <span className="font-medium text-comfy-text">{post.author || 'ViSuReNa'}</span>
+              <span className="text-comfy-border">·</span>
+              <time>{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+
               {post.tags && post.tags.length > 0 && (
-                <div className="flex space-x-2">
-                  {post.tags.slice(0, 3).map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-theme-blog-muted text-netflix-text rounded-full text-xs"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                <>
+                  <span className="text-comfy-border">·</span>
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-1 bg-comfy-card text-comfy-muted rounded text-xs border border-comfy-border hover:border-comfy-accent hover:text-comfy-accent transition-colors"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           </header>
 
           {/* Featured Image */}
           {post.image && post.image !== '/images/blog-default.jpg' && (
-            <div className="mb-8">
+            <div className="mb-12">
               <img
                 src={post.image}
                 alt={post.title}
-                className="w-full max-w-3xl mx-auto h-auto object-cover rounded-lg shadow-lg"
-                style={{ maxHeight: '400px' }}
+                className="w-full h-auto object-cover rounded-xl shadow-2xl"
+                loading="lazy"
               />
             </div>
           )}
 
           {/* Content */}
-          <div className="blog-content">
+          <div className="comfy-blog-content">
             {post.isHtml ? (
-              <div 
-                className="html-content text-netflix-muted leading-relaxed"
-                style={{
-                  color: '#b3b3b3',
-                  fontSize: '1.1rem',
-                  lineHeight: '1.7'
-                }}
-                dangerouslySetInnerHTML={{ __html: post.content }} 
-              />
+              <div dangerouslySetInnerHTML={{ __html: post.content }} />
             ) : (
-              <div 
-                className="prose prose-invert prose-lg max-w-none
-                           prose-headings:text-netflix-text
-                           prose-p:text-netflix-muted prose-p:leading-relaxed
-                           prose-a:text-theme-blog-primary prose-a:no-underline hover:prose-a:underline
-                           prose-strong:text-netflix-text
-                           prose-code:text-theme-blog-secondary prose-code:bg-netflix-dark prose-code:px-1 prose-code:rounded
-                           prose-blockquote:border-l-theme-blog-primary prose-blockquote:text-netflix-muted
-                           prose-ul:text-netflix-muted prose-ol:text-netflix-muted
-                           prose-li:text-netflix-muted"
-                dangerouslySetInnerHTML={{ __html: marked(post.content) }}
-              />
+              <div dangerouslySetInnerHTML={{ __html: marked(post.content) }} />
             )}
           </div>
 
-          <style jsx>{`
-            .html-content h1,
-            .html-content h2,
-            .html-content h3,
-            .html-content h4 {
-              color: #3b82f6 !important;
-              margin-top: 2rem !important;
-              margin-bottom: 1rem !important;
-              font-weight: 600 !important;
-            }
-            
-            .html-content h2 {
-              font-size: 1.8rem !important;
-            }
-            
-            .html-content h3 {
-              font-size: 1.4rem !important;
-              color: #fbbf24 !important;
-            }
-            
-            .html-content p {
-              color: #b3b3b3 !important;
-              margin-bottom: 1rem !important;
-            }
-            
-            .html-content strong {
-              color: #ffffff !important;
-            }
-            
-            .html-content ul,
-            .html-content ol {
-              color: #b3b3b3 !important;
-              margin: 1rem 0 !important;
-              padding-left: 1.5rem !important;
-            }
-            
-            .html-content li {
-              margin-bottom: 0.5rem !important;
-            }
-            
-            .html-content hr {
-              border-color: #333333 !important;
-              margin: 3rem 0 !important;
-            }
-            
-            .html-content img {
-              max-width: 100% !important;
-              height: auto !important;
-              border-radius: 8px !important;
-              margin: 2rem 0 !important;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-            }
-            
-            .html-content a {
-              color: #3b82f6 !important;
-              text-decoration: none !important;
-            }
-            
-            .html-content a:hover {
-              text-decoration: underline !important;
-            }
-          `}</style>
-
           {/* Footer */}
-          <footer className="mt-12 pt-8 border-t border-netflix-gray/20">
-            <button
-              onClick={() => router.back()}
-              className="px-6 py-3 bg-theme-blog-primary text-white rounded hover:bg-theme-blog-secondary transition-colors"
-            >
-              ← Back to Blog
-            </button>
+          <footer className="mt-16 pt-8 border-t border-comfy-border">
+            <div className="flex items-center justify-between font-sans">
+              <button
+                onClick={() => router.push('/blog')}
+                className="text-comfy-accent hover:text-comfy-heading transition-colors flex items-center gap-2"
+              >
+                <span>←</span>
+                <span>More Posts</span>
+              </button>
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="text-comfy-muted hover:text-comfy-accent transition-colors flex items-center gap-2"
+              >
+                <span>Back to Top</span>
+                <span>↑</span>
+              </button>
+            </div>
           </footer>
         </motion.article>
       </div>
-    </Layout>
+
+      {/* Global styles for blog content */}
+      <style jsx global>{`
+        .comfy-blog-content {
+          font-family: Georgia, Cambria, 'Times New Roman', serif;
+          font-size: 1.125rem;
+          line-height: 1.8;
+          color: #e5e5e5;
+        }
+
+        /* Headings */
+        .comfy-blog-content h1,
+        .comfy-blog-content h2,
+        .comfy-blog-content h3,
+        .comfy-blog-content h4,
+        .comfy-blog-content h5,
+        .comfy-blog-content h6 {
+          font-family: Georgia, Cambria, 'Times New Roman', serif;
+          color: #ffffff;
+          font-weight: 700;
+          margin-top: 2.5rem;
+          margin-bottom: 1rem;
+          line-height: 1.3;
+        }
+
+        .comfy-blog-content h1 {
+          font-size: 2.25rem;
+        }
+
+        .comfy-blog-content h2 {
+          font-size: 1.875rem;
+          margin-top: 3rem;
+        }
+
+        .comfy-blog-content h3 {
+          font-size: 1.5rem;
+        }
+
+        .comfy-blog-content h4 {
+          font-size: 1.25rem;
+        }
+
+        /* Paragraphs */
+        .comfy-blog-content p {
+          margin-bottom: 1.5rem;
+          color: #e5e5e5;
+        }
+
+        /* Links */
+        .comfy-blog-content a {
+          color: #3b82f6;
+          text-decoration: none;
+          border-bottom: 1px solid transparent;
+          transition: border-color 0.2s;
+        }
+
+        .comfy-blog-content a:hover {
+          border-bottom-color: #3b82f6;
+        }
+
+        /* Strong/Bold */
+        .comfy-blog-content strong,
+        .comfy-blog-content b {
+          color: #ffffff;
+          font-weight: 600;
+        }
+
+        /* Emphasis/Italic */
+        .comfy-blog-content em,
+        .comfy-blog-content i {
+          font-style: italic;
+          color: #f5f5f5;
+        }
+
+        /* Lists */
+        .comfy-blog-content ul,
+        .comfy-blog-content ol {
+          margin: 1.5rem 0;
+          padding-left: 2rem;
+          color: #e5e5e5;
+        }
+
+        .comfy-blog-content li {
+          margin-bottom: 0.75rem;
+          line-height: 1.8;
+        }
+
+        .comfy-blog-content li::marker {
+          color: #3b82f6;
+        }
+
+        /* Blockquotes */
+        .comfy-blog-content blockquote {
+          border-left: 4px solid #3b82f6;
+          padding-left: 1.5rem;
+          margin: 2rem 0;
+          color: #999999;
+          font-style: italic;
+        }
+
+        /* Horizontal Rule */
+        .comfy-blog-content hr {
+          border: none;
+          border-top: 1px solid #2a2a2a;
+          margin: 3rem 0;
+        }
+
+        /* Images - Full-width, responsive, Comfy.org style */
+        .comfy-blog-content img {
+          width: 100%;
+          height: auto;
+          border-radius: 0.75rem;
+          margin: 2.5rem 0;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+          display: block;
+        }
+
+        /* Videos - Full-width, responsive */
+        .comfy-blog-content video {
+          width: 100%;
+          height: auto;
+          border-radius: 0.75rem;
+          margin: 2.5rem 0;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+          display: block;
+        }
+
+        /* Code - Inline */
+        .comfy-blog-content code {
+          background-color: #1e1e1e;
+          color: #3b82f6;
+          padding: 0.2rem 0.4rem;
+          border-radius: 0.25rem;
+          font-family: 'Monaco', 'Courier New', monospace;
+          font-size: 0.9em;
+        }
+
+        /* Code Blocks */
+        .comfy-blog-content pre {
+          background-color: #1e1e1e;
+          border: 1px solid #2a2a2a;
+          border-radius: 0.75rem;
+          padding: 1.5rem;
+          margin: 2rem 0;
+          overflow-x: auto;
+        }
+
+        .comfy-blog-content pre code {
+          background: none;
+          color: #e5e5e5;
+          padding: 0;
+          font-size: 0.95rem;
+          line-height: 1.6;
+        }
+
+        /* Tables */
+        .comfy-blog-content table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 2rem 0;
+        }
+
+        .comfy-blog-content th,
+        .comfy-blog-content td {
+          border: 1px solid #2a2a2a;
+          padding: 0.75rem 1rem;
+          text-align: left;
+        }
+
+        .comfy-blog-content th {
+          background-color: #111111;
+          color: #ffffff;
+          font-weight: 600;
+        }
+
+        .comfy-blog-content td {
+          color: #e5e5e5;
+        }
+
+        /* Figure/Figcaption - for image captions */
+        .comfy-blog-content figure {
+          margin: 2.5rem 0;
+        }
+
+        .comfy-blog-content figcaption {
+          text-align: center;
+          font-size: 0.9rem;
+          color: #999999;
+          margin-top: 0.75rem;
+          font-style: italic;
+        }
+      `}</style>
+    </div>
   );
 }
 

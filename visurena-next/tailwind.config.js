@@ -17,6 +17,17 @@ module.exports = {
           gray: '#808080',
           muted: '#b3b3b3'
         },
+        // Comfy.org inspired blog colors
+        'comfy': {
+          bg: '#0a0a0a',        // Main background (soft black)
+          card: '#111111',      // Card background
+          text: '#e5e5e5',      // Body text (readable)
+          heading: '#ffffff',   // Headings (crisp white)
+          muted: '#999999',     // Secondary text
+          accent: '#3b82f6',    // Links/highlights (blue)
+          border: '#2a2a2a',    // Borders
+          code: '#1e1e1e',      // Code block background
+        },
         // Sophisticated streaming service inspired colors
         'theme': {
           // Movies - Netflix inspired warm red with subtle gradient feel
@@ -56,6 +67,11 @@ module.exports = {
             muted: '#0891b2'
           }
         }
+      },
+      fontFamily: {
+        'spectral': ['Spectral', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
+        'serif': ['Spectral', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
+        'sans': ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

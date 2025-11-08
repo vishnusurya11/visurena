@@ -98,9 +98,9 @@ const ContentCard: React.FC<ContentCardProps> = ({
         )}
       </div>
 
-      <div className="p-3 bg-netflix-card">
-        <h3 className="text-sm font-medium text-netflix-text mb-1 truncate">{title}</h3>
-        
+      <div className="p-4 bg-netflix-card">
+        <h3 className="text-base font-bold text-white mb-2 line-clamp-2 leading-tight">{title}</h3>
+
         <p className="text-xs text-netflix-gray mb-2 line-clamp-2">{description}</p>
         
         <div className="flex items-center justify-between text-xs text-netflix-gray">
