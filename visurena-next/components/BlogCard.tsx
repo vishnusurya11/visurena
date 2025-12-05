@@ -33,58 +33,59 @@ const BlogCard: React.FC<BlogCardProps> = ({
     return (
       <motion.article
         onClick={onClick}
-        className="cursor-pointer border-b border-comfy-border pb-12 mb-12 hover:opacity-80 transition-opacity"
+        className="cursor-pointer border-b border-comfy-border pb-16 mb-12 hover:opacity-90 transition-opacity group"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
         {/* Featured Image */}
-        <div className="mb-6">
+        <div className="mb-8 overflow-hidden rounded-lg">
           <img
             src={thumbnail}
             alt={title}
-            className="w-full h-auto max-h-96 object-cover rounded-xl shadow-2xl"
+            className="w-full h-auto max-h-[500px] object-cover group-hover:scale-[1.02] transition-transform duration-300"
             loading="lazy"
           />
         </div>
 
         {/* Content */}
         <div>
-          <h2 className="font-spectral text-4xl font-bold text-comfy-heading mb-4 leading-tight hover:text-comfy-accent transition-colors">
+          <h2 className="font-spectral text-5xl font-bold text-comfy-heading mb-5 leading-tight group-hover:text-comfy-accent transition-colors">
             {title}
           </h2>
 
-          <p className="text-lg text-comfy-text mb-6 leading-relaxed">
+          <p className="text-xl text-comfy-text mb-8 leading-relaxed max-w-4xl">
             {description}
           </p>
 
           {/* Meta */}
-          <div className="flex flex-wrap items-center gap-3 text-sm text-comfy-muted">
+          <div className="flex flex-wrap items-center gap-4 text-base text-comfy-muted">
+            <span className="font-medium text-comfy-text">ViSuReNa</span>
+            <span>·</span>
             <time>{formattedDate}</time>
             {duration && (
               <>
                 <span>·</span>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
                   <ClockIcon className="h-4 w-4" />
                   <span>{duration}</span>
                 </div>
               </>
             )}
-            {tags && tags.length > 0 && (
-              <>
-                <span>·</span>
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-1 bg-comfy-card text-comfy-muted rounded text-xs border border-comfy-border hover:border-comfy-accent hover:text-comfy-accent transition-colors"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </>
-            )}
           </div>
+
+          {/* Tags */}
+          {tags && tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-6">
+              {tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1.5 bg-comfy-card text-comfy-muted rounded-md text-sm border border-comfy-border hover:border-comfy-accent hover:text-comfy-accent transition-colors"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </motion.article>
     );
@@ -93,58 +94,47 @@ const BlogCard: React.FC<BlogCardProps> = ({
   return (
     <motion.article
       onClick={onClick}
-      className="cursor-pointer flex flex-col sm:flex-row gap-6 border-b border-comfy-border py-8 hover:bg-comfy-card/30 transition-colors px-4 -mx-4 rounded-lg"
+      className="cursor-pointer border-b border-comfy-border pb-6 mb-6 hover:opacity-90 transition-opacity group"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ x: 4 }}
     >
-      {/* Image */}
-      <div className="sm:w-1/3 flex-shrink-0">
-        <img
-          src={thumbnail}
-          alt={title}
-          className="w-full h-48 sm:h-40 object-cover rounded-lg shadow-lg"
-          loading="lazy"
-        />
-      </div>
+      <div className="flex gap-6 items-start">
+        {/* Content on LEFT */}
+        <div className="flex-1 min-w-0">
+          <h2 className="font-spectral text-xl font-bold text-comfy-heading mb-2 leading-tight group-hover:text-comfy-accent transition-colors">
+            {title}
+          </h2>
 
-      {/* Content */}
-      <div className="flex-1 flex flex-col justify-center">
-        <h2 className="font-spectral text-2xl font-bold text-comfy-heading mb-2 leading-tight hover:text-comfy-accent transition-colors">
-          {title}
-        </h2>
+          <p className="text-sm text-comfy-text mb-3 leading-relaxed line-clamp-2">
+            {description}
+          </p>
 
-        <p className="text-comfy-text mb-4 line-clamp-2 leading-relaxed">
-          {description}
-        </p>
-
-        {/* Meta */}
-        <div className="flex flex-wrap items-center gap-3 text-sm text-comfy-muted">
-          <time>{formattedDate}</time>
-          {duration && (
-            <>
-              <span>·</span>
-              <div className="flex items-center gap-1">
-                <ClockIcon className="h-4 w-4" />
+          {/* Meta */}
+          <div className="flex flex-wrap items-center gap-2 text-xs text-comfy-muted">
+            <time>{formattedDate}</time>
+            {duration && (
+              <>
+                <span>·</span>
                 <span>{duration}</span>
-              </div>
-            </>
-          )}
-          {tags && tags.length > 0 && (
-            <>
-              <span>·</span>
-              <div className="flex flex-wrap gap-2">
-                {tags.slice(0, 3).map((tag, index) => (
-                  <span
-                    key={index}
-                    className="px-2 py-1 bg-comfy-card text-comfy-muted rounded text-xs border border-comfy-border hover:border-comfy-accent hover:text-comfy-accent transition-colors"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </>
-          )}
+              </>
+            )}
+            {tags && tags.length > 0 && (
+              <>
+                <span>·</span>
+                <span className="text-comfy-muted">{tags[0]}</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Image on RIGHT - Small square */}
+        <div className="flex-shrink-0 w-32 h-32 overflow-hidden rounded-md">
+          <img
+            src={thumbnail}
+            alt={title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
+          />
         </div>
       </div>
     </motion.article>

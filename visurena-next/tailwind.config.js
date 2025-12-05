@@ -24,7 +24,7 @@ module.exports = {
           text: '#e5e5e5',      // Body text (readable)
           heading: '#ffffff',   // Headings (crisp white)
           muted: '#999999',     // Secondary text
-          accent: '#3b82f6',    // Links/highlights (blue)
+          accent: '#2563eb',    // Links/highlights (Comfy.org blue)
           border: '#2a2a2a',    // Borders
           code: '#1e1e1e',      // Code block background
         },
@@ -54,9 +54,9 @@ module.exports = {
             secondary: '#fbbf24',
             muted: '#92400e'
           },
-          // Blog - Professional blue like medium/substack
+          // Blog - Professional blue like medium/substack (Comfy.org)
           blog: {
-            primary: '#3b82f6',
+            primary: '#2563eb',
             secondary: '#60a5fa',
             muted: '#1e40af'
           },

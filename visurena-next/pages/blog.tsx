@@ -23,11 +23,9 @@ export default function Blog({ blogPosts }: BlogProps) {
   const router = useRouter();
   const [selectedTag, setSelectedTag] = useState<string>('all');
 
-  // Get featured posts (first 2)
-  const featuredPosts = blogPosts.slice(0, 2);
-
-  // Get all other posts
-  const regularPosts = blogPosts.slice(2);
+  // First post is featured, all others are regular
+  const featuredPost = blogPosts.length > 0 ? blogPosts[0] : null;
+  const regularPosts = blogPosts.slice(1);
 
   // Get all unique tags
   const allTags = ['all', ...Array.from(new Set(blogPosts.flatMap(item => item.tags || [])))];
@@ -38,7 +36,10 @@ export default function Blog({ blogPosts }: BlogProps) {
     return posts.filter(post => post.tags?.includes(selectedTag));
   };
 
-  const filteredFeatured = getFilteredPosts(featuredPosts);
+  // Filter featured post if needed
+  const filteredFeatured = selectedTag === 'all'
+    ? featuredPost
+    : featuredPost && featuredPost.tags?.includes(selectedTag) ? featuredPost : null;
   const filteredRegular = getFilteredPosts(regularPosts);
 
   const handlePostClick = (slug: string) => {
@@ -94,31 +95,26 @@ export default function Blog({ blogPosts }: BlogProps) {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-        {/* Featured Posts Section */}
-        {filteredFeatured.length > 0 && (
-          <section className="mb-16">
-            {filteredFeatured.map((post) => (
-              <BlogCard
-                key={post.slug}
-                title={post.title}
-                description={post.description}
-                thumbnail={post.thumbnail}
-                date={post.releaseDate}
-                duration={post.duration}
-                tags={post.tags}
-                onClick={() => handlePostClick(post.slug)}
-                featured={true}
-              />
-            ))}
+        {/* Featured Post - Latest post */}
+        {filteredFeatured && (
+          <section className="mb-12">
+            <BlogCard
+              key={filteredFeatured.slug}
+              title={filteredFeatured.title}
+              description={filteredFeatured.description}
+              thumbnail={filteredFeatured.thumbnail}
+              date={filteredFeatured.releaseDate}
+              duration={filteredFeatured.duration}
+              tags={filteredFeatured.tags}
+              onClick={() => handlePostClick(filteredFeatured.slug)}
+              featured={true}
+            />
           </section>
         )}
 
-        {/* Regular Posts Section */}
+        {/* All Other Posts - Horizontal layout */}
         {filteredRegular.length > 0 ? (
           <section>
-            <h2 className="font-spectral text-2xl font-bold text-comfy-heading mb-8 pb-4 border-b border-comfy-border">
-              All Posts
-            </h2>
             {filteredRegular.map((post) => (
               <BlogCard
                 key={post.slug}
@@ -134,7 +130,7 @@ export default function Blog({ blogPosts }: BlogProps) {
             ))}
           </section>
         ) : (
-          selectedTag !== 'all' && (
+          selectedTag !== 'all' && !filteredFeatured && (
             <div className="text-center py-20">
               <p className="text-comfy-muted text-lg">
                 No posts found with the tag "{selectedTag}"

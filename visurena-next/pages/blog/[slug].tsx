@@ -3,6 +3,12 @@ import { useRouter } from 'next/router';
 import { getAllPosts, getPostBySlug } from '../../lib/blog';
 import { marked } from 'marked';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import dynamic from 'next/dynamic';
+
+const ImageComparisonSlider = dynamic(() => import('../../components/ImageComparisonSlider'), {
+  ssr: false
+});
 
 interface BlogPostProps {
   post: {
@@ -25,6 +31,44 @@ marked.setOptions({
 
 export default function BlogPost({ post }: BlogPostProps) {
   const router = useRouter();
+
+  // Initialize image comparison sliders after content loads
+  useEffect(() => {
+    const initializeSliders = () => {
+      const sliderDivs = document.querySelectorAll('.image-comparison');
+
+      sliderDivs.forEach((div) => {
+        // Skip if already initialized
+        if (div.querySelector('.react-compare-slider')) return;
+
+        const before = div.getAttribute('data-before');
+        const after = div.getAttribute('data-after');
+        const beforeLabel = div.getAttribute('data-before-label') || 'Before';
+        const afterLabel = div.getAttribute('data-after-label') || 'After';
+
+        if (before && after) {
+          // Create a React root and render the slider
+          import('react-dom/client').then(({ createRoot }) => {
+            const root = createRoot(div);
+            import('../../components/ImageComparisonSlider').then(({ default: Slider }) => {
+              root.render(
+                <Slider
+                  beforeImage={before}
+                  afterImage={after}
+                  beforeLabel={beforeLabel}
+                  afterLabel={afterLabel}
+                />
+              );
+            });
+          });
+        }
+      });
+    };
+
+    // Run after content is rendered
+    const timer = setTimeout(initializeSliders, 100);
+    return () => clearTimeout(timer);
+  }, [post.content]);
 
   if (router.isFallback) {
     return (
