@@ -106,6 +106,9 @@ npm run type-check
 
 # Build and preview
 npm run build && npm run start
+
+npm run build
+npx serve@latest out
 ```
 
 ## 🌐 Live Site
