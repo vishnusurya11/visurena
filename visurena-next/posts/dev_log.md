@@ -5,8 +5,89 @@ date: "2025-12-03"
 image: "/images/dev_journey.png"
 tags: ["Dev Log", "AI"]
 author: "ViSuReNa"
----
 
+---
+# [2025-12-06] - From Plan to Epics, Stories, and Subtasks
+
+I’ve spent a lot of time procrastinating—watching YouTube videos about new tech and LLM models instead of actually building anything. It always felt like I was “researching” or “planning,” but in reality I was just orbiting the work, not doing it.
+
+Now that I have a concrete plan for Project Palimpsest, I finally have something solid to anchor myself to. Even if the plan is partially outdated in a few months, it will still do its job: give me a direction, a sequence, and a way to see progress. Once I turn this into tasks on GitHub, I’ll be able to open the board and instantly see where I am and what comes next. That alone should help me move from dreaming and procrastinating to actually shipping things. And if everything goes well, the cherry on top would be using this work to land a new job.
+
+For Palimpsest, the next step is to translate the high-level phases into actual work items. My current approach is to start with one epic for each combination of phase and maturity level—P0, P1, and P2 for every phase—so I have fifteen starting epics. Under each epic, I’ll add concrete stories and subtasks that describe what needs to be built, tested, or experimented with. It’s the same way teams do it in real software development: begin with big shapes, then break them down as reality shows you what’s harder, messier, or more interesting than it looked on paper.
+
+I know that as I go deeper, I’ll discover gaps in my plan. Some epics will need to be split, some stories will turn into entire mini-projects, and new subtasks will appear that I couldn’t have predicted from the outside. That’s fine. Today’s job isn’t to get it perfect—it’s to get the work out of my head and into a system where I can see it, track it, and push it forward one small piece at a time. The day isn’t over yet, and I’ll keep adding to this as I refine how Palimpsest turns from an idea into an actual, working pipeline.
+
+## Draft Epics for Project Palimpsest
+![Dev Log 2025-12-06](/images/dev_log_20251206.png)
+For tracking, I’m going to use **PALI** as the prefix for everything related to this project.
+
+### ID Structure (for future me)
+
+I’m standardising everything around **Epic / Story / Task** in the ID itself:
+
+- **Epic:** `PALI-EX`  
+  - `X` = epic number  
+  - Example: `PALI-E2`
+- **Story:** `PALI-EX-SY`  
+  - `X` = epic number  
+  - `Y` = story number under that epic  
+  - Example: `PALI-E2-S1`
+- **Task/Subtask:** `PALI-EX-SY-TZ`  
+  - `X` = epic  
+  - `Y` = story  
+  - `Z` = task under that story  
+  - Example:  
+    - `PALI-E2-S1-T1: Write wants/needs prompt`  
+    - `PALI-E2-S1-T2: Parse JSON output`  
+    - `PALI-E2-S1-T3: Validate across 3 books`
+
+So if I see something like `PALI-E4-S2-T5`, I’ll know it’s:
+
+- Task `T5`  
+- under story `S2`  
+- under epic `PALI-E4`
+
+### Initial Epic List
+
+Here’s the first set of epics I’m planning to create, mapped to the phases and P0/P1/P2 levels from the Palimpsest plan:
+
+| Epic ID   | Phase / Level          | Working Title                                              |
+|-----------|------------------------|------------------------------------------------------------|
+| PALI-E1   | Phase 1 – P0           | Codex Ingestion Backbone (MVP)                                    |
+| PALI-E2   | Phase 1 – P1           | Autonomous Library Harvester                              |
+| PALI-E3   | Phase 1 – P2           | Omni-Format Codex Engine (HTML, PDF, etc.)                |
+| PALI-E4   | Phase 2 – P0           | Summary Video Rail (MVP)                                  |
+| PALI-E5   | Phase 2 – P1           | Timeline & Deep-Dive Analysis Tracks                      |
+| PALI-E6   | Phase 2 – P2           | Visual & Audio Experimentation Playground                 |
+| PALI-E7   | Phase 3 – P0           | Close Adaptation Layer (BBC-Style Remixes)                |
+| PALI-E8   | Phase 3 – P1           | Adaptive Rewrite & Structural Variations                  |
+| PALI-E9   | Phase 3 – P2           | New-Myth Retellings (Hamlet / Lion King / Baahubali Mode) |
+| PALI-E10  | Phase 4 – P0           | New Story → Screen Pipeline (MVP)                         |
+| PALI-E11  | Phase 4 – P1           | Analysis & Timelines for Generated Stories                |
+| PALI-E12  | Phase 4 – P2           | Alternate Cuts, Tones & Commentary Layer                  |
+| PALI-E13  | Phase 5 – P0           | Core Marketing Loop & Promo Snippets                      |
+| PALI-E14  | Phase 5 – P1           | Performance & Sentiment Insight Hub                       |
+| PALI-E15  | Phase 5 – P2           | Adaptive Feedback-Driven Strategy Engine                  |
+
+
+And just to anchor the structure in my head, here’s a small concrete example of how I expect to break things down under one epic:
+
+- `PALI-E1` – Codex Ingestion MVP  
+  - `PALI-E1-S1` – Parse chapters from a single HTML source  
+    - `PALI-E1-S1-T1` – Implement basic HTML loader  
+    - `PALI-E1-S1-T2` – Detect chapter boundaries  
+    - `PALI-E1-S1-T3` – Write Codex JSON to disk  
+
+I don’t need to freeze this forever, but having a stable naming pattern now means future me can glance at an ID and instantly know which part of Palimpsest it belongs to, instead of having to dig through descriptions every time.
+
+- **Repo:** [vishnusurya11/palimpsest](https://github.com/vishnusurya11/palimpsest)  
+- **Project board:** [Palimpsest – PALI Board](https://github.com/users/vishnusurya11/projects/11)
+
+I’ve also created a small sync script that reads from a YAML config file and automatically creates/updates **Epics**, **Stories**, **Tasks**, and **Sub-tasks** in the GitHub project. The YAML file is the single source of truth; running the script keeps the board aligned with the current structure and naming scheme.
+
+
+
+---
 # [2025-12-05] - Planning the Journey
 
 Okay, time to plan my first proper project.
@@ -28,7 +109,7 @@ Here’s the pattern in a more concrete way:
 That’s the kind of structural echo I want to capture: same bones, new body.
 
 ## Project Palimpsest
-![Dev Log 2025-12-05](/images/dev_log_20251204.png)
+![Dev Log 2025-12-05](/images/dev_log_20251205.png)
 
 I’m calling this **Project Palimpsest**.
 
