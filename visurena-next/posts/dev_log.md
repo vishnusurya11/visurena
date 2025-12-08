@@ -6,6 +6,52 @@ image: "/images/dev_journey.png"
 tags: ["Dev Log", "AI"]
 author: "ViSuReNa"
 
+
+---
+# [2025-12-07] - Laying Groundwork for the AI Dev Team
+
+Tonight I accidentally started a second project while working on Palimpsest.
+
+This began as a simple “quality of life” thing: I didn’t want to keep manually creating epics and tasks in GitHub. I just wanted a clean way to define all of Palimpsest’s work in one place and have it show up properly on the board.
+
+But as I was wiring it up, I realised this is actually the first brick of something much bigger: an AI software development team that can plan, organize, break down work, finish tasks, and deliver the product I asked for.
+
+The idea is simple:
+
+- I don’t want to micromanage prompts.
+- I want agents to handle **small, clear tasks**, not “build the entire project.”
+- I want them to work **in parallel**, like real software engineers in a team.
+- GitHub already has the structure for that: epics, stories, tasks, subtasks, status, history.
+
+So I built some groundwork:
+
+- All work is defined in a single YAML file.
+- Each item has a stable ID like:
+  - `PALI-E1` – Epic  
+  - `PALI-E1-S1` – Story  
+  - `PALI-E1-S1-T3` – Task  
+  - `PALI-E1-S1-T3-ST2` – Sub-task  
+- A Python script reads the YAML and:
+  - Creates or updates GitHub issues for every epic, story, task, and sub-task  
+  - Keeps titles and descriptions in sync with YAML  
+  - Adds labels like `Epics`, `Stories`, `Tasks`, `Sub-tasks` plus `E1`, `S1`, `T3`, `ST2`, and `P0/P1/P2`  
+  - Uses GitHub’s sub-issue API so epics own stories, stories own tasks, and tasks own subtasks in the Sub-issues panel  
+
+Right now it “only” does planning: it turns a config file into a structured board. No agents are running yet. But this is exactly the kind of skeleton an AI dev team will need later:
+
+- Clear hierarchy of work  
+- Stable IDs  
+- Machine-friendly labels  
+- A place to plug in agents that can say: “Give me all `Tasks` in `E1` with priority `P0`” and just start working.
+
+For now, I’m treating this as a **detour**, not a full pivot. Palimpsest is still the main project, and I’ll keep building it manually and semi-manually on top of this structure.
+
+But I see the potential now.
+![Dev Log 2025-12-07](/images/dev_log_20251207.png)
+Once Palimpsest P0 is done, I want to come back to this and turn it into its own project: an AI-powered software development team where I describe the product I want, the system plans and breaks it down into work, agents pick up tasks, and GitHub becomes the shared brain and history of everything we’ve built.
+
+Today’s win: I laid the tracks. Just a YAML-driven issue generator on the surface—but underneath, it’s the first step toward that future team.
+
 ---
 # [2025-12-06] - From Plan to Epics, Stories, and Subtasks
 
