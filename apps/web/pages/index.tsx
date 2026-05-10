@@ -525,19 +525,19 @@ export default function Home({ blogPosts }: HomeProps) {
                 transition={{ duration: 0.4, delay: i * 0.05, ease: 'easeOut' }}
                 className={tile.span}
               >
-                <Link href={tile.href}>
-                  <a
-                    className={`group relative block ${tile.bg} ${tile.textColor} rounded-[14px] overflow-hidden no-underline transition-[transform,box-shadow] duration-200 hover:-translate-y-1 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-[3px]`}
-                    style={{
-                      minHeight: tile.span.includes('col-span-12') && i === bentoTiles.length - 1 ? 160 : 280,
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.boxShadow = `0 24px 60px -12px ${tile.shadow}`;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.boxShadow = '';
-                    }}
-                  >
+                <Link
+                  href={tile.href}
+                  className={`group relative block ${tile.bg} ${tile.textColor} rounded-[14px] overflow-hidden no-underline transition-[transform,box-shadow] duration-200 hover:-translate-y-1 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-[3px]`}
+                  style={{
+                    minHeight: tile.span.includes('col-span-12') && i === bentoTiles.length - 1 ? 160 : 280,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = `0 24px 60px -12px ${tile.shadow}`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = '';
+                  }}
+                >
                     <div className="relative w-full h-full p-7 sm:p-[26px_28px]" style={{ minHeight: 'inherit' }}>
                       <span className="absolute top-6 right-7 font-sans font-bold text-[12px] tracking-[0.18em] uppercase">
                         {tile.room}
@@ -592,7 +592,6 @@ export default function Home({ blogPosts }: HomeProps) {
                         </span>
                       </span>
                     </div>
-                  </a>
                 </Link>
               </motion.div>
             ))}
@@ -645,10 +644,11 @@ export default function Home({ blogPosts }: HomeProps) {
             </div>
           </div>
 
-          <Link href="/brd">
-            <a className="inline-block mt-12 font-sans font-medium text-[14px] text-aurora-accent hover:text-[#8A99FF] transition-colors">
-              Read the full BRD &rarr;
-            </a>
+          <Link
+            href="/brd"
+            className="inline-block mt-12 font-sans font-medium text-[14px] text-aurora-accent hover:text-[#8A99FF] transition-colors"
+          >
+            Read the full BRD &rarr;
           </Link>
         </div>
       </section>

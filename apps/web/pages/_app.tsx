@@ -11,11 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
         <link rel="icon" href="/favicon.ico" />
 
-        {/* Google Fonts - Aurora Indigo stack (Inter UI, DM Serif Display headlines, JetBrains Mono accents) + Spectral for blog */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+        {/* Google Fonts are loaded in pages/_document.tsx (Next.js requires <link rel="stylesheet"> in Document, not next/head) */}
 
         {/* PWA Configuration */}
         <link rel="manifest" href="/manifest.json" />
