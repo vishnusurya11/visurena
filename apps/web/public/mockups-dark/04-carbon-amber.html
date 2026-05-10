@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ViSuReNa — Search what's coming next.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,200;0,300;0,500;0,700;1,200;1,300&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Tokens ---------- */
+  :root{
+    --bg:#000000;
+    --s1:#0F0F12;
+    --s2:#18181C;
+    --hair:rgba(245,245,247,0.08);
+    --hair-soft:rgba(245,245,247,0.06);
+    --th:#F5F5F7;
+    --tm:#A1A1A6;
+    --tmu:#6E6E73;
+    --amber:#D89B3D;
+    --amber-12:rgba(216,155,61,0.12);
+    --amber-30:rgba(216,155,61,0.30);
+    --watch:#C9602E;
+    --read:#E6CFA4;
+    --play:#B5D44A;
+    --listen:#4DB7B0;
+    --research:#C9CCD1;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--th);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  body{
+    font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+    font-weight:300;
+    font-size:16px;
+    line-height:1.55;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  ::selection{background:var(--amber);color:#000}
+
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:400}
+  .container{width:100%;max-width:1280px;margin:0 auto;padding:0 32px}
+  @media (max-width:720px){.container{padding:0 20px}}
+
+  /* ---------- Top nav ---------- */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(0,0,0,0.65);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--hair);
+    transition:opacity .4s ease;
+    opacity:0;
+  }
+  .nav.show{opacity:1}
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    height:64px;
+    padding:0 32px;
+    max-width:1440px;margin:0 auto;
+  }
+  .wordmark{
+    font-family:'Inter';font-weight:200;font-size:18px;
+    letter-spacing:.15em;color:var(--th);
+  }
+  .nav-center{display:flex;gap:30px;align-items:center}
+  .nav-center a{
+    font-family:'Inter';font-weight:500;font-size:13px;
+    color:var(--tm);letter-spacing:.04em;
+    transition:color .2s ease;
+    position:relative;
+  }
+  .nav-center a:hover{color:var(--th)}
+  .nav-center a.active{color:var(--th)}
+  .nav-center a.active::after{
+    content:"";position:absolute;left:0;right:0;bottom:-22px;height:1px;background:var(--amber);
+  }
+  .member{
+    color:var(--amber);font-size:13px;font-weight:400;letter-spacing:.02em;
+    transition:opacity .2s ease;
+  }
+  .member:hover{opacity:.75}
+  @media (max-width:980px){
+    .nav-center{display:none}
+    .nav-inner{padding:0 20px;height:56px}
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:12vh 32px 8vh;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.85) 60%, #000 100%),
+      url('https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=2000&q=80') center/cover no-repeat;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    opacity:.045;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-size:240px 240px;
+    mix-blend-mode:overlay;
+  }
+  .hero-inner{
+    position:relative;z-index:2;
+    width:100%;max-width:920px;
+    text-align:left;
+  }
+  .eyebrow-row{display:flex;align-items:center;gap:14px;margin-bottom:36px}
+  .gold-rule{display:inline-block;width:15px;height:1px;background:var(--amber);vertical-align:middle}
+  .eyebrow{
+    font-family:'JetBrains Mono';font-size:11px;letter-spacing:.22em;
+    color:var(--amber);text-transform:uppercase;
+  }
+  .hero h1{
+    font-family:'Inter';font-weight:200;
+    font-size:6.5rem;line-height:1.02;letter-spacing:-.025em;
+    color:var(--th);
+    margin:0 0 28px;
+  }
+  .hero h1 em{
+    font-style:italic;font-weight:200;color:var(--amber);
+  }
+  .hero-sub{
+    font-family:'Inter';font-weight:300;
+    font-size:22px;line-height:1.55;color:var(--tm);
+    max-width:580px;margin:0 0 56px;
+  }
+
+  /* ---------- Search bar ---------- */
+  .search-wrap{max-width:720px;margin:0 0 28px}
+  .search-bar{
+    display:flex;align-items:center;gap:14px;
+    height:84px;
+    padding:10px 10px 10px 26px;
+    background:rgba(15,15,18,0.55);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    border:1px solid var(--amber-30);
+    border-radius:4px;
+    transition:border-color .2s ease, box-shadow .25s ease;
+  }
+  .search-bar:focus-within{
+    border-color:var(--amber);
+    box-shadow:0 0 0 4px var(--amber-12);
+  }
+  .search-icon{flex:0 0 20px;width:20px;height:20px;color:var(--tm)}
+  .search-input{
+    flex:1;min-width:0;background:transparent;border:0;outline:0;
+    font-family:'Inter';font-weight:300;font-size:18px;color:var(--th);
+    letter-spacing:-.005em;
+  }
+  .search-input::placeholder{color:var(--tm);opacity:1;transition:opacity .35s ease}
+  .search-input.fade::placeholder{opacity:0}
+  .ghost-btn{
+    background:transparent;color:var(--amber);
+    border:1px solid var(--amber);
+    border-radius:4px;
+    padding:14px 28px;
+    font-family:'Inter';font-weight:500;font-size:13px;letter-spacing:.06em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:background .2s ease,color .2s ease;
+    white-space:nowrap;
+  }
+  .ghost-btn:hover{background:var(--amber);color:#000}
+
+  /* ---------- WHY input ---------- */
+  .why-block{max-width:720px;margin-bottom:48px}
+  .why-label{
+    font-family:'JetBrains Mono';font-size:11px;letter-spacing:.18em;
+    color:var(--tmu);text-transform:uppercase;display:block;margin-bottom:10px;
+  }
+  .why-input{
+    width:100%;background:transparent;border:0;border-bottom:1px solid var(--hair);
+    padding:10px 2px;outline:0;
+    font-family:'Inter';font-weight:300;font-size:16px;color:var(--th);
+    transition:border-color .2s ease;
+  }
+  .why-input::placeholder{font-style:italic;color:var(--tmu);font-weight:300}
+  .why-input:focus{border-bottom-color:var(--amber)}
+
+  /* ---------- Trending ---------- */
+  .trending{max-width:920px}
+  .trending-eyebrow{
+    font-family:'JetBrains Mono';font-size:11px;letter-spacing:.22em;
+    color:var(--amber);text-transform:uppercase;display:block;margin-bottom:18px;
+  }
+  .pill-row{display:flex;flex-wrap:wrap;gap:10px}
+  .pill{
+    display:inline-flex;align-items:center;
+    background:transparent;
+    border:1px solid var(--hair);
+    border-radius:999px;
+    padding:9px 16px;
+    font-family:'Inter';font-weight:400;font-size:13px;color:var(--tm);
+    cursor:pointer;
+    transition:border-color .2s ease,color .2s ease;
+  }
+  .pill:hover{border-color:var(--amber);color:var(--th)}
+
+  /* ---------- Scroll cue ---------- */
+  .scroll-cue{
+    position:absolute;left:50%;bottom:28px;transform:translateX(-50%);
+    font-family:'JetBrains Mono';font-size:11px;letter-spacing:.2em;
+    color:var(--tmu);text-transform:uppercase;
+    animation:bounce 2.6s ease-in-out infinite;
+    z-index:2;
+  }
+  @keyframes bounce{
+    0%,100%{transform:translate(-50%,0);opacity:.65}
+    50%{transform:translate(-50%,8px);opacity:1}
+  }
+
+  /* Mobile hero scaling */
+  @media (max-width:980px){
+    .hero h1{font-size:3.2rem}
+    .hero-sub{font-size:18px;margin-bottom:40px}
+    .search-bar{height:72px;padding:8px 8px 8px 18px}
+    .ghost-btn{padding:12px 18px;font-size:12px}
+  }
+  @media (max-width:560px){
+    .hero h1{font-size:2.8rem}
+    .hero{padding:14vh 0 10vh}
+    .hero-sub{font-size:16px}
+    .search-bar{height:64px}
+    .search-input{font-size:15px}
+  }
+
+  /* ---------- Section base ---------- */
+  section.block{padding:140px 0;border-top:1px solid var(--hair)}
+  section.block:first-of-type{border-top:0}
+  .section-eyebrow{
+    font-family:'JetBrains Mono';font-size:11px;letter-spacing:.22em;
+    color:var(--amber);text-transform:uppercase;display:block;margin-bottom:24px;
+  }
+  .section-h{
+    font-family:'Inter';font-weight:200;font-size:3.5rem;line-height:1.05;letter-spacing:-.02em;
+    color:var(--th);max-width:900px;margin-bottom:24px;
+  }
+  .section-sub{
+    font-family:'Inter';font-weight:300;font-size:17px;color:var(--tm);
+    max-width:640px;margin-bottom:64px;line-height:1.6;
+  }
+  @media (max-width:720px){
+    section.block{padding:90px 0}
+    .section-h{font-size:2.2rem}
+  }
+
+  /* ---------- Catalog row ---------- */
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:20px;
+  }
+  @media (max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:780px){.cards{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:480px){.cards{grid-template-columns:1fr}}
+
+  .card{
+    background:var(--s1);
+    border:1px solid var(--hair-soft);
+    border-radius:4px;
+    overflow:hidden;
+    transition:transform .35s ease,border-color .25s ease;
+    display:flex;flex-direction:column;
+  }
+  .card:hover{transform:translateY(-4px);border-color:var(--amber)}
+  .card:hover .card-title{color:#fff}
+  .card-media{
+    aspect-ratio:16/10;
+    background:linear-gradient(135deg,#18181C 0%,#0F0F12 100%);
+    position:relative;overflow:hidden;
+  }
+  .card-media img{width:100%;height:100%;object-fit:cover;display:block}
+  .card-game{
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:20px;
+  }
+  .card-game .gname{
+    font-family:'Inter';font-weight:200;font-size:26px;letter-spacing:-.01em;color:var(--th);
+  }
+  .card-body{padding:18px 18px 22px}
+  .card-tag{
+    font-family:'JetBrains Mono';font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+    display:block;margin-bottom:10px;
+  }
+  .tag-music{color:var(--listen)}
+  .tag-play{color:var(--play)}
+  .card-title{
+    font-family:'Inter';font-weight:300;font-size:22px;line-height:1.25;color:var(--th);
+    margin-bottom:8px;letter-spacing:-.005em;
+    transition:color .2s ease;
+  }
+  .card-desc{
+    font-family:'Inter';font-weight:300;font-size:13px;line-height:1.55;color:var(--tm);
+    margin-bottom:14px;
+  }
+  .card-game-desc{font-style:italic;color:var(--tm)}
+  .card-meta{
+    font-family:'JetBrains Mono';font-size:11px;letter-spacing:.14em;
+    color:var(--tmu);
+  }
+
+  /* ---------- Six rooms ---------- */
+  .rooms{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:14px;
+  }
+  @media (max-width:1100px){.rooms{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:640px){.rooms{grid-template-columns:repeat(2,1fr)}}
+
+  .room{
+    position:relative;
+    border-radius:4px;
+    padding:36px 22px 32px;
+    background:#0F0F12;
+    overflow:hidden;
+    min-height:220px;
+    transition:transform .3s ease;
+  }
+  .room::before{
+    content:"";position:absolute;left:0;right:0;top:0;height:2px;
+    background:var(--accent);
+    transition:height .2s ease;
+  }
+  .room::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, var(--tint), transparent 70%);
+    pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .room:hover::before{height:3px}
+  .room:hover::after{opacity:1.4}
+  .room > *{position:relative;z-index:1}
+  .room-eyebrow{
+    font-family:'JetBrains Mono';font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--accent);display:block;margin-bottom:18px;
+  }
+  .room-title{
+    font-family:'Inter';font-weight:500;font-size:18px;color:var(--th);margin-bottom:10px;
+  }
+  .room-desc{
+    font-family:'Inter';font-weight:300;font-size:13px;line-height:1.55;color:var(--tm);
+  }
+  .room.r-search   {--accent:var(--amber);   --tint:rgba(216,155,61,0.10)}
+  .room.r-watch    {--accent:var(--watch);   --tint:rgba(201,96,46,0.10)}
+  .room.r-read     {--accent:var(--read);    --tint:rgba(230,207,164,0.08)}
+  .room.r-play     {--accent:var(--play);    --tint:rgba(181,212,74,0.09)}
+  .room.r-listen   {--accent:var(--listen);  --tint:rgba(77,183,176,0.10)}
+  .room.r-research {--accent:var(--research);--tint:rgba(201,204,209,0.06)}
+
+  /* ---------- Manifesto ---------- */
+  .manifesto{
+    background:#000;
+    padding:160px 32px;
+    border-top:1px solid var(--hair);
+    border-bottom:1px solid var(--hair);
+  }
+  .manifesto-inner{max-width:920px;margin:0 auto;text-align:left}
+  .m-eyebrow-row{display:flex;align-items:center;gap:14px;margin-bottom:40px;justify-content:flex-start}
+  .manifesto h2{
+    font-family:'Inter';font-weight:200;font-size:5rem;line-height:1.05;letter-spacing:-.022em;
+    color:var(--th);margin-bottom:60px;
+  }
+  .manifesto h2 em{font-style:italic;font-weight:200;color:var(--amber)}
+  .manifesto-body{
+    columns:2;column-gap:48px;
+    font-family:'Inter';font-weight:300;font-size:17px;line-height:1.75;color:var(--tm);
+    margin-bottom:48px;
+  }
+  .manifesto-body p{break-inside:avoid;margin-bottom:18px}
+  .manifesto a.read-brd{color:var(--amber);font-size:14px;font-weight:400;letter-spacing:.02em}
+  .manifesto a.read-brd:hover{opacity:.75}
+  @media (max-width:780px){
+    .manifesto{padding:100px 20px}
+    .manifesto h2{font-size:2.6rem}
+    .manifesto-body{columns:1;font-size:16px}
+  }
+
+  /* ---------- Engine steps ---------- */
+  .steps{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:48px;
+  }
+  @media (max-width:980px){.steps{grid-template-columns:1fr;gap:56px}}
+  .step{padding-top:8px}
+  .step-num{
+    font-family:'Inter';font-weight:200;font-size:9rem;line-height:.9;color:var(--tm);
+    letter-spacing:-.04em;margin-bottom:24px;
+  }
+  .step-eye{
+    font-family:'JetBrains Mono';font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+    display:block;margin-bottom:16px;
+  }
+  .step.s-search   .step-eye{color:var(--amber)}
+  .step.s-cluster  .step-eye{color:var(--watch)}
+  .step.s-original .step-eye{color:var(--play)}
+  .step-title{
+    font-family:'Inter';font-weight:500;font-size:22px;color:var(--th);margin-bottom:12px;
+  }
+  .step-title em{font-style:italic;font-weight:300;color:var(--tm)}
+  .step-desc{
+    font-family:'Inter';font-weight:300;font-size:15px;line-height:1.6;color:var(--tm);
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    border-top:1px solid var(--hair);
+    padding:80px 0 36px;
+    background:#000;
+  }
+  .foot-grid{
+    display:grid;grid-template-columns:1.4fr 2fr 1fr;gap:48px;
+    padding-bottom:60px;
+    border-bottom:1px solid var(--hair);
+  }
+  @media (max-width:880px){.foot-grid{grid-template-columns:1fr;gap:40px}}
+  .foot-brand .wm{
+    font-family:'Inter';font-weight:200;font-size:20px;letter-spacing:.15em;color:var(--th);margin-bottom:14px;
+  }
+  .foot-brand p{font-family:'Inter';font-weight:300;font-size:14px;color:var(--tm);max-width:280px}
+  .foot-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+  @media (max-width:560px){.foot-cols{grid-template-columns:repeat(2,1fr)}}
+  .foot-col h4{
+    font-family:'JetBrains Mono';font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--tmu);margin-bottom:18px;font-weight:400;
+  }
+  .foot-col a{
+    display:block;font-family:'Inter';font-weight:300;font-size:14px;color:var(--tm);
+    padding:6px 0;transition:color .2s ease;
+  }
+  .foot-col a:hover{color:var(--th)}
+  .foot-right{text-align:right}
+  @media (max-width:880px){.foot-right{text-align:left}}
+  .foot-right a{color:var(--amber);font-size:13px;font-weight:400}
+  .foot-right a:hover{opacity:.75}
+  .foot-bottom{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-top:28px;gap:24px;flex-wrap:wrap;
+  }
+  .foot-bottom .lcopy{font-family:'Inter';font-weight:300;font-size:12px;color:var(--tmu)}
+  .foot-bottom .mid{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.18em;color:var(--tmu)}
+  .foot-bottom .tag{font-family:'Inter';font-style:italic;font-weight:300;font-size:12px;color:var(--tmu)}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="wordmark">VISURENA</a>
+    <div class="nav-center">
+      <a href="#" class="active">SEARCH</a>
+      <a href="#">FOR YOU</a>
+      <a href="#">WATCH</a>
+      <a href="#">READ</a>
+      <a href="#">PLAY</a>
+      <a href="#">LISTEN</a>
+      <a href="#">RESEARCH</a>
+    </div>
+    <a href="#" class="member">Become a member &rarr;</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow-row">
+      <span class="gold-rule"></span>
+      <span class="eyebrow">VISURENA &middot; SEARCH</span>
+    </div>
+
+    <h1>Search what's <em>coming next.</em></h1>
+
+    <p class="hero-sub">A streaming search engine for the catalog the audience commissioned. Editorially directed. AI-produced. In beta.</p>
+
+    <div class="search-wrap">
+      <form class="search-bar" onsubmit="event.preventDefault()">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="m20 20-3.5-3.5"/>
+        </svg>
+        <input id="searchInput" class="search-input" type="text" autocomplete="off" placeholder="A film you can't stop thinking about…" />
+        <button class="ghost-btn" type="submit">Search</button>
+      </form>
+    </div>
+
+    <div class="why-block">
+      <span class="why-label">// Add the WHY &middot; powers our recommendation engine</span>
+      <input class="why-input" type="text" placeholder="Why does this matter to you? — one line is enough" />
+    </div>
+
+    <div class="trending">
+      <span class="trending-eyebrow">// TRENDING TONIGHT</span>
+      <div class="pill-row">
+        <button class="pill">slow-burn sci-fi mystery</button>
+        <button class="pill">mid-budget heist</button>
+        <button class="pill">electronic dream-pop</button>
+        <button class="pill">first-person walking sims</button>
+        <button class="pill">sapphic regency</button>
+        <button class="pill">vinyl-warm jazz</button>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">&darr; Discover</div>
+</header>
+
+<!-- ============ NOW STREAMING ============ -->
+<section class="block">
+  <div class="container">
+    <span class="section-eyebrow">// 12 ITEMS LIVE &middot; UPDATED HOURLY</span>
+    <h2 class="section-h">Already shipped, all of it free.</h2>
+
+    <div class="cards">
+      <!-- Music 1 -->
+      <article class="card">
+        <div class="card-media">
+          <img src="https://img.youtube.com/vi/7p4Lusyuoa8/maxresdefault.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="card-body">
+          <span class="card-tag tag-music">MUSIC</span>
+          <h3 class="card-title">Original Composition I</h3>
+          <p class="card-desc">An ambient, slow-build instrumental — the first track from the studio.</p>
+          <span class="card-meta">// 4:20 &middot; 2025</span>
+        </div>
+      </article>
+
+      <!-- Music 2 -->
+      <article class="card">
+        <div class="card-media">
+          <img src="https://img.youtube.com/vi/GLrnybyJKDo/maxresdefault.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="card-body">
+          <span class="card-tag tag-music">MUSIC</span>
+          <h3 class="card-title">Original Composition II</h3>
+          <p class="card-desc">A deeper, layered companion piece — lush textures, late-night listening.</p>
+          <span class="card-meta">// 5:08 &middot; 2025</span>
+        </div>
+      </article>
+
+      <!-- Game 1 -->
+      <article class="card">
+        <div class="card-media card-game"><span class="gname">Cosmic Defense</span></div>
+        <div class="card-body">
+          <span class="card-tag tag-play">PLAY</span>
+          <h3 class="card-title">Cosmic Defense</h3>
+          <p class="card-desc card-game-desc">Hold the line against the dark — wave-based arcade defense.</p>
+          <span class="card-meta">// ARCADE &middot; 2025</span>
+        </div>
+      </article>
+
+      <!-- Game 2 -->
+      <article class="card">
+        <div class="card-media card-game"><span class="gname">Neon Tetris</span></div>
+        <div class="card-body">
+          <span class="card-tag tag-play">PLAY</span>
+          <h3 class="card-title">Neon Tetris</h3>
+          <p class="card-desc card-game-desc">The classic stack, drenched in synthwave color.</p>
+          <span class="card-meta">// PUZZLE &middot; 2025</span>
+        </div>
+      </article>
+
+      <!-- Game 3 -->
+      <article class="card">
+        <div class="card-media card-game"><span class="gname">Snake Evolution</span></div>
+        <div class="card-body">
+          <span class="card-tag tag-play">PLAY</span>
+          <h3 class="card-title">Snake Evolution</h3>
+          <p class="card-desc card-game-desc">Eat, grow, mutate — the snake you remember, evolved.</p>
+          <span class="card-meta">// ARCADE &middot; 2025</span>
+        </div>
+      </article>
+
+      <!-- Game 4 -->
+      <article class="card">
+        <div class="card-media card-game"><span class="gname">Pac-Runner</span></div>
+        <div class="card-body">
+          <span class="card-tag tag-play">PLAY</span>
+          <h3 class="card-title">Pac-Runner</h3>
+          <p class="card-desc card-game-desc">Maze chase reimagined as a sprinting endless runner.</p>
+          <span class="card-meta">// ARCADE &middot; 2025</span>
+        </div>
+      </article>
+
+      <!-- Game 5 -->
+      <article class="card">
+        <div class="card-media card-game"><span class="gname">Asteroid Blaster</span></div>
+        <div class="card-body">
+          <span class="card-tag tag-play">PLAY</span>
+          <h3 class="card-title">Asteroid Blaster</h3>
+          <p class="card-desc card-game-desc">Drift, rotate, and shatter the rocks before they shatter you.</p>
+          <span class="card-meta">// ARCADE &middot; 2025</span>
+        </div>
+      </article>
+
+      <!-- Game 6 -->
+      <article class="card">
+        <div class="card-media card-game"><span class="gname">Missile Defense</span></div>
+        <div class="card-body">
+          <span class="card-tag tag-play">PLAY</span>
+          <h3 class="card-title">Missile Defense</h3>
+          <p class="card-desc card-game-desc">Trace a precise arc and intercept — one city at a time.</p>
+          <span class="card-meta">// ARCADE &middot; 2025</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ONE BRAND. SIX ROOMS. ============ -->
+<section class="block">
+  <div class="container">
+    <span class="section-eyebrow">// THE SYSTEM</span>
+    <h2 class="section-h">One brand. Six rooms.</h2>
+    <p class="section-sub">Search is the parent. Each tab inherits its own derived accent — distinct without breaking brand.</p>
+
+    <div class="rooms">
+      <a class="room r-search" href="#">
+        <span class="room-eyebrow">SEARCH</span>
+        <h4 class="room-title">Ask for what's next</h4>
+        <p class="room-desc">The front door. Type a wish, add a why — the catalog answers.</p>
+      </a>
+      <a class="room r-watch" href="#">
+        <span class="room-eyebrow">WATCH</span>
+        <h4 class="room-title">Films &amp; series</h4>
+        <p class="room-desc">Cinematic shorts, episodic stories, scenes commissioned by demand.</p>
+      </a>
+      <a class="room r-read" href="#">
+        <span class="room-eyebrow">READ</span>
+        <h4 class="room-title">Long-form fiction</h4>
+        <p class="room-desc">Chapter-by-chapter novels — the audience steers the story.</p>
+      </a>
+      <a class="room r-play" href="#">
+        <span class="room-eyebrow">PLAY</span>
+        <h4 class="room-title">Browser games</h4>
+        <p class="room-desc">Arcade and puzzle titles, instantly playable, no install.</p>
+      </a>
+      <a class="room r-listen" href="#">
+        <span class="room-eyebrow">LISTEN</span>
+        <h4 class="room-title">Music &amp; audio</h4>
+        <p class="room-desc">Original compositions and audio fiction, edited for the late hour.</p>
+      </a>
+      <a class="room r-research" href="#">
+        <span class="room-eyebrow">RESEARCH</span>
+        <h4 class="room-title">Process &amp; notes</h4>
+        <p class="room-desc">How we build it. Honest field notes from an editorial AI studio.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MANIFESTO ============ -->
+<section class="manifesto">
+  <div class="manifesto-inner">
+    <div class="m-eyebrow-row">
+      <span class="gold-rule"></span>
+      <span class="eyebrow">OUR THESIS</span>
+    </div>
+    <h2>Most platforms ship what's already made. We ship <em>what you ask for.</em></h2>
+    <div class="manifesto-body">
+      <p>The streaming era trained us to scroll. Endless rows of catalog you didn't choose, recommended by systems that only know what already exists. Demand was an afterthought.</p>
+      <p>ViSuReNa starts the other way. The audience tells us what's missing — a film that doesn't exist yet, a song they wish someone would write, a game they keep waiting for — and the studio commits to making it.</p>
+      <p>Every search is a signal. Every why is a brief. Patterns become slates. Slates become productions. The wait between asking and watching collapses from years to weeks.</p>
+      <p>We are not replacing artists. We are giving editorial direction to a machine that can render at scale, and giving the audience a seat at the table where the slate is decided.</p>
+    </div>
+    <a href="#" class="read-brd">Read the full BRD &rarr;</a>
+  </div>
+</section>
+
+<!-- ============ ENGINE ============ -->
+<section class="block">
+  <div class="container">
+    <span class="section-eyebrow">// HOW IT WORKS</span>
+    <h2 class="section-h">How the engine works.</h2>
+
+    <div class="steps">
+      <div class="step s-search">
+        <div class="step-num">01</div>
+        <span class="step-eye">SEARCH</span>
+        <h3 class="step-title"><em>You ask.</em></h3>
+        <p class="step-desc">Submit what you wish existed. We catalog the why.</p>
+      </div>
+      <div class="step s-cluster">
+        <div class="step-num">02</div>
+        <span class="step-eye">DEMAND CLUSTER</span>
+        <h3 class="step-title"><em>We aggregate.</em></h3>
+        <p class="step-desc">Patterns emerge. "23% want slow-burn sci-fi mystery."</p>
+      </div>
+      <div class="step s-original">
+        <div class="step-num">03</div>
+        <span class="step-eye">ORIGINAL</span>
+        <h3 class="step-title"><em>We ship.</em></h3>
+        <p class="step-desc">New chapter, track, scene — editorially directed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="wm">VISURENA</div>
+        <p>An editorial AI streaming studio.</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h4>// Catalog</h4>
+          <a href="#">Search</a>
+          <a href="#">Discover</a>
+          <a href="#">Watch</a>
+          <a href="#">Read</a>
+        </div>
+        <div class="foot-col">
+          <h4>// Studio</h4>
+          <a href="#">Play</a>
+          <a href="#">Listen</a>
+          <a href="#">Research</a>
+          <a href="#">Process notes</a>
+        </div>
+        <div class="foot-col">
+          <h4>// Studio</h4>
+          <a href="#">About</a>
+          <a href="#">Editorial board</a>
+          <a href="#">Contact</a>
+          <a href="#">Press</a>
+        </div>
+      </div>
+      <div class="foot-right">
+        <a href="#">Membership opens at end of Phase 3.</a>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <span class="lcopy">&copy; 2026 ViSuReNa Studio. All rights reserved.</span>
+      <span class="mid">// VISURENA &middot; v0.1 &middot; phase 0 &middot; 2026</span>
+      <span class="tag">Editorially directed. AI-produced.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Reveal nav after scrolling past hero crest
+  (function(){
+    var nav = document.getElementById('nav');
+    function onScroll(){
+      if (window.scrollY > 60) nav.classList.add('show');
+      else nav.classList.remove('show');
+    }
+    onScroll();
+    window.addEventListener('scroll', onScroll, {passive:true});
+  })();
+
+  // Rotating placeholder
+  (function(){
+    var input = document.getElementById('searchInput');
+    if (!input) return;
+    var phrases = [
+      "A film you can't stop thinking about…",
+      "A novel ending that wrecked you…",
+      "A song that hit just right…",
+      "A game you wish someone would make…"
+    ];
+    var i = 0;
+    setInterval(function(){
+      if (document.activeElement === input) return; // don't disturb typing
+      input.classList.add('fade');
+      setTimeout(function(){
+        i = (i + 1) % phrases.length;
+        input.placeholder = phrases[i];
+        input.classList.remove('fade');
+      }, 380);
+    }, 3000);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ViSuReNa — VR World · Aurora Indigo</title>
+<meta name="description" content="ViSuReNa VR World — immersive worlds you can stand inside. Phase 4d. The far horizon." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=DM+Serif+Display:ital@1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* =========================================================
+     ViSuReNa — Aurora Indigo · VR WORLD room
+     Section accent: electric lavender #A78BFA (immersive, future)
+     ========================================================= */
+
+  :root {
+    /* Parent palette */
+    --bg:        #0A0E2A;
+    --surface-1: #131A3D;
+    --surface-2: #1D2552;
+    --hairline:  #2A3268;
+    --text-hi:   #F0F2FF;
+    --text-md:   #9DA8D9;
+    --text-mu:   #5C66A0;
+
+    /* Parent accent (the verb — global links/focus) */
+    --indigo:        #6B7DFF;
+    --indigo-soft:   rgba(107,125,255,0.18);
+
+    /* Section accent — VR WORLD (electric lavender) */
+    --vr:        #A78BFA;
+    --vr-deep:   #9077E0;
+    --vr-soft:   rgba(167,139,250,0.16);
+    --vr-faint:  rgba(167,139,250,0.08);
+
+    /* Type stacks */
+    --f-sans:  "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --f-serif: "DM Serif Display", Georgia, serif;
+    --f-mono:  "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  body {
+    font-family: var(--f-sans);
+    background: var(--bg);
+    color: var(--text-hi);
+    font-weight: 400;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  img { display: block; max-width: 100%; }
+
+  ::selection { background: var(--vr-soft); color: var(--text-hi); }
+  :focus-visible { outline: 2px solid var(--indigo); outline-offset: 3px; border-radius: 2px; }
+
+  .container { max-width: 1320px; margin: 0 auto; padding: 0 32px; }
+  .container-narrow { max-width: 880px; margin: 0 auto; padding: 0 32px; }
+  .mono { font-family: var(--f-mono); font-weight: 400; }
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--vr);
+  }
+
+  /* =========================================================
+     NAV
+     ========================================================= */
+  nav.top {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10, 14, 42, 0.78);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  .wordmark {
+    font-family: var(--f-sans);
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: 0.06em;
+    color: var(--text-hi);
+  }
+  .nav-links { display: flex; gap: 26px; align-items: center; }
+  .nav-links a {
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-md);
+    letter-spacing: 0.04em;
+    position: relative;
+    padding: 4px 0;
+    transition: color 0.18s ease;
+  }
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -2px;
+    height: 1px;
+    background: var(--indigo);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+  }
+  .nav-links a:hover { color: var(--text-hi); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-links a.active { color: var(--text-hi); }
+  .nav-links a.active::after {
+    background: var(--vr);
+    transform: scaleX(1);
+  }
+  .nav-cta {
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-md);
+    letter-spacing: 0.04em;
+    transition: color 0.18s ease;
+  }
+  .nav-cta:hover { color: var(--vr); }
+
+  /* =========================================================
+     PALETTE STRIP
+     ========================================================= */
+  .palette-strip {
+    margin-top: 64px;
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--hairline);
+    padding: 18px 0;
+    position: relative;
+  }
+  .palette-back-wrap {
+    position: absolute;
+    top: 10px;
+    right: 32px;
+  }
+  .palette-back {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--vr);
+    letter-spacing: 0.04em;
+    transition: color 0.18s ease;
+  }
+  .palette-back:hover { color: var(--text-hi); }
+  .palette-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+    padding: 0 32px;
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+  .palette-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .palette-meta .eyebrow { color: var(--vr); font-size: 11px; }
+  .palette-meta .sub {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    color: var(--text-mu);
+    letter-spacing: 0.08em;
+  }
+  .palette-swatches {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding-bottom: 18px;
+  }
+  .swatch {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    border: 1px solid var(--hairline);
+    position: relative;
+  }
+  .swatch::after {
+    content: attr(data-hex);
+    position: absolute;
+    bottom: -16px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    color: var(--text-mu);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* =========================================================
+     HERO
+     ========================================================= */
+  .hero {
+    position: relative;
+    min-height: 50vh;
+    padding: 110px 0 90px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 60%, rgba(167,139,250,0.13), transparent 50%),
+      radial-gradient(ellipse at 85% 0%, rgba(107,125,255,0.06), transparent 55%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 32px;
+    text-align: center;
+    z-index: 1;
+  }
+  .hero .eyebrow { margin-bottom: 22px; }
+  .hero h1 {
+    font-family: var(--f-sans);
+    font-weight: 700;
+    font-size: clamp(2rem, 5.6vw, 3.8rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--text-hi);
+    margin-bottom: 26px;
+  }
+  .hero h1 em {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--vr);
+    letter-spacing: -0.01em;
+  }
+  .hero .sub {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text-md);
+    max-width: 600px;
+    margin: 0 auto 32px;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--vr);
+    color: var(--bg);
+    font-family: var(--f-sans);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    padding: 14px 28px;
+    border-radius: 10px;
+    transition: background 0.18s ease, transform 0.18s ease;
+  }
+  .hero-cta:hover {
+    background: var(--vr-deep);
+    transform: translateY(-1px);
+  }
+  .hero-meta {
+    margin-top: 22px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--text-md);
+    letter-spacing: 0.1em;
+  }
+
+  /* =========================================================
+     REASONING GRID — "why VR is last"
+     ========================================================= */
+  .reasoning {
+    padding: 60px 0 80px;
+  }
+  .reasoning .eyebrow { margin-bottom: 36px; }
+  .reasoning-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .reasoning-card {
+    background: var(--surface-1);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    padding: 32px;
+    position: relative;
+    transition: border-color 0.22s ease, transform 0.22s ease;
+  }
+  .reasoning-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--vr);
+    border-radius: 10px 10px 0 0;
+  }
+  .reasoning-card:hover {
+    border-color: var(--vr);
+    border-width: 2px;
+    padding: 31px;
+  }
+  .reasoning-num {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--vr);
+    letter-spacing: 0.14em;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .reasoning-card h3 {
+    font-family: var(--f-sans);
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--text-hi);
+    margin-bottom: 14px;
+  }
+  .reasoning-card p {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--text-md);
+  }
+
+  /* =========================================================
+     SCOPE STRIP — what's coming, what's not
+     ========================================================= */
+  .scope {
+    padding: 60px 0 80px;
+  }
+  .scope-strip {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    background: var(--surface-1);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .scope-divider {
+    background: var(--hairline);
+  }
+  .scope-panel {
+    padding: 36px 36px 40px;
+  }
+  .scope-panel .eyebrow {
+    margin-bottom: 22px;
+    color: var(--vr);
+  }
+  .scope-panel.out .eyebrow { color: var(--text-md); }
+  .scope-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .scope-list li {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text-hi);
+    padding-left: 22px;
+    position: relative;
+  }
+  .scope-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 8px;
+    height: 1px;
+    background: var(--vr);
+  }
+  .scope-panel.out .scope-list li {
+    color: var(--text-md);
+  }
+  .scope-panel.out .scope-list li::before {
+    background: var(--text-mu);
+  }
+
+  /* =========================================================
+     EXPLAINER
+     ========================================================= */
+  .explainer {
+    padding: 40px 0 100px;
+  }
+  .explainer .eyebrow { margin-bottom: 28px; }
+  .explainer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+  }
+  .explainer-grid p {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-md);
+    margin-bottom: 18px;
+  }
+  .explainer-grid p:last-child { margin-bottom: 0; }
+  .explainer-grid strong {
+    color: var(--text-hi);
+    font-weight: 600;
+  }
+
+  /* =========================================================
+     FOOTER
+     ========================================================= */
+  footer {
+    border-top: 1px solid var(--hairline);
+    padding: 56px 0 32px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 2fr 1fr;
+    gap: 56px;
+    padding-bottom: 48px;
+  }
+  .footer-brand .wordmark {
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+  .footer-brand p {
+    font-family: var(--f-sans);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-md);
+  }
+  .footer-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .footer-col h4 {
+    font-family: var(--f-mono);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--text-mu);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .footer-col a {
+    display: block;
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 13.5px;
+    color: var(--text-md);
+    padding: 5px 0;
+    transition: color 0.18s ease;
+  }
+  .footer-col a:hover { color: var(--vr); }
+  .footer-note {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--vr);
+  }
+  .footer-bottom {
+    border-top: 1px solid var(--hairline);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--text-mu);
+    letter-spacing: 0.04em;
+  }
+  .footer-bottom .credo {
+    font-family: var(--f-sans);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 12.5px;
+    color: var(--text-md);
+    letter-spacing: 0;
+  }
+
+  /* =========================================================
+     RESPONSIVE
+     ========================================================= */
+  @media (max-width: 1024px) {
+    .reasoning-grid { grid-template-columns: 1fr; gap: 18px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-cta { display: none; }
+    .hero { padding: 90px 0 70px; }
+    .hero h1 { font-size: clamp(2rem, 8vw, 2.5rem); }
+    .scope-strip { grid-template-columns: 1fr; }
+    .scope-divider { width: 100%; height: 1px; }
+    .explainer-grid { grid-template-columns: 1fr; gap: 24px; }
+    .palette-back-wrap { position: static; padding: 0 32px 8px; }
+    .palette-swatches { flex-wrap: wrap; }
+    .footer-cols { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .footer-bottom { flex-direction: column; }
+  }
+  @media (max-width: 480px) {
+    .container, .container-narrow { padding: 0 20px; }
+    .nav-inner { padding: 0 20px; }
+    .hero h1 { font-size: 2rem; }
+    .hero .sub { font-size: 15.5px; }
+    .reasoning-card { padding: 24px; }
+    .reasoning-card:hover { padding: 23px; }
+    .scope-panel { padding: 28px 24px 32px; }
+    .swatch { width: 48px; height: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============== NAV ============== -->
+<nav class="top">
+  <div class="nav-inner">
+    <a href="06-aurora-indigo.html" class="wordmark">VISURENA</a>
+    <div class="nav-links">
+      <a href="06-aurora-indigo.html">HOME</a>
+      <a href="06-aurora-indigo-watch.html">MOVIES</a>
+      <a href="06-aurora-indigo-listen.html">MUSIC</a>
+      <a href="06-aurora-indigo-play.html">GAMES</a>
+      <a href="06-aurora-indigo-read.html">STORY</a>
+      <a href="#" class="active">VR WORLD</a>
+      <a href="06-aurora-indigo-research.html">BLOG</a>
+    </div>
+    <a href="#" class="nav-cta">Become a member &rarr;</a>
+  </div>
+</nav>
+
+<!-- ============== PALETTE STRIP ============== -->
+<section class="palette-strip">
+  <div class="palette-back-wrap">
+    <a href="06-aurora-indigo.html" class="palette-back">&larr; back to home</a>
+  </div>
+  <div class="palette-inner">
+    <div class="palette-meta">
+      <div class="eyebrow">// VR WORLD &middot; room palette</div>
+      <div class="sub">Immersive worlds &middot; Phase 4d</div>
+    </div>
+    <div class="palette-swatches">
+      <div class="swatch" style="background:#A78BFA;" data-hex="#A78BFA"></div>
+      <div class="swatch" style="background:#131A3D;" data-hex="#131A3D"></div>
+      <div class="swatch" style="background:#1D2552;" data-hex="#1D2552"></div>
+      <div class="swatch" style="background:#2A3268;" data-hex="#2A3268"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">// VR WORLD &middot; IMMERSIVE &middot; PHASE 4d &middot; THE FAR HORIZON</div>
+    <h1>Worlds <em>people stand inside.</em></h1>
+    <p class="sub">VR is the last medium ViSuReNa expands into. Not because it's the easiest &mdash; because it's the most demanding. Once short film and music prove the demand-first thesis at scale, immersive becomes the proving ground. Phase 4d. Likely 2028.</p>
+    <a href="#brief" class="hero-cta">Read the Phase 4d brief &rarr;</a>
+    <div class="hero-meta">// SHIPPED CONTENT: 0 &middot; MEMBER WAITLIST OPENS PHASE 3</div>
+  </div>
+</section>
+
+<!-- ============== REASONING GRID ============== -->
+<section class="reasoning" id="brief">
+  <div class="container">
+    <div class="eyebrow">// THE BRIEF &middot; WHY IT WAITS</div>
+    <div class="reasoning-grid">
+
+      <div class="reasoning-card">
+        <div class="reasoning-num">// 01</div>
+        <h3>The cost is editorial, not technical.</h3>
+        <p>By the time we ship a VR world, we'll have shipped four other mediums. The audience will know what we make. The crowd-steered brief will already be tested. VR is where we apply what we learned, not where we learn.</p>
+      </div>
+
+      <div class="reasoning-card">
+        <div class="reasoning-num">// 02</div>
+        <h3>The medium punishes premature commitment.</h3>
+        <p>VR worlds done badly are the worst kind of AI slop &mdash; uncanny, sluggish, alone. We hold this room until the production stack and the audience are both ready. Editorial veto, not technical capacity, sets the date.</p>
+      </div>
+
+      <div class="reasoning-card">
+        <div class="reasoning-num">// 03</div>
+        <h3>The crowd has to ask first.</h3>
+        <p>Every other room shipped because demand clusters surfaced. VR is no different &mdash; when "I want to walk inside this story" becomes the dominant signal, that's when Phase 4d opens. Probably 2028. Could be later. Won't be sooner.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============== SCOPE STRIP ============== -->
+<section class="scope">
+  <div class="container">
+    <div class="scope-strip">
+
+      <div class="scope-panel in">
+        <div class="eyebrow">// SCOPED FOR PHASE 4d</div>
+        <ul class="scope-list">
+          <li>One short immersive scene (under 5 minutes) tied to a confirmed novel chapter</li>
+          <li>Web-based VR (WebXR), no native app &mdash; accessible through any modern browser</li>
+          <li>Crowd-steered scene selection: members vote which novel chapter becomes the first VR scene</li>
+          <li>Editorial direction holds &mdash; production AI assists; the cut is human</li>
+        </ul>
+      </div>
+
+      <div class="scope-divider"></div>
+
+      <div class="scope-panel out">
+        <div class="eyebrow">// EXPLICITLY OUT OF SCOPE</div>
+        <ul class="scope-list">
+          <li>Full-length VR films or games &mdash; Phase 5+ at earliest</li>
+          <li>Native Quest / Vision Pro apps (web-first principle)</li>
+          <li>Multi-user social VR &mdash; out of scope per BRD &sect;5.2</li>
+          <li>Custom-trained world models &mdash; hosted APIs only, per BRD principle</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============== EXPLAINER ============== -->
+<section class="explainer">
+  <div class="container">
+    <div class="eyebrow">// HOW VR WORLD FITS</div>
+    <div class="explainer-grid">
+      <div>
+        <p><strong>VR World</strong> is the last medium because it's the highest-leverage one. By the time it ships, ViSuReNa will already have a paying audience, a tested editorial spine, and a working demand-cluster engine. Immersive is what that compounds into.</p>
+        <p>Until then, this room sits empty on purpose. Empty rooms are honest. We could fake a "coming soon" grid here, but the BRD explicitly rejects that pattern. When VR ships, it ships with its first scene already crowd-steered into existence.</p>
+      </div>
+      <div>
+        <p>If you want to be part of it: keep submitting taste inputs to the rooms that already exist. The same engine that picks novel chapters and music tracks will pick the first VR scene. Your input scopes the brief either way.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="06-aurora-indigo.html" class="wordmark">VISURENA</a>
+        <p>An editorial AI streaming studio.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>// Catalog</h4>
+          <a href="06-aurora-indigo-watch.html">Movies</a>
+          <a href="06-aurora-indigo-listen.html">Music</a>
+          <a href="06-aurora-indigo-play.html">Games</a>
+          <a href="06-aurora-indigo-read.html">Story</a>
+        </div>
+        <div class="footer-col">
+          <h4>// About</h4>
+          <a href="06-aurora-indigo-research.html">Blog</a>
+          <a href="#">Editorial</a>
+          <a href="#">Transparency</a>
+          <a href="#">BRD</a>
+        </div>
+        <div class="footer-col">
+          <h4>// Connect</h4>
+          <a href="#">Membership</a>
+          <a href="#">Newsletter</a>
+          <a href="#">Submissions</a>
+          <a href="#">hello@visurena.com</a>
+        </div>
+      </div>
+      <div class="footer-note">
+        Membership opens at end of Phase 3.
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>// &copy; 2026 ViSuReNa</span>
+      <span>// VISURENA &middot; v0.1 &middot; phase 0 &middot; 2026</span>
+      <span class="credo">Crowd-steered. Editorially directed. AI-produced.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

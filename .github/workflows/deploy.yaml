@@ -19,16 +19,16 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: visurena-next/package-lock.json
+          cache-dependency-path: apps/web/package-lock.json
 
       - name: Install Dependencies
         run: |
-          cd visurena-next
+          cd apps/web
           npm ci
 
       - name: Build Next.js Site
         run: |
-          cd visurena-next
+          cd apps/web
           npm run build
 
       - name: Configure AWS Credentials
@@ -40,7 +40,7 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          cd visurena-next
+          cd apps/web
           aws s3 sync out/ s3://${{ secrets.S3_BUCKET }} --delete --cache-control "public, max-age=31536000, immutable" --exclude "*.html"
           aws s3 sync out/ s3://${{ secrets.S3_BUCKET }} --delete --cache-control "public, max-age=0, must-revalidate" --include "*.html"
 

@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ViSuReNa — Find what comes next.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  /* =========================================
+     RESET / BASE
+     ========================================= */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0A0E2A;
+    color: #F0F2FF;
+    font-weight: 400;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  img { display: block; max-width: 100%; }
+  input { font-family: inherit; outline: none; border: none; background: none; color: inherit; }
+
+  /* SVG noise overlay — applied in the hero only */
+  .noise-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* =========================================
+     UTILITIES
+     ========================================= */
+  .container {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  .mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    font-weight: 400;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6B7DFF;
+  }
+
+  /* =========================================
+     NAV
+     ========================================= */
+  nav.top {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10, 14, 42, 0.78);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid #2A3268;
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  .wordmark {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: 0.06em;
+    color: #F0F2FF;
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+  }
+  .nav-links a {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: #9DA8D9;
+    letter-spacing: 0.04em;
+    position: relative;
+    padding: 4px 0;
+    transition: color 0.18s ease;
+  }
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 1px;
+    background: #6B7DFF;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+  .nav-links a:hover { color: #F0F2FF; }
+  .nav-links a:hover::after { opacity: 1; }
+  .nav-links a.active {
+    color: #F0F2FF;
+  }
+  .nav-links a.active::after {
+    opacity: 1;
+  }
+  .nav-cta {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: #F0F2FF;
+    transition: color 0.18s ease;
+  }
+  .nav-cta:hover { color: #6B7DFF; }
+
+  /* =========================================
+     HERO
+     ========================================= */
+  .hero {
+    position: relative;
+    min-height: 95vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 32px 80px;
+    overflow: hidden;
+  }
+  .hero-aurora {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1100px;
+    height: 720px;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at 35% 50%, rgba(107, 125, 255, 0.18), transparent 55%),
+      radial-gradient(ellipse at 70% 65%, rgba(244, 114, 182, 0.10), transparent 55%);
+    filter: blur(8px);
+    z-index: 0;
+  }
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 920px;
+    width: 100%;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    margin-bottom: 28px;
+    color: #6B7DFF;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .hero-headline {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 5.6rem;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    color: #F0F2FF;
+    margin-bottom: 28px;
+  }
+  .hero-headline em {
+    font-style: italic;
+    font-weight: 700;
+    color: #6B7DFF;
+  }
+  .hero-sub {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.6;
+    color: #9DA8D9;
+    max-width: 640px;
+    margin: 0 auto 48px;
+  }
+
+  /* SEARCH BAR */
+  .search-wrap {
+    max-width: 720px;
+    margin: 0 auto 24px;
+  }
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(19, 26, 61, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(107, 125, 255, 0.30);
+    border-radius: 14px;
+    padding: 8px 8px 8px 24px;
+    height: 80px;
+    transition: border-color 0.22s ease, box-shadow 0.22s ease;
+  }
+  .search-bar:focus-within {
+    border-color: #6B7DFF;
+    box-shadow: 0 0 0 4px rgba(107, 125, 255, 0.22);
+  }
+  .search-icon {
+    flex-shrink: 0;
+    color: #9DA8D9;
+    width: 20px;
+    height: 20px;
+  }
+  .search-input-wrap {
+    flex: 1;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+  .search-input {
+    width: 100%;
+    background: transparent;
+    color: #F0F2FF;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+  }
+  .search-input::placeholder {
+    color: #5C66A0;
+    transition: opacity 0.5s ease;
+  }
+  .search-btn {
+    background: #6B7DFF;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    padding: 14px 28px;
+    border-radius: 10px;
+    transition: background 0.18s ease, transform 0.18s ease;
+  }
+  .search-btn:hover {
+    background: #5566E0;
+  }
+  .search-btn:active { transform: scale(0.98); }
+
+  /* WHY input */
+  .why-wrap {
+    max-width: 720px;
+    margin: 0 auto 56px;
+    text-align: left;
+  }
+  .why-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #5C66A0;
+    margin-bottom: 10px;
+  }
+  .why-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #2A3268;
+    padding: 10px 0;
+    color: #F0F2FF;
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 16px;
+    transition: border-color 0.2s ease;
+  }
+  .why-input::placeholder { color: #5C66A0; font-style: italic; }
+  .why-input:focus { border-bottom-color: #6B7DFF; }
+
+  /* Trending */
+  .trending-wrap {
+    max-width: 760px;
+    margin: 0 auto 56px;
+    text-align: center;
+  }
+  .trending-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #6B7DFF;
+    margin-bottom: 18px;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .pill {
+    background: #131A3D;
+    border: 1px solid #2A3268;
+    color: #9DA8D9;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+    cursor: pointer;
+  }
+  .pill:hover {
+    border-color: #6B7DFF;
+    color: #F0F2FF;
+    background: #1D2552;
+  }
+
+  /* Browse hint */
+  .browse-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #5C66A0;
+    text-align: center;
+    animation: bounce 2.4s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  /* =========================================
+     SECTIONS
+     ========================================= */
+  section.block {
+    padding: 110px 32px;
+    position: relative;
+  }
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #6B7DFF;
+    margin-bottom: 14px;
+  }
+  .section-header {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    color: #F0F2FF;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .section-sub {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: #9DA8D9;
+    max-width: 620px;
+    margin-bottom: 56px;
+  }
+
+  /* =========================================
+     CATALOG CARDS
+     ========================================= */
+  .catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+  }
+  .card {
+    background: #131A3D;
+    border: 1px solid #2A3268;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: #6B7DFF;
+    box-shadow: 0 16px 40px -12px rgba(107, 125, 255, 0.25);
+  }
+  .card-media {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1D2552 0%, #131A3D 100%);
+  }
+  .card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .card:hover .card-media img { transform: scale(1.04); }
+  .game-block {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1D2552 0%, #131A3D 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .game-block::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(181, 232, 83, 0.10), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(107, 125, 255, 0.08), transparent 50%);
+  }
+  .game-name {
+    position: relative;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    color: #F0F2FF;
+    text-align: center;
+    padding: 0 20px;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+    transition: color 0.25s ease;
+  }
+  .card:hover .game-name { color: #FFFFFF; }
+  .card-body {
+    padding: 18px 20px 22px;
+  }
+  .card-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .card-label.label-music { color: #F4C04E; }
+  .card-label.label-play  { color: #B5E853; }
+  .card-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 17px;
+    color: #F0F2FF;
+    margin-bottom: 8px;
+    transition: color 0.2s ease;
+    letter-spacing: -0.01em;
+  }
+  .card:hover .card-title { color: #FFFFFF; }
+  .card-desc {
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    color: #9DA8D9;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .card-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #5C66A0;
+    letter-spacing: 0.06em;
+  }
+
+  /* =========================================
+     PALETTE SHOWCASE — editorial swatch spread
+     ========================================= */
+  .palette-section {
+    padding: 100px 32px 120px;
+  }
+  .palette-shell {
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+  .palette-eyebrow {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6B7DFF;
+    margin-bottom: 26px;
+  }
+  .palette-headline {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 7rem;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: #F0F2FF;
+    margin-bottom: 36px;
+    max-width: 1100px;
+  }
+  .palette-headline em {
+    font-family: 'DM Serif Display', 'Inter', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: #6B7DFF;
+    letter-spacing: -0.02em;
+  }
+  .palette-sub {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.6;
+    color: #9DA8D9;
+    max-width: 700px;
+    margin-bottom: 72px;
+  }
+
+  /* PARENT BAND — 4 connected swatches */
+  .parent-band {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid #2A3268;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 80px;
+    box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.55);
+  }
+  .parent-swatch {
+    position: relative;
+    height: 220px;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+  }
+  .parent-swatch:last-child { border-right: none; }
+  .parent-swatch.is-accent {
+    box-shadow: inset 0 0 80px rgba(255, 255, 255, 0.18);
+  }
+  .parent-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #0A0E2A;
+    background: rgba(255, 255, 255, 0.78);
+    padding: 5px 9px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .parent-meta {
+    position: absolute;
+    left: 18px;
+    bottom: 18px;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 12px 14px 13px;
+    border-radius: 6px;
+    min-width: 200px;
+  }
+  .parent-swatch.is-accent .parent-meta {
+    background: rgba(0, 0, 0, 0.45);
+  }
+  .parent-meta .label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .parent-meta .hex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: #FFFFFF;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .parent-meta .usage {
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 12px;
+    color: rgba(240, 242, 255, 0.78);
+    line-height: 1.45;
+    display: block;
+    max-width: 220px;
+  }
+
+  /* AURORA BENTO GRID */
+  .aurora-bento {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .aurora-tile {
+    --i: 0;
+    position: relative;
+    min-height: 280px;
+    border-radius: 14px;
+    overflow: hidden;
+    padding: 26px 28px;
+    display: block;
+    text-decoration: none;
+    transition:
+      transform 0.22s ease,
+      box-shadow 0.22s ease,
+      opacity 0.22s ease;
+    opacity: 0;
+    transform: translateY(8px);
+    will-change: transform, box-shadow, opacity;
+  }
+  .aurora-tile.in-view {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 0.4s ease calc(50ms * var(--i)),
+      transform 0.4s ease calc(50ms * var(--i)),
+      box-shadow 0.22s ease,
+      filter 0.22s ease;
+  }
+  .aurora-tile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 60px -12px var(--accent-shadow);
+  }
+  .aurora-bento:hover .aurora-tile:not(:hover) {
+    opacity: 0.85;
+  }
+  .aurora-tile:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 3px;
+  }
+  .aurora-tile:active { transform: scale(0.98); }
+  .aurora-tile.col-6  { grid-column: span 6; }
+  .aurora-tile.col-4  { grid-column: span 4; }
+  .aurora-tile.col-12 { grid-column: span 12; min-height: 160px; }
+
+  .tile-room {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--tile-text);
+  }
+  .tile-hex {
+    position: absolute;
+    top: 50%;
+    left: 28px;
+    transform: translateY(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 3rem;
+    letter-spacing: 0.02em;
+    color: var(--tile-text);
+    transition: transform 0.22s ease;
+    line-height: 1;
+  }
+  .aurora-tile:hover .tile-hex {
+    transform: translateY(-50%) scale(1.02);
+  }
+  .tile-usage {
+    position: absolute;
+    left: 28px;
+    top: calc(50% + 38px);
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--tile-text);
+    opacity: 0.78;
+    max-width: 260px;
+  }
+  .aurora-tile.col-12 .tile-hex {
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.4rem;
+  }
+  .aurora-tile.col-12 .tile-usage {
+    top: calc(50% + 26px);
+  }
+  .tile-open {
+    position: absolute;
+    bottom: 24px;
+    right: 28px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--tile-text);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tile-open .arrow {
+    display: inline-block;
+    transition: transform 0.22s ease;
+  }
+  .aurora-tile:hover .tile-open .arrow {
+    transform: translateX(4px);
+  }
+
+  /* tile mini-demos (bottom-left "live sample") */
+  .tile-demo {
+    position: absolute;
+    left: 24px;
+    bottom: 22px;
+    max-width: 180px;
+  }
+  .demo-pill {
+    display: inline-block;
+    background: #6B7DFF;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    padding: 7px 13px;
+    border-radius: 999px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  }
+  .demo-watch {
+    position: relative;
+    padding-top: 10px;
+  }
+  .demo-watch .stripe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 56px;
+    height: 2px;
+    background: #F472B6;
+    border-radius: 2px;
+  }
+  .demo-watch .chip {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #F472B6;
+    background: rgba(10, 14, 42, 0.72);
+    padding: 6px 9px;
+    border-radius: 4px;
+  }
+  .demo-read {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: #2DD4BF;
+    text-decoration: underline;
+    text-decoration-color: rgba(45, 212, 191, 0.55);
+    text-underline-offset: 4px;
+    background: rgba(10, 14, 42, 0.4);
+    padding: 5px 9px;
+    border-radius: 4px;
+  }
+  .demo-play {
+    display: inline-block;
+    background: #B5E853;
+    color: #0A0E2A;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    font-weight: 500;
+    padding: 7px 11px;
+    border-radius: 999px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  }
+  .demo-listen {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #F4C04E;
+    color: #0A0E2A;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    font-weight: 500;
+    padding: 7px 11px;
+    border-radius: 4px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    text-transform: uppercase;
+  }
+  .demo-listen .play-icon {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+  }
+  .demo-research {
+    display: inline-block;
+    background: #C0C8E0;
+    color: #0A0E2A;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    font-weight: 500;
+    padding: 7px 11px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  }
+  .demo-vr {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(10, 14, 42, 0.55);
+    border: 1px solid #A78BFA;
+    color: #A78BFA;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    font-weight: 500;
+    padding: 6px 11px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+  .demo-vr .enter-icon {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: #A78BFA;
+  }
+  .aurora-tile.col-12 .tile-demo {
+    left: auto;
+    right: 28px;
+    bottom: 50%;
+    transform: translateY(50%);
+  }
+  .aurora-tile.col-12 .tile-open {
+    bottom: 50%;
+    transform: translateY(50%);
+    right: 200px;
+  }
+
+  /* closing rule */
+  .palette-rule {
+    border: none;
+    border-top: 1px solid #2A3268;
+    margin: 36px 0 18px;
+  }
+  .palette-caption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #9DA8D9;
+    text-align: center;
+  }
+
+  /* =========================================
+     MANIFESTO
+     ========================================= */
+  .manifesto {
+    background: #131A3D;
+    border-top: 1px solid #2A3268;
+    border-bottom: 1px solid #2A3268;
+    padding: 110px 32px;
+  }
+  .manifesto-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .manifesto-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #6B7DFF;
+    margin-bottom: 28px;
+  }
+  .manifesto-quote {
+    font-family: 'DM Serif Display', 'Inter', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 3rem;
+    line-height: 1.15;
+    color: #6B7DFF;
+    margin-bottom: 56px;
+    letter-spacing: -0.02em;
+    max-width: 980px;
+  }
+  .manifesto-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+  }
+  .manifesto-cols p {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #9DA8D9;
+  }
+  .manifesto-cols p + p { margin-top: 18px; }
+  .manifesto-link {
+    display: inline-block;
+    margin-top: 48px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #6B7DFF;
+    transition: color 0.2s ease;
+  }
+  .manifesto-link:hover { color: #8A99FF; }
+
+  /* =========================================
+     ENGINE / STEPS
+     ========================================= */
+  .engine-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 56px;
+  }
+  .step {
+    position: relative;
+  }
+  .step-num {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 6rem;
+    line-height: 0.9;
+    color: #6B7DFF;
+    margin-bottom: 24px;
+    letter-spacing: -0.04em;
+    opacity: 0.95;
+  }
+  .step-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .step-title {
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 22px;
+    color: #F0F2FF;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+  .step-desc {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #9DA8D9;
+    max-width: 320px;
+  }
+
+  /* =========================================
+     FOOTER
+     ========================================= */
+  footer {
+    border-top: 1px solid #2A3268;
+    padding: 80px 32px 40px;
+    background: #0A0E2A;
+  }
+  .footer-grid {
+    max-width: 1320px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.4fr 2fr 1.2fr;
+    gap: 48px;
+    margin-bottom: 60px;
+  }
+  .footer-brand .wordmark {
+    display: inline-block;
+    font-size: 18px;
+    margin-bottom: 18px;
+  }
+  .footer-tag {
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    color: #9DA8D9;
+    line-height: 1.6;
+    max-width: 280px;
+  }
+  .footer-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .footer-col h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #6B7DFF;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  .footer-col a {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #9DA8D9;
+    margin-bottom: 10px;
+    transition: color 0.18s ease;
+  }
+  .footer-col a:hover { color: #F0F2FF; }
+  .footer-cta h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #6B7DFF;
+    margin-bottom: 14px;
+    font-weight: 400;
+  }
+  .footer-cta a {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #6B7DFF;
+    transition: color 0.18s ease;
+  }
+  .footer-cta a:hover { color: #8A99FF; }
+  .footer-bottom {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-top: 28px;
+    border-top: 1px solid #2A3268;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+  }
+  .footer-copy {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    color: #5C66A0;
+  }
+  .footer-build {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #5C66A0;
+    letter-spacing: 0.06em;
+  }
+  .footer-mantra {
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-size: 12px;
+    color: #9DA8D9;
+  }
+
+  /* =========================================
+     RESPONSIVE
+     ========================================= */
+  @media (max-width: 1080px) {
+    .catalog-grid { grid-template-columns: repeat(3, 1fr); }
+    .nav-links { gap: 18px; }
+    .nav-links a { font-size: 12px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .footer-cta { grid-column: 1 / -1; }
+    .palette-headline { font-size: 5.4rem; }
+    .tile-hex { font-size: 2.4rem; }
+    .aurora-tile.col-12 .tile-open { right: 28px; }
+    .aurora-tile.col-12 .tile-demo { right: auto; left: 24px; bottom: 22px; transform: none; }
+    .aurora-tile.col-12 .tile-open { bottom: 24px; transform: none; }
+  }
+  @media (max-width: 820px) {
+    .nav-links { display: none; }
+    .catalog-grid { grid-template-columns: repeat(2, 1fr); }
+    .engine-grid { grid-template-columns: 1fr; gap: 40px; }
+    .manifesto-cols { grid-template-columns: 1fr; gap: 0; }
+    .manifesto-quote { font-size: 2rem; }
+    .hero-headline { font-size: 2.6rem; }
+    .hero-sub { font-size: 16px; }
+    .search-bar { height: 64px; padding: 6px 6px 6px 18px; gap: 8px; }
+    .search-input { font-size: 15px; }
+    .search-btn { padding: 12px 18px; font-size: 13px; }
+    .step-num { font-size: 4.6rem; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-links { grid-template-columns: 1fr 1fr; }
+    .palette-section { padding: 70px 24px 90px; }
+    .palette-headline { font-size: 3.4rem; }
+    .palette-sub { font-size: 16px; margin-bottom: 48px; }
+    .parent-band { grid-template-columns: repeat(2, 1fr); }
+    .parent-swatch { height: 180px; }
+    .parent-swatch:nth-child(2) { border-right: none; }
+    .aurora-tile.col-6,
+    .aurora-tile.col-4,
+    .aurora-tile.col-12 { grid-column: span 6; }
+    .tile-hex { font-size: 2.2rem; }
+  }
+  @media (max-width: 520px) {
+    .container { padding: 0 20px; }
+    section.block { padding: 80px 20px; }
+    .manifesto { padding: 80px 20px; }
+    .hero { padding: 120px 20px 60px; }
+    .catalog-grid { grid-template-columns: 1fr; }
+    .footer-links { grid-template-columns: 1fr; }
+    .hero-headline { font-size: 2.4rem; }
+    .nav-cta { font-size: 12px; }
+    .wordmark { font-size: 15px; }
+    .palette-headline { font-size: 2.6rem; }
+    .parent-band { grid-template-columns: 1fr; }
+    .parent-swatch { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); height: 160px; }
+    .parent-swatch:last-child { border-bottom: none; }
+    .aurora-tile.col-6,
+    .aurora-tile.col-4,
+    .aurora-tile.col-12 { grid-column: span 12; }
+    .tile-hex { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== NAV ===================== -->
+<nav class="top">
+  <div class="nav-inner">
+    <a href="#" class="wordmark">VISURENA</a>
+    <div class="nav-links">
+      <a href="06-aurora-indigo.html" class="active">HOME</a>
+      <a href="06-aurora-indigo-watch.html">MOVIES</a>
+      <a href="06-aurora-indigo-listen.html">MUSIC</a>
+      <a href="06-aurora-indigo-play.html">GAMES</a>
+      <a href="06-aurora-indigo-read.html">STORY</a>
+      <a href="06-aurora-indigo-vr-world.html">VR WORLD</a>
+      <a href="06-aurora-indigo-research.html">BLOG</a>
+    </div>
+    <a href="#" class="nav-cta">Become a member &rarr;</a>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="hero-aurora" aria-hidden="true"></div>
+  <div class="noise-overlay" aria-hidden="true"></div>
+
+  <div class="hero-inner">
+    <div class="hero-eyebrow">&#9656; ViSuReNa &middot; Phase 0 &middot; The catalog you wish existed</div>
+
+    <h1 class="hero-headline">Find what <em>comes&nbsp;next</em>.</h1>
+
+    <p class="hero-sub">
+      A streaming search engine for what hasn't been made yet. When the audience asks for it,
+      ViSuReNa makes it. Crowd-steered. Editorially directed. AI-produced.
+    </p>
+
+    <!-- SEARCH BAR -->
+    <div class="search-wrap">
+      <form class="search-bar" onsubmit="event.preventDefault();">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <div class="search-input-wrap">
+          <input id="searchInput" class="search-input" type="text" placeholder="A film you can't stop thinking about&hellip;" autocomplete="off" />
+        </div>
+        <button class="search-btn" type="submit">Search</button>
+      </form>
+    </div>
+
+    <!-- WHY -->
+    <div class="why-wrap">
+      <div class="why-label">// Add the WHY &middot; powers our recommendation engine</div>
+      <input class="why-input" type="text" placeholder="why this hits, what it scratches, what's missing&hellip;" />
+    </div>
+
+    <!-- TRENDING -->
+    <div class="trending-wrap">
+      <div class="trending-eyebrow">// TRENDING TONIGHT</div>
+      <div class="pill-row">
+        <button class="pill">slow-burn sci-fi mystery</button>
+        <button class="pill">mid-budget heist</button>
+        <button class="pill">electronic dream-pop</button>
+        <button class="pill">first-person walking sims</button>
+        <button class="pill">sapphic regency</button>
+        <button class="pill">vinyl-warm jazz</button>
+      </div>
+    </div>
+
+    <div class="browse-hint">&darr; Browse the catalog</div>
+  </div>
+</section>
+
+<!-- ===================== CATALOG ===================== -->
+<section class="block" id="catalog">
+  <div class="container">
+    <div class="section-eyebrow">// 12 ITEMS LIVE &middot; UPDATED HOURLY</div>
+    <h2 class="section-header">Tonight on visurena.</h2>
+    <p class="section-sub">A small, deliberate catalog. Two original tracks, ten retro arcade games, a research blog. We keep it tight on purpose — every release is intentional.</p>
+
+    <div class="catalog-grid">
+
+      <!-- MUSIC 1 -->
+      <article class="card">
+        <div class="card-media">
+          <img src="https://img.youtube.com/vi/7p4Lusyuoa8/maxresdefault.jpg" alt="Original Composition I" loading="lazy" />
+        </div>
+        <div class="card-body">
+          <div class="card-label label-music">MUSIC</div>
+          <h3 class="card-title">Original Composition I</h3>
+          <p class="card-desc"><em>A first sketch in the studio voice — patient, electronic, half-remembered.</em></p>
+          <div class="card-meta">// 4:20 &middot; 2025</div>
+        </div>
+      </article>
+
+      <!-- MUSIC 2 -->
+      <article class="card">
+        <div class="card-media">
+          <img src="https://img.youtube.com/vi/GLrnybyJKDo/maxresdefault.jpg" alt="Original Composition II" loading="lazy" />
+        </div>
+        <div class="card-body">
+          <div class="card-label label-music">MUSIC</div>
+          <h3 class="card-title">Original Composition II</h3>
+          <p class="card-desc"><em>The second pass. Warmer low end, a melodic spine you can hum.</em></p>
+          <div class="card-meta">// 4:20 &middot; 2025</div>
+        </div>
+      </article>
+
+      <!-- GAME 1 -->
+      <article class="card">
+        <div class="card-media">
+          <div class="game-block"><span class="game-name">Cosmic Defense</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-label label-play">PLAY</div>
+          <h3 class="card-title">Cosmic Defense</h3>
+          <p class="card-desc"><em>Stand between the planet and the swarm. Twin-stick precision, vector neon.</em></p>
+          <div class="card-meta">// ARCADE &middot; BROWSER</div>
+        </div>
+      </article>
+
+      <!-- GAME 2 -->
+      <article class="card">
+        <div class="card-media">
+          <div class="game-block"><span class="game-name">Neon Tetris</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-label label-play">PLAY</div>
+          <h3 class="card-title">Neon Tetris</h3>
+          <p class="card-desc"><em>The classic, dressed in synthwave glow. Drop fast, clear faster.</em></p>
+          <div class="card-meta">// ARCADE &middot; BROWSER</div>
+        </div>
+      </article>
+
+      <!-- GAME 3 -->
+      <article class="card">
+        <div class="card-media">
+          <div class="game-block"><span class="game-name">Snake Evolution</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-label label-play">PLAY</div>
+          <h3 class="card-title">Snake Evolution</h3>
+          <p class="card-desc"><em>The snake you grew up with — now it earns abilities the longer it lives.</em></p>
+          <div class="card-meta">// ARCADE &middot; BROWSER</div>
+        </div>
+      </article>
+
+      <!-- GAME 4 -->
+      <article class="card">
+        <div class="card-media">
+          <div class="game-block"><span class="game-name">Pac-Runner</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-label label-play">PLAY</div>
+          <h3 class="card-title">Pac-Runner</h3>
+          <p class="card-desc"><em>A maze-chase remix tuned for keyboard reflexes and one-more-go runs.</em></p>
+          <div class="card-meta">// ARCADE &middot; BROWSER</div>
+        </div>
+      </article>
+
+      <!-- GAME 5 -->
+      <article class="card">
+        <div class="card-media">
+          <div class="game-block"><span class="game-name">Asteroid Blaster</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-label label-play">PLAY</div>
+          <h3 class="card-title">Asteroid Blaster</h3>
+          <p class="card-desc"><em>Inertia, vector physics, and exactly enough ammo. Don't miss.</em></p>
+          <div class="card-meta">// ARCADE &middot; BROWSER</div>
+        </div>
+      </article>
+
+      <!-- GAME 6 -->
+      <article class="card">
+        <div class="card-media">
+          <div class="game-block"><span class="game-name">Missile Defense</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-label label-play">PLAY</div>
+          <h3 class="card-title">Missile Defense</h3>
+          <p class="card-desc"><em>Pure '80s arcade tension — cities below, trajectories above, you in between.</em></p>
+          <div class="card-meta">// ARCADE &middot; BROWSER</div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PALETTE / ROOMS SHOWCASE ===================== -->
+<section class="palette-section" id="rooms">
+  <div class="palette-shell">
+
+    <div class="palette-eyebrow">// THE PALETTE &middot; 1 PARENT &middot; 6 AURORA ACCENTS &middot; 1 BRAND</div>
+
+    <h2 class="palette-headline">The color system.<br/>The colors of this <em>page</em>.</h2>
+
+    <p class="palette-sub">Every color you see — the page background, the underline under SEARCH, the ring around the search bar, every section eyebrow — comes from this palette. One parent indigo. Six aurora accents. All shown below, with their hex and where they live.</p>
+
+    <!-- PARENT BAND -->
+    <div class="parent-band" aria-label="Parent palette">
+      <div class="parent-swatch" style="background:#0A0E2A;">
+        <div class="parent-meta">
+          <span class="label">Background</span>
+          <span class="hex">#0A0E2A</span>
+          <span class="usage">Page background. Where everything else sits.</span>
+        </div>
+      </div>
+      <div class="parent-swatch" style="background:#131A3D;">
+        <div class="parent-meta">
+          <span class="label">Surface</span>
+          <span class="hex">#131A3D</span>
+          <span class="usage">Cards, manifesto band, search bar fill.</span>
+        </div>
+      </div>
+      <div class="parent-swatch" style="background:#1D2552;">
+        <div class="parent-meta">
+          <span class="label">Raised</span>
+          <span class="hex">#1D2552</span>
+          <span class="usage">Hover states. Pressed pills. Game tile gradient.</span>
+        </div>
+      </div>
+      <div class="parent-swatch is-accent" style="background:#6B7DFF;">
+        <span class="parent-badge">&#9733; Parent accent</span>
+        <div class="parent-meta">
+          <span class="label">Indigo</span>
+          <span class="hex">#6B7DFF</span>
+          <span class="usage">The verb. SEARCH underline. Search button. Italic emphasis.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AURORA BENTO GRID -->
+    <div class="aurora-bento" aria-label="Six aurora room accents">
+
+      <!-- 1. MOVIES — col 6 -->
+      <a class="aurora-tile col-6"
+         href="06-aurora-indigo-watch.html"
+         style="--i:1; background:#F472B6; --tile-text:#F8F8FF; --accent-shadow: rgba(244,114,182,0.35);">
+        <span class="tile-room">Movies</span>
+        <span class="tile-hex">#F472B6</span>
+        <span class="tile-usage">Films, shorts, scenes.</span>
+        <div class="tile-demo demo-watch">
+          <span class="stripe"></span>
+          <span class="chip">// MOVIES &middot; films</span>
+        </div>
+        <span class="tile-open">Open <span class="arrow">&rarr;</span></span>
+      </a>
+
+      <!-- 2. MUSIC — col 6 -->
+      <a class="aurora-tile col-6"
+         href="06-aurora-indigo-listen.html"
+         style="--i:2; background:#F4C04E; --tile-text:#0A0E2A; --accent-shadow: rgba(244,192,78,0.40);">
+        <span class="tile-room">Music</span>
+        <span class="tile-hex">#F4C04E</span>
+        <span class="tile-usage">Tracks, EPs, originals.</span>
+        <div class="tile-demo">
+          <span class="demo-listen"><span class="play-icon">&#9656;</span> Original Composition I &middot; 4:20</span>
+        </div>
+        <span class="tile-open">Open <span class="arrow">&rarr;</span></span>
+      </a>
+
+      <!-- 3. GAMES — col 4 -->
+      <a class="aurora-tile col-4"
+         href="06-aurora-indigo-play.html"
+         style="--i:3; background:#B5E853; --tile-text:#0A0E2A; --accent-shadow: rgba(181,232,83,0.40);">
+        <span class="tile-room">Games</span>
+        <span class="tile-hex">#B5E853</span>
+        <span class="tile-usage">Browser games, retro reborn.</span>
+        <div class="tile-demo">
+          <span class="demo-play">Games &middot; Arcade</span>
+        </div>
+        <span class="tile-open">Open <span class="arrow">&rarr;</span></span>
+      </a>
+
+      <!-- 4. STORY — col 4 -->
+      <a class="aurora-tile col-4"
+         href="06-aurora-indigo-read.html"
+         style="--i:4; background:#2DD4BF; --tile-text:#0A0E2A; --accent-shadow: rgba(45,212,191,0.40);">
+        <span class="tile-room">Story</span>
+        <span class="tile-hex">#2DD4BF</span>
+        <span class="tile-usage">Chapters, novels, serialized.</span>
+        <div class="tile-demo">
+          <span class="demo-read">Read chapter &rarr;</span>
+        </div>
+        <span class="tile-open">Open <span class="arrow">&rarr;</span></span>
+      </a>
+
+      <!-- 5. VR WORLD — col 4 -->
+      <a class="aurora-tile col-4"
+         href="06-aurora-indigo-vr-world.html"
+         style="--i:5; background:#A78BFA; --tile-text:#0A0E2A; --accent-shadow: rgba(167,139,250,0.40);">
+        <span class="tile-room">VR World</span>
+        <span class="tile-hex">#A78BFA</span>
+        <span class="tile-usage">Immersive worlds, Phase 4d.</span>
+        <div class="tile-demo">
+          <span class="demo-vr"><span class="enter-icon">&#9656;</span> VR &middot; Immersive</span>
+        </div>
+        <span class="tile-open">Open <span class="arrow">&rarr;</span></span>
+      </a>
+
+      <!-- 6. BLOG — col 12 (full width, shorter) -->
+      <a class="aurora-tile col-12"
+         href="06-aurora-indigo-research.html"
+         style="--i:6; background:#C0C8E0; --tile-text:#0A0E2A; --accent-shadow: rgba(192,200,224,0.40);">
+        <span class="tile-room">Blog</span>
+        <span class="tile-hex">#C0C8E0</span>
+        <span class="tile-usage">Build log, transparency, process.</span>
+        <div class="tile-demo">
+          <span class="demo-research">// 6 min read &middot; build log</span>
+        </div>
+        <span class="tile-open">Open <span class="arrow">&rarr;</span></span>
+      </a>
+
+    </div>
+
+    <hr class="palette-rule" />
+    <p class="palette-caption">// Every hex above appears somewhere on this page &middot; click a room to see it in context</p>
+
+  </div>
+</section>
+
+<!-- ===================== MANIFESTO ===================== -->
+<section class="manifesto">
+  <div class="manifesto-inner">
+    <div class="manifesto-eyebrow">// THE THESIS</div>
+    <h2 class="manifesto-quote">&ldquo;Most platforms ship what's already made. We ship what you ask for.&rdquo;</h2>
+
+    <div class="manifesto-cols">
+      <div>
+        <p>Streaming is a back-catalog problem. Even the biggest libraries are limited to what was financed five years ago, by people guessing what you'd want today. The shelves are full and the search is empty.</p>
+        <p>ViSuReNa flips the order. The search bar comes first. You tell us what's missing — the film, the album, the novel ending, the game mechanic — and the WHY behind it.</p>
+      </div>
+      <div>
+        <p>Demand clusters into signals. Editors pick which signals deserve a real production. Then a hybrid pipeline — human craft plus AI-native tools — actually ships the thing, with credits, provenance, and a release date.</p>
+        <p>It's a streaming platform, but the catalog is a verb. The audience writes the brief. We make the work.</p>
+      </div>
+    </div>
+
+    <a class="manifesto-link" href="#">Read the full BRD &rarr;</a>
+  </div>
+</section>
+
+<!-- ===================== ENGINE ===================== -->
+<section class="block" id="engine">
+  <div class="container">
+    <div class="section-eyebrow">// HOW THE ENGINE WORKS</div>
+    <h2 class="section-header">Three steps, plainly.</h2>
+    <p class="section-sub">From a single search to a finished release. No mysticism, no ten-step funnel — just the loop, in order.</p>
+
+    <div class="engine-grid">
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-eyebrow" style="color:#6B7DFF;">ASK</div>
+        <h3 class="step-title"><em>You ask.</em></h3>
+        <p class="step-desc">Type what you wish existed. The films, the songs, the endings, the games. The WHY counts as much as the what — that's the signal we listen for.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-eyebrow" style="color:#2DD4BF;">DEMAND CLUSTER</div>
+        <h3 class="step-title"><em>We aggregate.</em></h3>
+        <p class="step-desc">Searches collapse into themes. Editors look at clusters of real demand — not vibes, not vanity — and choose the next thing worth making.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-eyebrow" style="color:#F472B6;">ORIGINAL</div>
+        <h3 class="step-title"><em>We ship.</em></h3>
+        <p class="step-desc">A small, hybrid crew — human craft plus AI-native tools — produces the work, credits the team, and releases it on the platform that asked for it.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="wordmark">VISURENA</div>
+      <p class="footer-tag">A demand-driven AI content studio. Crowd-steered, editorially directed, AI-produced.</p>
+    </div>
+
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>// PLATFORM</h4>
+        <a href="06-aurora-indigo.html">Home</a>
+        <a href="06-aurora-indigo-watch.html">Movies</a>
+        <a href="06-aurora-indigo-listen.html">Music</a>
+        <a href="06-aurora-indigo-play.html">Games</a>
+        <a href="06-aurora-indigo-read.html">Story</a>
+        <a href="06-aurora-indigo-vr-world.html">VR World</a>
+        <a href="06-aurora-indigo-research.html">Blog</a>
+      </div>
+      <div class="footer-col">
+        <h4>// BLOG</h4>
+        <a href="#">About</a>
+        <a href="#">Method</a>
+        <a href="#">Provenance</a>
+        <a href="#">Credits</a>
+        <a href="#">Press</a>
+      </div>
+      <div class="footer-col">
+        <h4>// CONNECT</h4>
+        <a href="#">Newsletter</a>
+        <a href="#">Dev log</a>
+        <a href="#">GitHub</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+
+    <div class="footer-cta">
+      <h4>// MEMBERSHIP</h4>
+      <a href="#">Membership opens at end of Phase 3 &rarr;</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-copy">&copy; 2026 ViSuReNa. All works credited.</div>
+    <div class="footer-build">// build 0.6.0 &middot; phase 0 &middot; aurora-indigo</div>
+    <div class="footer-mantra"><em>Crowd-steered. Editorially directed. AI-produced.</em></div>
+  </div>
+</footer>
+
+<script>
+  // Rotating placeholder
+  (function () {
+    var input = document.getElementById('searchInput');
+    if (!input) return;
+    var phrases = [
+      "A film you can't stop thinking about…",
+      "A novel ending that wrecked you…",
+      "A song that hit just right…",
+      "A game you wish someone would make…"
+    ];
+    var i = 0;
+    setInterval(function () {
+      // Don't fight a focused, mid-typing user
+      if (document.activeElement === input && input.value.length > 0) return;
+      input.style.transition = 'opacity 0.4s ease';
+      input.style.opacity = '0.0';
+      setTimeout(function () {
+        i = (i + 1) % phrases.length;
+        input.placeholder = phrases[i];
+        input.style.opacity = '1';
+      }, 420);
+    }, 3000);
+  })();
+
+  // Staggered scroll-reveal for aurora bento tiles
+  (function () {
+    var tiles = document.querySelectorAll('.aurora-tile');
+    if (!tiles.length) return;
+    if (!('IntersectionObserver' in window)) {
+      tiles.forEach(function (t) { t.classList.add('in-view'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    tiles.forEach(function (t) { io.observe(t); });
+  })();
+</script>
+
+</body>
+</html>
