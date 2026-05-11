@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ViSuReNa — Dark Brand Direction Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0A0B;
+    --surface: #16161A;
+    --surface-2: #1F1F25;
+    --text: #F5F5F7;
+    --text-mid: #A3A3AB;
+    --text-muted: #6B6B73;
+    --hairline: #2A2A30;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { line-height: 1.5; }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 80px 32px 120px; }
+
+  .top { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 22px; border-bottom: 1px solid var(--hairline); }
+  .wordmark { font-weight: 600; font-size: 18px; letter-spacing: 0.04em; }
+  .meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .hero { padding: 80px 0 48px; max-width: 820px; }
+  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 20px; }
+  h1 { font-weight: 600; font-size: clamp(2.6rem, 5vw, 4.6rem); line-height: 1.0; letter-spacing: -0.03em; margin-bottom: 22px; }
+  h1 em { font-style: italic; font-weight: 700; }
+  .lede { font-size: 19px; color: var(--text-mid); max-width: 660px; line-height: 1.55; }
+
+  .table-head { display: grid; grid-template-columns: 1fr 320px 200px; gap: 32px; padding: 18px 0; border-top: 1px solid rgba(245,245,247,0.16); border-bottom: 1px solid var(--hairline); margin-top: 56px; }
+  .table-head span { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+  .table-head span:last-child { text-align: right; }
+
+  .row { display: grid; grid-template-columns: 1fr 320px 200px; gap: 32px; padding: 32px 0; border-bottom: 1px solid var(--hairline); align-items: center; transition: background 0.2s; }
+  .row:hover { background: rgba(245,245,247,0.025); }
+  .row .num { font-family: 'JetBrains Mono', monospace; color: var(--text-muted); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .row h2 { font-weight: 600; font-size: 26px; line-height: 1.1; margin: 6px 0 8px; letter-spacing: -0.01em; color: var(--text); }
+  .row h2 em { font-style: italic; font-weight: 700; }
+  .row p { color: var(--text-mid); font-size: 14.5px; line-height: 1.55; max-width: 540px; }
+
+  .swatches { display: flex; gap: 0; height: 60px; border: 1px solid var(--hairline); border-radius: 4px; overflow: hidden; }
+  .swatch { flex: 1; position: relative; }
+  .swatch::after {
+    content: attr(data-hex);
+    position: absolute; bottom: -22px; left: 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+
+  .open { display: inline-flex; align-items: center; gap: 8px; padding: 14px 20px; border: 1px solid var(--hairline); color: var(--text); font-weight: 500; font-size: 14px; transition: all 0.18s; justify-self: end; border-radius: 8px; }
+  .open .accent { width: 8px; height: 8px; border-radius: 99px; transition: all 0.18s; }
+  .open:hover { border-color: var(--text); }
+  .open:hover .arrow { transform: translateX(3px); }
+  .arrow { transition: transform 0.18s; display: inline-block; }
+
+  .section-pals { padding: 56px 0 32px; border-top: 1px solid rgba(245,245,247,0.16); margin-top: 80px; }
+  .section-pals h3 { font-weight: 600; font-size: 30px; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .section-pals .lede-small { font-size: 16px; color: var(--text-mid); max-width: 720px; margin-bottom: 32px; }
+  table.matrix { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.matrix th, table.matrix td { padding: 14px 12px; text-align: left; border-bottom: 1px solid var(--hairline); }
+  table.matrix th { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid rgba(245,245,247,0.16); }
+  table.matrix td.dir { font-weight: 500; color: var(--text); }
+  .chip { display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-mid); }
+  .chip .dot { width: 14px; height: 14px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.06); }
+
+  .nav-note { margin-top: 56px; padding: 24px 28px; background: var(--surface); border: 1px solid var(--hairline); border-radius: 10px; }
+  .nav-note .label { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
+  .nav-note .demo { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--text); letter-spacing: 0.05em; }
+  .nav-note .demo .active { color: var(--text); border-bottom: 1px solid var(--text); padding-bottom: 2px; }
+  .nav-note .demo .dim { color: var(--text-muted); }
+  .nav-note p { color: var(--text-mid); font-size: 14px; margin-top: 14px; line-height: 1.55; max-width: 720px; }
+
+  footer { margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--hairline); display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  @media (max-width: 880px) {
+    .table-head, .row { grid-template-columns: 1fr; gap: 16px; }
+    .open { justify-self: start; }
+    .swatch::after { font-size: 8.5px; }
+    h1 { font-size: 2.4rem; }
+    .table-head span:last-child { text-align: left; }
+  }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top">
+      <div class="wordmark">VISURENA</div>
+      <div class="meta">Dark · Phase 0 · 6 directions · v2</div>
+    </div>
+
+    <header class="hero">
+      <div class="eyebrow">// Dark premium streaming · Search-first product · Per-section accents</div>
+      <h1>Six dark directions.<br>One <em>brand DNA</em>.</h1>
+      <p class="lede">Each direction has a parent palette plus 6 derived section accents (Search · For You · Watch · Read · Play · Listen · Research). Master accent stays glued to interactive elements; section accents shift per page so each room feels distinct without breaking brand cohesion.</p>
+    </header>
+
+    <div class="nav-note">
+      <div class="label">// Nav update · "Discover" → "For You"</div>
+      <div class="demo">SEARCH · <span class="active">FOR YOU</span> · WATCH · READ · PLAY · LISTEN · RESEARCH</div>
+      <p>"Discover" was generic and tech-flavored. "For You" frames the tab as recommendation — what the engine surfaces based on your taste signal. Familiar from Apple TV+/Spotify; instantly readable. Easy to swap to PICKS / TONIGHT / TASTE / MATCHED if you prefer.</p>
+    </div>
+
+    <div class="table-head">
+      <span>Direction</span>
+      <span>Parent palette</span>
+      <span>Open</span>
+    </div>
+
+    <a class="row" href="01-onyx-crimson.html">
+      <div>
+        <div class="num">01 / 06 — Netflix-prime evolved</div>
+        <h2>Onyx <em>Crimson</em></h2>
+        <p>Premium dark streaming. Deep onyx black, single deep crimson accent (less saturated than Netflix red — more cinematic curtain). Confident, broadcast-quality. The "I'm paying for this" platform.</p>
+      </div>
+      <div class="swatches">
+        <div class="swatch" style="background:#0A0A0B" data-hex="#0A0A0B"></div>
+        <div class="swatch" style="background:#16161A" data-hex="#16161A"></div>
+        <div class="swatch" style="background:#1F1F25" data-hex="#1F1F25"></div>
+        <div class="swatch" style="background:#C8202C" data-hex="#C8202C"></div>
+      </div>
+      <span class="open"><span class="accent" style="background:#C8202C"></span>Open <span class="arrow">→</span></span>
+    </a>
+
+    <a class="row" href="02-midnight-cobalt.html">
+      <div>
+        <div class="num">02 / 06 — Disney+ / Prime fusion</div>
+        <h2>Midnight <em>Cobalt</em></h2>
+        <p>Deep navy near-black with electric Prime/Disney+ blue. Cool, polished, broadcast-tier. Manrope geometric type. Feels like a 2026 streaming OS. Most "premium-tech-streaming" of the six.</p>
+      </div>
+      <div class="swatches">
+        <div class="swatch" style="background:#050B1F" data-hex="#050B1F"></div>
+        <div class="swatch" style="background:#0E1530" data-hex="#0E1530"></div>
+        <div class="swatch" style="background:#1A2245" data-hex="#1A2245"></div>
+        <div class="swatch" style="background:#1E88FF" data-hex="#1E88FF"></div>
+      </div>
+      <span class="open"><span class="accent" style="background:#1E88FF"></span>Open <span class="arrow">→</span></span>
+    </a>
+
+    <a class="row" href="03-velvet-violet.html">
+      <div>
+        <div class="num">03 / 06 — HBO Max prestige</div>
+        <h2>Velvet <em>Violet</em></h2>
+        <p>Moody, prestige-tv energy. Near-black with violet undertone, deep saturated violet primary. Tinos italic for the brand voice — that serif-italic-in-sans contrast is the prestige-tv signature. Auteur-streaming-tier.</p>
+      </div>
+      <div class="swatches">
+        <div class="swatch" style="background:#0A0712" data-hex="#0A0712"></div>
+        <div class="swatch" style="background:#14101F" data-hex="#14101F"></div>
+        <div class="swatch" style="background:#1F1830" data-hex="#1F1830"></div>
+        <div class="swatch" style="background:#7B2CBF" data-hex="#7B2CBF"></div>
+      </div>
+      <span class="open"><span class="accent" style="background:#7B2CBF"></span>Open <span class="arrow">→</span></span>
+    </a>
+
+    <a class="row" href="04-carbon-amber.html">
+      <div>
+        <div class="num">04 / 06 — Apple TV+ refined</div>
+        <h2>Carbon <em>Amber</em></h2>
+        <p>Pure-black-OLED minimalism with a single warm amber/cognac accent (less yellow than typical "gold"). Inter weight 200 throughout. Cinematic film-still hero. Vast negative space — the most "expensive" of the six.</p>
+      </div>
+      <div class="swatches">
+        <div class="swatch" style="background:#000000" data-hex="#000000"></div>
+        <div class="swatch" style="background:#0F0F12" data-hex="#0F0F12"></div>
+        <div class="swatch" style="background:#18181C" data-hex="#18181C"></div>
+        <div class="swatch" style="background:#D89B3D" data-hex="#D89B3D"></div>
+      </div>
+      <span class="open"><span class="accent" style="background:#D89B3D"></span>Open <span class="arrow">→</span></span>
+    </a>
+
+    <a class="row" href="05-forest-mint.html">
+      <div>
+        <div class="num">05 / 06 — Hulu/indie prestige</div>
+        <h2>Forest <em>Mint</em></h2>
+        <p>WARM-DARK rather than cool-dark. Deep teal-black background, warm cream type, signature mint accent. Tinos italic for editorial moments. Indie-A24-prestige with Apple-TV+ design discipline. Most distinctive.</p>
+      </div>
+      <div class="swatches">
+        <div class="swatch" style="background:#0A1817" data-hex="#0A1817"></div>
+        <div class="swatch" style="background:#122421" data-hex="#122421"></div>
+        <div class="swatch" style="background:#1B312D" data-hex="#1B312D"></div>
+        <div class="swatch" style="background:#4FD1A8" data-hex="#4FD1A8"></div>
+      </div>
+      <span class="open"><span class="accent" style="background:#4FD1A8"></span>Open <span class="arrow">→</span></span>
+    </a>
+
+    <a class="row" href="06-aurora-indigo.html">
+      <div>
+        <div class="num">06 / 06 — Future-AI streaming</div>
+        <h2>Aurora <em>Indigo</em></h2>
+        <p>Deep indigo near-black, electric indigo primary, with section accents (cyan / pink / lime / gold) appearing as faceted aurora glints. The most distinct aesthetic — Peacock multi-color identity restrained through Apple TV+ discipline.</p>
+      </div>
+      <div class="swatches">
+        <div class="swatch" style="background:#0A0E2A" data-hex="#0A0E2A"></div>
+        <div class="swatch" style="background:#131A3D" data-hex="#131A3D"></div>
+        <div class="swatch" style="background:#1D2552" data-hex="#1D2552"></div>
+        <div class="swatch" style="background:#6B7DFF" data-hex="#6B7DFF"></div>
+      </div>
+      <span class="open"><span class="accent" style="background:#6B7DFF"></span>Open <span class="arrow">→</span></span>
+    </a>
+
+    <section class="section-pals">
+      <h3>Per-section accents — derived from each parent</h3>
+      <p class="lede-small">Master accent stays glued to interactive elements (button fill, link hover, focus ring, active nav indicator). Each section gets its own surface accent — eyebrow, page tint, active-nav indicator — derived from the master so Watch ≠ Read ≠ Play ≠ Listen ≠ Research without breaking brand cohesion. Visible inside each mockup as the "One brand. Six rooms." preview strip.</p>
+
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Direction</th>
+            <th>Master / Search</th>
+            <th>Watch</th>
+            <th>Read</th>
+            <th>Play</th>
+            <th>Listen</th>
+            <th>Research</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="dir">01 Onyx Crimson</td>
+            <td><span class="chip"><span class="dot" style="background:#C8202C"></span>#C8202C</span></td>
+            <td><span class="chip"><span class="dot" style="background:#8B1A28"></span>#8B1A28</span></td>
+            <td><span class="chip"><span class="dot" style="background:#C9763D"></span>#C9763D</span></td>
+            <td><span class="chip"><span class="dot" style="background:#F04060"></span>#F04060</span></td>
+            <td><span class="chip"><span class="dot" style="background:#7B2C4E"></span>#7B2C4E</span></td>
+            <td><span class="chip"><span class="dot" style="background:#8C7568"></span>#8C7568</span></td>
+          </tr>
+          <tr>
+            <td class="dir">02 Midnight Cobalt</td>
+            <td><span class="chip"><span class="dot" style="background:#1E88FF"></span>#1E88FF</span></td>
+            <td><span class="chip"><span class="dot" style="background:#5B2BFF"></span>#5B2BFF</span></td>
+            <td><span class="chip"><span class="dot" style="background:#3D5AFF"></span>#3D5AFF</span></td>
+            <td><span class="chip"><span class="dot" style="background:#2DD4BF"></span>#2DD4BF</span></td>
+            <td><span class="chip"><span class="dot" style="background:#B547D6"></span>#B547D6</span></td>
+            <td><span class="chip"><span class="dot" style="background:#6B83A8"></span>#6B83A8</span></td>
+          </tr>
+          <tr>
+            <td class="dir">03 Velvet Violet</td>
+            <td><span class="chip"><span class="dot" style="background:#7B2CBF"></span>#7B2CBF</span></td>
+            <td><span class="chip"><span class="dot" style="background:#B5277A"></span>#B5277A</span></td>
+            <td><span class="chip"><span class="dot" style="background:#5C5BC9"></span>#5C5BC9</span></td>
+            <td><span class="chip"><span class="dot" style="background:#E04A8E"></span>#E04A8E</span></td>
+            <td><span class="chip"><span class="dot" style="background:#4D8E9A"></span>#4D8E9A</span></td>
+            <td><span class="chip"><span class="dot" style="background:#9189A8"></span>#9189A8</span></td>
+          </tr>
+          <tr>
+            <td class="dir">04 Carbon Amber</td>
+            <td><span class="chip"><span class="dot" style="background:#D89B3D"></span>#D89B3D</span></td>
+            <td><span class="chip"><span class="dot" style="background:#C9602E"></span>#C9602E</span></td>
+            <td><span class="chip"><span class="dot" style="background:#E6CFA4"></span>#E6CFA4</span></td>
+            <td><span class="chip"><span class="dot" style="background:#B5D44A"></span>#B5D44A</span></td>
+            <td><span class="chip"><span class="dot" style="background:#4DB7B0"></span>#4DB7B0</span></td>
+            <td><span class="chip"><span class="dot" style="background:#C9CCD1"></span>#C9CCD1</span></td>
+          </tr>
+          <tr>
+            <td class="dir">05 Forest Mint</td>
+            <td><span class="chip"><span class="dot" style="background:#4FD1A8"></span>#4FD1A8</span></td>
+            <td><span class="chip"><span class="dot" style="background:#E5654E"></span>#E5654E</span></td>
+            <td><span class="chip"><span class="dot" style="background:#DBA84A"></span>#DBA84A</span></td>
+            <td><span class="chip"><span class="dot" style="background:#C9D944"></span>#C9D944</span></td>
+            <td><span class="chip"><span class="dot" style="background:#C46BB5"></span>#C46BB5</span></td>
+            <td><span class="chip"><span class="dot" style="background:#6B8A60"></span>#6B8A60</span></td>
+          </tr>
+          <tr>
+            <td class="dir">06 Aurora Indigo</td>
+            <td><span class="chip"><span class="dot" style="background:#6B7DFF"></span>#6B7DFF</span></td>
+            <td><span class="chip"><span class="dot" style="background:#F472B6"></span>#F472B6</span></td>
+            <td><span class="chip"><span class="dot" style="background:#2DD4BF"></span>#2DD4BF</span></td>
+            <td><span class="chip"><span class="dot" style="background:#B5E853"></span>#B5E853</span></td>
+            <td><span class="chip"><span class="dot" style="background:#F4C04E"></span>#F4C04E</span></td>
+            <td><span class="chip"><span class="dot" style="background:#C0C8E0"></span>#C0C8E0</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      <div>VISURENA · Phase 0 · Brand foundation v2 · Dark</div>
+      <div>Search-first · Crowd-steered · Editorially directed</div>
+    </footer>
+  </main>
+</body>
+</html>

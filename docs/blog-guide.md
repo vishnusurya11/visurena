@@ -6,7 +6,7 @@ The blog system supports both **Markdown** (.md) and **HTML** (.html) files. Jus
 
 ### File Structure
 ```
-visurena-next/
+apps/web/
 ├── posts/                    # Your blog posts here
 │   ├── my-post.md           # Markdown posts
 │   └── rich-post.html       # HTML posts
@@ -17,7 +17,7 @@ visurena-next/
 
 ### Create a Markdown Post
 
-1. Create file: `visurena-next/posts/my-post.md`
+1. Create file: `apps/web/posts/my-post.md`
 2. Add front matter and content:
 
 ```markdown
@@ -62,7 +62,7 @@ Use HTML for complete control over styling, layout, videos, and interactive cont
 
 ### Create an HTML Post
 
-Create file: `visurena-next/posts/my-post.html`
+Create file: `apps/web/posts/my-post.html`
 
 ```html
 <!DOCTYPE html>
@@ -111,7 +111,7 @@ Create file: `visurena-next/posts/my-post.html`
 
 ## 📸 Adding Images
 
-1. Place images in: `visurena-next/public/images/`
+1. Place images in: `apps/web/public/images/`
 2. Reference as: `/images/your-image.jpg`
 3. External images also work: `https://example.com/image.jpg`
 

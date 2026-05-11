@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ViSuReNa — Vol. I, Issue 01 · The Manifesto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Inter:wght@400;500&family=Spectral:ital,wght@0,600;1,600;1,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F2EA;
+    --ink:#0A0A0A;
+    --vermilion:#D7261C;
+    --halftone:#5C5A55;
+  }
+  *{box-sizing:border-box; border-radius:0 !important;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter','Archivo',Helvetica,Arial,sans-serif;
+    font-size:17px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  a{color:inherit; text-decoration:none;}
+  a:hover{text-decoration:underline; text-underline-offset:3px;}
+  ::selection{background:var(--vermilion); color:#fff;}
+
+  .wrap{
+    max-width:1320px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  /* ───── MASTHEAD ───── */
+  .issue-strip{
+    border-bottom:1px solid var(--vermilion);
+    padding:8px 0;
+  }
+  .issue-strip .inner{
+    display:flex; justify-content:space-between; align-items:center;
+    color:var(--vermilion);
+    font-family:'Archivo',sans-serif;
+    font-weight:500;
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+  }
+  .issue-strip .inner span+span{margin-left:18px;}
+  .issue-strip .right{font-style:normal;}
+
+  .masthead{padding:18px 0 0;}
+  .masthead-row{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:32px;
+    flex-wrap:wrap;
+  }
+  .wordmark{
+    font-family:'Archivo',sans-serif;
+    font-weight:900;
+    font-size:5rem;
+    line-height:0.85;
+    letter-spacing:-0.02em;
+    text-transform:uppercase;
+    color:var(--ink);
+    margin:0;
+  }
+  .deck{
+    font-family:'Spectral',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:18px;
+    color:var(--ink);
+    max-width:380px;
+    text-align:right;
+    line-height:1.3;
+    padding-bottom:10px;
+  }
+  .rule-thick{ height:3px; background:var(--ink); margin:14px 0 0; }
+  .rule-thin{  height:1px; background:var(--ink); margin:0; }
+  .rule-vermilion{ height:2px; background:var(--vermilion); margin:0; }
+
+  .nav-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0;
+    flex-wrap:wrap; gap:16px;
+  }
+  .nav-list{
+    font-family:'Archivo',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+  }
+  .nav-list span{color:var(--ink);}
+  .nav-list .sep{
+    color:var(--ink);
+    margin:0 10px;
+    opacity:0.55;
+  }
+  .nav-cta{
+    font-family:'Archivo',sans-serif;
+    font-weight:800;
+    font-size:13px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--vermilion);
+  }
+
+  /* ───── HERO ───── */
+  .hero{
+    display:grid;
+    grid-template-columns:60fr 40fr;
+    gap:40px;
+    padding:36px 0 48px;
+    border-bottom:3px solid var(--ink);
+  }
+  .eyebrow{
+    font-family:'Archivo',sans-serif;
+    font-weight:800;
+    font-size:12px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--vermilion);
+    margin:0 0 18px;
+  }
+  .lead-headline{
+    font-family:'Archivo',sans-serif;
+    font-weight:900;
+    font-size:9rem;
+    line-height:0.85;
+    letter-spacing:-0.025em;
+    text-transform:uppercase;
+    margin:0;
+    color:var(--ink);
+  }
+  .lead-headline .red{ color:var(--vermilion); display:block; }
+  .deck-sub{
+    font-family:'Spectral',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:28px;
+    line-height:1.25;
+    margin:24px 0 28px;
+    max-width:38ch;
+    color:var(--ink);
+  }
+  .standfirst{
+    font-family:'Inter',sans-serif;
+    font-weight:400;
+    font-size:17px;
+    line-height:1.6;
+    column-count:1;
+    max-width:62ch;
+  }
+  .standfirst p{margin:0 0 14px;}
+  .dropcap::first-letter{
+    font-family:'Archivo',sans-serif;
+    font-weight:900;
+    font-size:5.4rem;
+    line-height:0.82;
+    float:left;
+    margin:6px 10px -6px 0;
+    color:var(--ink);
+    text-transform:uppercase;
+  }
+
+  /* ───── SUBMISSION PANEL ───── */
+  .submission{
+    border:3px solid var(--ink);
+    background:var(--paper);
+    align-self:start;
+    position:relative;
+  }
+  .submission .stripe{
+    background:var(--vermilion);
+    color:#fff;
+    font-family:'Archivo',sans-serif;
+    font-weight:800;
+    font-size:12px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    padding:11px 18px;
+    line-height:1.2;
+  }
+  .submission .body{padding:22px 22px 22px;}
+  .field{margin-bottom:22px;}
+  .field label{
+    display:block;
+    font-family:'Archivo',sans-serif;
+    font-weight:800;
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--ink);
+    margin-bottom:8px;
+  }
+  .field label .num{color:var(--vermilion); margin-right:8px;}
+  .field input,
+  .field textarea{
+    width:100%;
+    border:none;
+    border-bottom:1px solid var(--ink);
+    background:transparent;
+    font-family:'Inter',sans-serif;
+    font-size:17px;
+    color:var(--ink);
+    padding:8px 0;
+    resize:none;
+    outline:none;
+  }
+  .field input:focus,
+  .field textarea:focus{
+    border-bottom:2px solid var(--vermilion);
+  }
+  .field input::placeholder,
+  .field textarea::placeholder{color:var(--halftone); font-style:italic;}
+  .submit-bar{
+    display:block; width:100%;
+    background:var(--vermilion);
+    color:#fff;
+    font-family:'Archivo',sans-serif;
+    font-weight:900;
+    font-size:18px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    padding:18px 0;
+    border:none;
+    cursor:pointer;
+    text-align:center;
+  }
+  .submit-bar:hover{background:var(--ink);}
+  .submission .note{
+    font-family:'Spectral',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:14px;
+    color:var(--halftone);
+    line-height:1.5;
+    margin:18px 0 0;
+  }
+
+  /* ───── ARTICLE 02: NOW PLAYING ───── */
+  .section{padding:56px 0; border-bottom:3px solid var(--ink);}
+  .section-headline{
+    font-family:'Archivo',sans-serif;
+    font-weight:900;
+    font-size:3.5rem;
+    line-height:0.9;
+    letter-spacing:-0.02em;
+    text-transform:uppercase;
+    margin:0 0 18px;
+  }
+  .classifieds{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    border-top:3px solid var(--ink);
+    margin-top:28px;
+  }
+  .col{
+    padding:28px 24px;
+    border-right:2px solid var(--ink);
+  }
+  .col:last-child{border-right:none;}
+  .ad{
+    border-top:2px solid var(--ink);
+    padding:22px 0 26px;
+  }
+  .ad:first-child{border-top:none; padding-top:0;}
+  .ad .cat{
+    font-family:'Archivo',sans-serif;
+    font-weight:800;
+    font-size:11px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--vermilion);
+    margin:0 0 10px;
+  }
+  .ad h3{
+    font-family:'Archivo',sans-serif;
+    font-weight:900;
+    font-size:26px;
+    line-height:0.95;
+    letter-spacing:-0.01em;
+    text-transform:uppercase;
+    margin:0 0 12px;
+    color:var(--ink);
+  }
+  .ad .desc{
+    font-family:'Inter',sans-serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:14px;
+    line-height:1.45;
+    color:var(--ink);
+    margin:0 0 16px;
+    max-width:32ch;
+  }
+  .ad .meta{
+    font-family:'Archivo',sans-serif;
+    font-weight:500;
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--halftone);
+    border-top:1px solid var(--ink);
+    padding-top:10px;
+  }
+  .ad .meta .dot{margin:0 8px;}
+
+  /* ───── ARTICLE 03: MANIFESTO ───── */
+  .manifesto{
+    text-align:left;
+    max-width:880px;
+    margin:0 auto;
+  }
+  .manifesto .eyebrow{text-align:left;}
+  .manifesto .pull{
+    font-family:'Spectral',serif;
+    font-style:italic;
+    font-weight:700;
+    font-size:3.5rem;
+    line-height:1.05;
+    margin:0 0 32px;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  .manifesto-body p{
+    font-family:'Inter',sans-serif;
+    font-weight:400;
+    font-size:17px;
+    line-height:1.7;
+    margin:0 0 18px;
+    color:var(--ink);
+  }
+  .manifesto-body p:first-child::first-letter{
+    font-family:'Archivo',sans-serif;
+    font-weight:900;
+    font-size:5.4rem;
+    line-height:0.82;
+    float:left;
+    margin:6px 10px -6px 0;
+    color:var(--ink);
+    text-transform:uppercase;
+  }
+  .signoff{
+    font-family:'Archivo',sans-serif;
+    font-weight:800;
+    font-size:13px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--vermilion);
+    margin:34px 0 0;
+  }
+
+  /* ───── ARTICLE 04: ENGINE ───── */
+  .engine{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    border-top:3px solid var(--ink);
+    margin-top:28px;
+  }
+  .engine .step{
+    padding:32px 28px 36px;
+    border-right:2px solid var(--ink);
+  }
+  .engine .step:last-child{border-right:none;}
+  .engine .num{
+    font-family:'Archivo',sans-serif;
+    font-weight:900;
+    font-size:6rem;
+    line-height:0.85;
+    letter-spacing:-0.04em;
+    color:var(--vermilion);
+    margin:0 0 18px;
+  }
+  .engine h3{
+    font-family:'Archivo',sans-serif;
+    font-weight:900;
+    font-size:20px;
+    letter-spacing:-0.005em;
+    text-transform:uppercase;
+    margin:0 0 12px;
+    color:var(--ink);
+  }
+  .engine .desc{
+    font-family:'Inter',sans-serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:14px;
+    line-height:1.5;
+    color:var(--ink);
+    max-width:30ch;
+  }
+  .engine .desc em{
+    font-style:italic;
+    font-weight:500;
+    color:var(--ink);
+  }
+  .engine .desc .lead{
+    font-family:'Spectral',serif;
+    font-style:italic;
+    font-weight:600;
+    color:var(--ink);
+  }
+
+  /* ───── COLOPHON FOOTER ───── */
+  footer{
+    padding:56px 0 60px;
+    background:var(--paper);
+  }
+  .colophon{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:0;
+    border-top:3px solid var(--ink);
+  }
+  .colophon .col{
+    padding:30px 28px;
+    border-right:1px solid var(--ink);
+  }
+  .colophon .col:last-child{border-right:none;}
+  .colophon h4{
+    font-family:'Archivo',sans-serif;
+    font-weight:800;
+    font-size:12px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--vermilion);
+    margin:0 0 18px;
+  }
+  .colophon ul{
+    list-style:none; padding:0; margin:0;
+  }
+  .colophon li{
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    line-height:2;
+    color:var(--ink);
+  }
+  .footer-rule{
+    height:2px; background:var(--ink);
+    margin:36px 0 24px;
+  }
+  .tagline{
+    font-family:'Spectral',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:18px;
+    text-align:center;
+    color:var(--ink);
+    margin:0;
+  }
+  .tagline::before, .tagline::after{
+    content:"·";
+    margin:0 14px;
+    color:var(--vermilion);
+  }
+
+  /* ───── RESPONSIVE ───── */
+  @media (max-width:980px){
+    .hero{
+      grid-template-columns:1fr;
+      gap:32px;
+      padding:28px 0 40px;
+    }
+    .lead-headline{font-size:5.2rem;}
+    .deck{text-align:left; max-width:none;}
+    .masthead-row{align-items:flex-start;}
+    .classifieds{grid-template-columns:repeat(2,1fr);}
+    .engine{grid-template-columns:1fr;}
+    .engine .step{border-right:none; border-bottom:2px solid var(--ink);}
+    .engine .step:last-child{border-bottom:none;}
+    .colophon{grid-template-columns:1fr;}
+    .colophon .col{border-right:none; border-bottom:1px solid var(--ink);}
+    .colophon .col:last-child{border-bottom:none;}
+  }
+  @media (max-width:640px){
+    .wrap{padding:0 18px;}
+    .wordmark{font-size:3rem;}
+    .lead-headline{font-size:4rem;}
+    .deck-sub{font-size:22px;}
+    .section-headline{font-size:2.4rem;}
+    .manifesto .pull{font-size:2.1rem;}
+    .classifieds{
+      grid-template-columns:1fr;
+      border-top:none;
+    }
+    .col{
+      padding:0 0 8px;
+      border-right:none;
+    }
+    .ad{border-top:2px solid var(--ink); padding:22px 0 26px;}
+    .nav-list{font-size:11px; letter-spacing:0.12em;}
+    .nav-list .sep{margin:0 6px;}
+    .engine .num{font-size:4.5rem;}
+    .dropcap::first-letter,
+    .manifesto-body p:first-child::first-letter{font-size:4rem;}
+    .nav-row{justify-content:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ───── MASTHEAD ───── -->
+  <header>
+    <div class="issue-strip">
+      <div class="wrap">
+        <div class="inner">
+          <div>
+            <span>VOL. I</span>
+            <span>·  ISSUE 01</span>
+            <span>·  PHASE 0</span>
+            <span>·  2026</span>
+          </div>
+          <div class="right">
+            <span>NEWSPRINT EDITION  ·  PUBLISHED WEEKLY</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap masthead">
+      <div class="masthead-row">
+        <h1 class="wordmark">ViSuReNa</h1>
+        <p class="deck">An editorial journal for demand-driven content.</p>
+      </div>
+      <div class="rule-thick"></div>
+
+      <div class="nav-row">
+        <nav class="nav-list" aria-label="Primary">
+          <span>Discover</span><span class="sep">·</span>
+          <span>Watch</span><span class="sep">·</span>
+          <span>Read</span><span class="sep">·</span>
+          <span>Play</span><span class="sep">·</span>
+          <span>Listen</span><span class="sep">·</span>
+          <span>Research</span>
+        </nav>
+        <a href="#submit" class="nav-cta">Become a Member →</a>
+      </div>
+      <div class="rule-thin"></div>
+    </div>
+  </header>
+
+  <!-- ───── HERO / ARTICLE 01 ───── -->
+  <main class="wrap">
+    <section class="hero" id="lead">
+      <div class="lead-col">
+        <p class="eyebrow">Article 01 · Lead</p>
+        <h2 class="lead-headline">
+          You Tell Us
+          <span class="red">What to Make.</span>
+        </h2>
+        <div class="rule-thick"></div>
+        <p class="deck-sub">We make it. The catalog you've been waiting for is the one you describe.</p>
+        <div class="standfirst">
+          <p class="dropcap">Most streaming platforms ship what's already been made — a slate of finished films, a back-catalog of records, a library handed down to you. ViSuReNa inverts the contract. The reader submits what they love (a chapter, a song, a film, a level) and the why behind it. AI ships new work against that demand, under editorial direction.</p>
+          <p>Four mediums sit on the roadmap: <em>story, music, film, game.</em> Phase 0 is live with original tracks, retro browser games, and a Research blog. Phase 1 wires the recommendation engine to a real backend. Phase 2 ships co-authored chapters; Phase 3, scenes.</p>
+          <p>The principle: <em>crowd-steered, editorially directed.</em> The crowd does not write — the crowd directs. An editor curates the demand signals, sets the bar, and ships originals that hold up next to anything on a slow Sunday afternoon. No accounts. No tracking. Anonymous from the start.</p>
+        </div>
+      </div>
+
+      <aside class="submission" id="submit">
+        <div class="stripe">Reader Submission · Taste Input · Two Steps</div>
+        <div class="body">
+          <form onsubmit="event.preventDefault(); this.querySelector('.submit-bar').textContent='Filed →';">
+            <div class="field">
+              <label for="love"><span class="num">01</span>What you love</label>
+              <input id="love" type="text" placeholder="e.g. The opening chapter of Three Body Problem" />
+            </div>
+            <div class="field">
+              <label for="why"><span class="num">02</span>Why — one line</label>
+              <textarea id="why" rows="2" placeholder="e.g. The slow burn. The patience. The science as a love letter."></textarea>
+            </div>
+            <button type="submit" class="submit-bar">Submit Taste  →</button>
+          </form>
+          <p class="note">Submissions go to localStorage in Phase 0. Phase 1 (next quarter) wires this to a real backend. No accounts. No tracking. Anonymous from the start.</p>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ───── ARTICLE 02 ───── -->
+    <section class="section">
+      <p class="eyebrow">Article 02 · Currently on the Front</p>
+      <h2 class="section-headline">Now Playing.</h2>
+      <p class="deck" style="text-align:left; max-width:60ch; padding-bottom:0;">A classified ledger of everything live this issue — original tracks, browser games, research notes. Read the column you came for; ignore the rest.</p>
+
+      <div class="classifieds">
+        <!-- COLUMN 1 -->
+        <div class="col">
+          <article class="ad">
+            <p class="cat">Music</p>
+            <h3>Original Composition I</h3>
+            <p class="desc">A debut instrumental in the studio's first sessions. Patient, layered, no hook in the first ninety seconds — by design.</p>
+            <p class="meta">4:20<span class="dot">·</span>2025<span class="dot">·</span>Original</p>
+          </article>
+          <article class="ad">
+            <p class="cat">Music</p>
+            <h3>Original Composition II</h3>
+            <p class="desc">The companion piece. Sparser. A study in negative space and what the rhythm section refuses to play.</p>
+            <p class="meta">3:48<span class="dot">·</span>2025<span class="dot">·</span>Original</p>
+          </article>
+          <article class="ad">
+            <p class="cat">Game</p>
+            <h3>Cosmic Defense</h3>
+            <p class="desc">Defend Earth. Endless. Keyboard or touch. Made to be played in the back of a long meeting.</p>
+            <p class="meta">Browser<span class="dot">·</span>Phase 0<span class="dot">·</span>Touch</p>
+          </article>
+        </div>
+
+        <!-- COLUMN 2 -->
+        <div class="col">
+          <article class="ad">
+            <p class="cat">Game</p>
+            <h3>Neon Tetris</h3>
+            <p class="desc">The shape-stacker. Glow palette, hard-drop, soft-drop, no microtransactions. As it should be.</p>
+            <p class="meta">Browser<span class="dot">·</span>Phase 0<span class="dot">·</span>Solo</p>
+          </article>
+          <article class="ad">
+            <p class="cat">Game</p>
+            <h3>Snake Evolution</h3>
+            <p class="desc">The classic, but the pellets mutate. Eat enough and the board starts to argue back.</p>
+            <p class="meta">Browser<span class="dot">·</span>Phase 0<span class="dot">·</span>Touch</p>
+          </article>
+          <article class="ad">
+            <p class="cat">Game</p>
+            <h3>Pac-Runner</h3>
+            <p class="desc">A side-scroll in the maze tradition. Ghosts have read your timing — you'll have to feint.</p>
+            <p class="meta">Browser<span class="dot">·</span>Phase 0<span class="dot">·</span>Touch</p>
+          </article>
+        </div>
+
+        <!-- COLUMN 3 -->
+        <div class="col">
+          <article class="ad">
+            <p class="cat">Game</p>
+            <h3>Asteroid Blaster</h3>
+            <p class="desc">Vector-style space rocks. Inertia is real. Wraparound edges. Don't shoot the small ones first.</p>
+            <p class="meta">Browser<span class="dot">·</span>Phase 0<span class="dot">·</span>Solo</p>
+          </article>
+          <article class="ad">
+            <p class="cat">Game</p>
+            <h3>Missile Defense</h3>
+            <p class="desc">Three cities. Six silos. A descending sky. Trade ammo for time and time for cities.</p>
+            <p class="meta">Browser<span class="dot">·</span>Phase 0<span class="dot">·</span>Touch</p>
+          </article>
+          <article class="ad">
+            <p class="cat">Research</p>
+            <h3>Flux LoRA Experiments — 4-Step Workflow</h3>
+            <p class="desc">A lab note on a four-step LoRA training pipeline. Repro instructions, training curves, failure modes catalogued.</p>
+            <p class="meta">Long-form<span class="dot">·</span>2026<span class="dot">·</span>Research</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───── ARTICLE 03 — MANIFESTO ───── -->
+    <section class="section">
+      <div class="manifesto">
+        <p class="eyebrow">Article 03 · Manifesto</p>
+        <p class="pull">"Most platforms ship what's already made. We ship what you ask for."</p>
+
+        <div class="manifesto-body">
+          <p>There is a gap that no one has named cleanly. On one side, generative AI can produce a chapter, a track, a scene at near-zero marginal cost — but it has no idea what's worth making. On the other side, the platforms with the richest taste signals on Earth — Netflix, Spotify, Goodreads — cannot, by their corporate physics, originate work fast enough to answer their own data. The middle is empty. ViSuReNa is the studio that lives in that middle.</p>
+
+          <p>Why now is not a slogan. The model quality crossover happened in 2024; the cost crossover in 2025. A studio that would have needed ten writers and a soundstage in 2019 needs an editor and a directorial taste in 2026. The question stopped being <em>can we make it</em> and became <em>should we make it, and for whom.</em></p>
+
+          <p>The principle is crowd-steered, not crowd-written. The crowd does not type into a document. The crowd submits taste — a chapter, a song, a level, and a sentence on why it landed. The editor reads the patterns. Demand clusters emerge: 23% want slow-burn sci-fi, 14% want orchestral grief, 9% want the puzzle game from a childhood that didn't quite exist. The editor commissions originals against those clusters. The editor signs every release.</p>
+
+          <p>Discipline is the four-repo system. Platform, story, music, film, game — each repo has its own lane, its own contracts, its own ethics review. Content is versioned. Provenance is logged. The site you are reading is the platform repo: it is the storefront, the member roll, the masthead. It is not a content factory. The factories are downstream, and they ship only when the editor says ship.</p>
+        </div>
+
+        <p class="signoff">— From the Editors  ·  May 2026</p>
+      </div>
+    </section>
+
+    <!-- ───── ARTICLE 04 — HOW THE ENGINE WORKS ───── -->
+    <section class="section">
+      <p class="eyebrow">Article 04 · The Mechanism</p>
+      <h2 class="section-headline">How the Engine Works.</h2>
+
+      <div class="engine">
+        <div class="step">
+          <p class="num">01.</p>
+          <h3>Taste Capture</h3>
+          <p class="desc"><span class="lead">You tell us.</span> A film, chapter, or song that hit. We catalog the why.</p>
+        </div>
+        <div class="step">
+          <p class="num">02.</p>
+          <h3>Demand Clusters</h3>
+          <p class="desc"><span class="lead">We aggregate.</span> Patterns emerge: "23% want slow-burn sci-fi."</p>
+        </div>
+        <div class="step">
+          <p class="num">03.</p>
+          <h3>Crowd-Steered Originals</h3>
+          <p class="desc"><span class="lead">We ship.</span> New chapter, track, scene — editorially directed.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ───── COLOPHON ───── -->
+  <footer>
+    <div class="wrap">
+      <div class="colophon">
+        <div class="col">
+          <h4>The Catalog</h4>
+          <ul>
+            <li><a href="#">Watch</a></li>
+            <li><a href="#">Read</a></li>
+            <li><a href="#">Play</a></li>
+            <li><a href="#">Listen</a></li>
+            <li><a href="#">Research</a></li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4>The Project</h4>
+          <ul>
+            <li><a href="#">Manifesto</a></li>
+            <li><a href="#">BRD</a></li>
+            <li><a href="#">Architecture</a></li>
+            <li><a href="#">Research blog</a></li>
+            <li><a href="#">Phases</a></li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4>Transparency</h4>
+          <ul>
+            <li><a href="#">Data ethics</a></li>
+            <li><a href="#">Crowd dashboard</a></li>
+            <li><a href="#">Editorial principles</a></li>
+            <li><a href="#">Open source</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-rule"></div>
+      <p class="tagline"><em>An editorial AI studio. Crowd-steered, editorially directed. Issue 01, Phase 0, 2026.</em></p>
+    </div>
+  </footer>
+
+</body>
+</html>

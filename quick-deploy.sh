@@ -21,7 +21,7 @@ if [ -z "$S3_BUCKET" ]; then
 fi
 
 # Navigate to Next.js directory
-cd visurena-next
+cd apps/web
 
 # Install dependencies if needed
 if [ ! -d "node_modules" ]; then

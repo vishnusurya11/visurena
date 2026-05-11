@@ -10,12 +10,12 @@ echo -e "${GREEN}ViSuReNa Deployment Preview Script${NC}"
 echo "===================================="
 
 # Check if we're in the right directory
-if [ ! -d "visurena-next" ]; then
-    echo -e "${RED}Error: visurena-next directory not found!${NC}"
+if [ ! -d "apps/web" ]; then
+    echo -e "${RED}Error: apps/web directory not found!${NC}"
     exit 1
 fi
 
-cd visurena-next
+cd apps/web
 
 # Step 1: Install dependencies
 echo -e "\n${YELLOW}Step 1: Installing dependencies...${NC}"

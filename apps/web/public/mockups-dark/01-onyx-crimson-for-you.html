@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ViSuReNa — For You · Onyx Crimson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     ViSuReNa — For You · Onyx Crimson
+     Single-file production-grade dark mockup
+     ============================================================ */
+
+  :root {
+    --bg: #0A0A0B;
+    --surface: #16161A;
+    --surface-2: #1F1F25;
+    --hairline: #2A2A30;
+
+    --text-high: #F5F5F7;
+    --text-mid: #A3A3AB;
+    --text-muted: #6B6B73;
+
+    /* Parent + Section accent (For You inherits the master) */
+    --accent: #C8202C;
+    --accent-deep: #A81720;
+
+    /* Per-section native accents — used in card labels on this page */
+    --watch: #8B1A28;
+    --read: #C9763D;
+    --play: #F04060;
+    --listen: #7B2C4E;
+    --research: #8C7568;
+
+    --radius: 10px;
+    --radius-sm: 4px;
+    --duration: 220ms;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+    --max: 1280px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-high);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--text-high);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--duration) var(--ease);
+  }
+
+  a:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  button {
+    font: inherit;
+    cursor: pointer;
+    border: 0;
+    background: none;
+    color: inherit;
+  }
+
+  /* ===================== Type utilities ===================== */
+  .mono {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-feature-settings: 'tnum';
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ===================== Top nav ===================== */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 10, 11, 0.78);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .topnav__inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    height: 60px;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .wordmark {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: 0.02em;
+    color: var(--text-high);
+  }
+
+  .wordmark:hover { color: var(--accent); }
+
+  .nav__links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav__links a {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--text-mid);
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+    transition: color var(--duration) var(--ease), border-color var(--duration) var(--ease);
+  }
+
+  .nav__links a:hover {
+    color: var(--text-high);
+    border-bottom-color: var(--accent);
+  }
+
+  .nav__links a.is-active {
+    color: var(--text-high);
+    border-bottom-color: var(--accent);
+  }
+
+  .nav__cta {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-mid);
+    letter-spacing: 0.01em;
+  }
+  .nav__cta:hover { color: var(--accent); }
+
+  /* ===================== Palette strip ===================== */
+  .palette {
+    background: var(--surface);
+    border-bottom: 1px solid var(--hairline);
+    padding: 18px 32px;
+  }
+
+  .palette__inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    position: relative;
+  }
+
+  .palette__copy { display: flex; flex-direction: column; gap: 4px; }
+
+  .palette__copy .eyebrow { font-size: 11px; }
+
+  .palette__copy small {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .palette__back {
+    position: absolute;
+    top: -10px;
+    right: 0;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+  .palette__back:hover { color: var(--text-high); }
+
+  .swatches {
+    display: flex;
+    gap: 18px;
+  }
+
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .swatch__chip {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--hairline);
+  }
+
+  .swatch__hex {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* ===================== Hero ===================== */
+  .hero {
+    position: relative;
+    min-height: 45vh;
+    padding: 88px 32px 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 60%, rgba(200, 32, 44, 0.10), transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero__inner {
+    position: relative;
+    max-width: 880px;
+    width: 100%;
+    text-align: left;
+  }
+
+  .hero h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.4rem, 5.6vw, 3.8rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--text-high);
+    margin: 18px 0 22px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .hero__sub {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text-mid);
+    max-width: 580px;
+    margin: 0 0 32px;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: var(--text-high);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+    padding: 14px 28px;
+    border-radius: var(--radius);
+    transition: background var(--duration) var(--ease), transform var(--duration) var(--ease);
+  }
+
+  .cta:hover {
+    background: var(--accent-deep);
+    transform: translateY(-1px);
+  }
+
+  .cta:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  /* ===================== Section base ===================== */
+  .section {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 56px 32px;
+  }
+
+  .section__head {
+    margin-bottom: 32px;
+  }
+
+  /* ===================== Recommendation grid ===================== */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--duration) var(--ease), border-color var(--duration) var(--ease);
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+  }
+
+  .card:hover .card__title {
+    color: var(--text-high);
+  }
+
+  .card__media {
+    aspect-ratio: 16 / 10;
+    width: 100%;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 480ms var(--ease), filter var(--duration) var(--ease);
+  }
+
+  .card:hover .card__media img {
+    transform: scale(1.03);
+    filter: brightness(1.05);
+  }
+
+  .card__media--gradient {
+    background: linear-gradient(160deg, var(--surface-2) 0%, var(--surface) 100%);
+    padding: 28px;
+  }
+
+  .card__media--solid {
+    background: var(--surface-2);
+    padding: 28px;
+  }
+
+  .card__display {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: var(--text-high);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  .card__display--xl { font-size: 26px; }
+  .card__display--md { font-size: 22px; }
+
+  .card__body {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .card__label {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .card__title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--text-high);
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+    margin: 0;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .card__desc {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .card__meta {
+    margin-top: auto;
+    padding-top: 10px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    font-feature-settings: 'tnum';
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* ===================== Mini explainer ===================== */
+  .explainer {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 56px 32px 64px;
+  }
+
+  .explainer__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .explainer p {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-mid);
+    margin: 0;
+  }
+
+  .explainer p strong {
+    font-weight: 600;
+    color: var(--text-high);
+  }
+
+  .explainer p em {
+    font-style: italic;
+    color: var(--text-high);
+  }
+
+  /* ===================== Footer ===================== */
+  .footer {
+    border-top: 1px solid var(--hairline);
+    padding: 56px 32px 32px;
+  }
+
+  .footer__inner {
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+
+  .footer__cols {
+    display: grid;
+    grid-template-columns: 1.3fr 2fr 1fr;
+    gap: 56px;
+    margin-bottom: 48px;
+  }
+
+  .footer__brand .wordmark {
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+
+  .footer__tagline {
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.5;
+    max-width: 240px;
+  }
+
+  .footer__linkcols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .footer__col h5 {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 0 14px;
+  }
+
+  .footer__col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer__col a {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .footer__col a:hover { color: var(--text-high); }
+
+  .footer__note {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--accent);
+    line-height: 1.5;
+    max-width: 200px;
+  }
+
+  .footer__bottom {
+    border-top: 1px solid var(--hairline);
+    padding-top: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .footer__bottom-left,
+  .footer__bottom-mid,
+  .footer__bottom-right {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .footer__bottom-mid {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+
+  .footer__bottom-right {
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--text-mid);
+  }
+
+  /* ===================== Responsive ===================== */
+  @media (max-width: 1024px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .footer__cols { grid-template-columns: 1fr 1.6fr; }
+    .footer__note { grid-column: 1 / -1; max-width: none; }
+  }
+
+  @media (max-width: 768px) {
+    .topnav__inner { height: 56px; padding: 0 20px; }
+    .nav__links { display: none; }
+    .palette { padding: 16px 20px; }
+    .palette__inner { flex-direction: column; align-items: flex-start; gap: 18px; }
+    .palette__back { position: static; align-self: flex-end; }
+    .swatches { gap: 12px; flex-wrap: wrap; }
+    .hero { padding: 64px 20px 72px; min-height: auto; }
+    .hero h1 { font-size: clamp(2rem, 8vw, 2.8rem); }
+    .section { padding: 40px 20px; }
+    .grid { grid-template-columns: 1fr; gap: 18px; }
+    .explainer { padding: 40px 20px 48px; }
+    .explainer__grid { grid-template-columns: 1fr; gap: 24px; }
+    .footer { padding: 40px 20px 28px; }
+    .footer__cols { grid-template-columns: 1fr; gap: 36px; }
+    .footer__linkcols { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .footer__bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+
+  @media (max-width: 480px) {
+    .topnav__inner { padding: 0 16px; }
+    .palette { padding: 14px 16px; }
+    .swatch__chip { width: 48px; height: 48px; }
+    .hero { padding: 48px 16px 56px; }
+    .hero h1 { font-size: 2rem; line-height: 1.05; }
+    .hero__sub { font-size: 15px; }
+    .section { padding: 32px 16px; }
+    .explainer { padding: 32px 16px 40px; }
+    .footer { padding: 32px 16px 24px; }
+    .footer__linkcols { grid-template-columns: 1fr 1fr; }
+    .cta { padding: 13px 24px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============================================================
+       1. STICKY BLURRED TOP NAV
+       ============================================================ -->
+  <header class="topnav" role="banner">
+    <div class="topnav__inner">
+      <a href="#" class="wordmark" aria-label="ViSuReNa home">VISURENA</a>
+      <nav aria-label="Primary">
+        <ul class="nav__links">
+          <li><a href="#search">SEARCH</a></li>
+          <li><a href="#for-you" class="is-active" aria-current="page">FOR YOU</a></li>
+          <li><a href="#watch">WATCH</a></li>
+          <li><a href="#read">READ</a></li>
+          <li><a href="#play">PLAY</a></li>
+          <li><a href="#listen">LISTEN</a></li>
+          <li><a href="#research">RESEARCH</a></li>
+        </ul>
+      </nav>
+      <a href="#member" class="nav__cta">Become a member &rarr;</a>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       2. SECTION PALETTE STRIP
+       ============================================================ -->
+  <section class="palette" aria-label="Room palette">
+    <div class="palette__inner">
+      <a href="../mockups-dark/" class="palette__back">&larr; back to home</a>
+      <div class="palette__copy">
+        <span class="eyebrow">// FOR YOU &middot; room palette</span>
+        <small>Inherits parent — the everything-feed</small>
+      </div>
+      <div class="swatches" aria-label="Palette swatches">
+        <div class="swatch">
+          <div class="swatch__chip" style="background:#C8202C;"></div>
+          <span class="swatch__hex mono">#C8202C</span>
+        </div>
+        <div class="swatch">
+          <div class="swatch__chip" style="background:#16161A;"></div>
+          <span class="swatch__hex mono">#16161A</span>
+        </div>
+        <div class="swatch">
+          <div class="swatch__chip" style="background:#1F1F25;"></div>
+          <span class="swatch__hex mono">#1F1F25</span>
+        </div>
+        <div class="swatch">
+          <div class="swatch__chip" style="background:#2A2A30;"></div>
+          <span class="swatch__hex mono">#2A2A30</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3. SECTION HERO
+       ============================================================ -->
+  <section class="hero" id="for-you">
+    <div class="hero__inner">
+      <span class="eyebrow">// FOR YOU &middot; the catalog rebuilt around your taste</span>
+      <h1>Built around what <em>you</em> love.</h1>
+      <p class="hero__sub">ViSuReNa rebuilds the front page every time you tell us a new thing you love. Every card here came from a search someone ran. Yours starts with one input.</p>
+      <a href="#search" class="cta">Run a search &rarr;</a>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4. RECOMMENDATION GRID — TONIGHT, FOR YOU
+       ============================================================ -->
+  <section class="section" aria-labelledby="feed-heading">
+    <div class="section__head">
+      <span class="eyebrow" id="feed-heading">// SAMPLE FEED &middot; 6 ITEMS &middot; ONE FROM EACH ROOM</span>
+    </div>
+
+    <div class="grid">
+
+      <!-- 1. PLAY · Cosmic Defense -->
+      <article class="card">
+        <div class="card__media card__media--gradient">
+          <span class="card__display card__display--xl">Cosmic Defense</span>
+        </div>
+        <div class="card__body">
+          <span class="card__label" style="color:#F04060;">PLAY</span>
+          <h3 class="card__title">Cosmic Defense</h3>
+          <p class="card__desc">Defend Earth from alien invaders.</p>
+          <span class="card__meta mono">// arcade &middot; 1p &middot; keyboard</span>
+        </div>
+      </article>
+
+      <!-- 2. LISTEN · Original Composition I -->
+      <article class="card">
+        <div class="card__media">
+          <img src="https://img.youtube.com/vi/7p4Lusyuoa8/maxresdefault.jpg" alt="Original Composition I — synth-led work" loading="lazy" />
+        </div>
+        <div class="card__body">
+          <span class="card__label" style="color:#7B2C4E;">LISTEN</span>
+          <h3 class="card__title">Original Composition I</h3>
+          <p class="card__desc">Original synth-led composition.</p>
+          <span class="card__meta mono">// 4:20 &middot; 2025 &middot; electronic</span>
+        </div>
+      </article>
+
+      <!-- 3. WATCH · The Quiet Room -->
+      <article class="card">
+        <div class="card__media">
+          <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&q=80" alt="The Quiet Room — interior still" loading="lazy" />
+        </div>
+        <div class="card__body">
+          <span class="card__label" style="color:#8B1A28;">WATCH</span>
+          <h3 class="card__title">The Quiet Room</h3>
+          <p class="card__desc">A house remembers what its tenants forgot.</p>
+          <span class="card__meta mono">// 8 min &middot; 2025 &middot; short</span>
+        </div>
+      </article>
+
+      <!-- 4. READ · Notes from the Backroom -->
+      <article class="card">
+        <div class="card__media card__media--solid">
+          <span class="card__display card__display--md">Notes from the Backroom</span>
+        </div>
+        <div class="card__body">
+          <span class="card__label" style="color:#C9763D;">READ</span>
+          <h3 class="card__title">Notes from the Backroom</h3>
+          <p class="card__desc">Field notes on demand-first content.</p>
+          <span class="card__meta mono">// 6 min read &middot; essay &middot; 2026</span>
+        </div>
+      </article>
+
+      <!-- 5. RESEARCH · Demand-cluster engine -->
+      <article class="card">
+        <div class="card__media card__media--solid">
+          <span class="card__display card__display--md">How the demand-cluster engine works</span>
+        </div>
+        <div class="card__body">
+          <span class="card__label" style="color:#8C7568;">RESEARCH</span>
+          <h3 class="card__title">How the demand-cluster engine works</h3>
+          <p class="card__desc">Inside the recommendation pipeline that turns search into commission.</p>
+          <span class="card__meta mono">// 9 min read &middot; build log &middot; 2026-05-09</span>
+        </div>
+      </article>
+
+      <!-- 6. PLAY · Neon Tetris -->
+      <article class="card">
+        <div class="card__media card__media--gradient">
+          <span class="card__display card__display--xl">Neon Tetris</span>
+        </div>
+        <div class="card__body">
+          <span class="card__label" style="color:#F04060;">PLAY</span>
+          <h3 class="card__title">Neon Tetris</h3>
+          <p class="card__desc">Classic block-stacking with neon visuals.</p>
+          <span class="card__meta mono">// puzzle &middot; 1p &middot; keyboard</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       5. MINI EXPLAINER
+       ============================================================ -->
+  <section class="explainer" aria-label="How For You works">
+    <div class="explainer__grid">
+      <p><strong>For You</strong> is the front page after you've left a fingerprint. The recommendation engine reads your taste inputs and rebuilds the home around them.</p>
+      <p>Every card you see came from a search someone else ran first. We catalog the <em>why</em> — the emotional beat or structural element behind each love — and surface what overlaps.</p>
+      <p>When demand clusters around a theme nobody else has made yet, that becomes a commission. Crowd-steered, editorially directed, AI-produced.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       6. FOOTER
+       ============================================================ -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__cols">
+        <div class="footer__brand">
+          <a href="#" class="wordmark">VISURENA</a>
+          <p class="footer__tagline">An editorial AI streaming studio.</p>
+        </div>
+        <div class="footer__linkcols">
+          <div class="footer__col">
+            <h5>Catalog</h5>
+            <ul>
+              <li><a href="#watch">Watch</a></li>
+              <li><a href="#read">Read</a></li>
+              <li><a href="#play">Play</a></li>
+              <li><a href="#listen">Listen</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <h5>About</h5>
+            <ul>
+              <li><a href="#">The studio</a></li>
+              <li><a href="#">Our process</a></li>
+              <li><a href="#">Editorial</a></li>
+              <li><a href="#">Roadmap</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <h5>Connect</h5>
+            <ul>
+              <li><a href="#">Newsletter</a></li>
+              <li><a href="#">Press</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">RSS</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer__note">
+          Membership opens at end of Phase 3.
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span class="footer__bottom-left">&copy; 2026 ViSuReNa Studio.</span>
+        <span class="footer__bottom-mid mono">// VISURENA &middot; v0.1 &middot; phase 0 &middot; 2026</span>
+        <span class="footer__bottom-right">Crowd-steered. Editorially directed. AI-produced.</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

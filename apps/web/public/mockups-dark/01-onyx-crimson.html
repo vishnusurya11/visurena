@@ -1,0 +1,1773 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ViSuReNa — The catalog you wish existed</title>
+<meta name="description" content="ViSuReNa — search the catalog you wish existed. Crowd-steered, AI-produced, editorially directed." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500&family=Spectral:ital,wght@1,700&display=swap" rel="stylesheet" />
+<style>
+  /* =========================================================
+     ViSuReNa — Onyx Crimson (dark)
+     Single self-contained mockup
+     ========================================================= */
+
+  :root {
+    /* Parent palette */
+    --bg:        #0A0A0B;
+    --surface-1: #16161A;
+    --surface-2: #1F1F25;
+    --hairline:  #2A2A30;
+    --text-hi:   #F5F5F7;
+    --text-md:   #A3A3AB;
+    --text-mu:   #6B6B73;
+
+    /* Parent accent (the verb) */
+    --crimson:        #C8202C;
+    --crimson-deep:   #A81720;
+    --crimson-soft:   rgba(200,32,44,0.18);
+    --crimson-faint:  rgba(200,32,44,0.10);
+
+    /* Per-section accents */
+    --search:   #C8202C;
+    --watch:    #8B1A28;
+    --read:     #C9763D;
+    --play:     #F04060;
+    --listen:   #7B2C4E;
+    --research: #8C7568;
+
+    /* Type stacks */
+    --f-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text-hi);
+    font-family: var(--f-sans);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+  input, textarea { font-family: inherit; }
+
+  ::selection { background: var(--crimson); color: #fff; }
+
+  .container {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .mono {
+    font-family: var(--f-mono);
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* =========================================================
+     1. NAV
+     ========================================================= */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10,10,11,0.78);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: blur(20px) saturate(140%);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .wordmark {
+    font-family: var(--f-sans);
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: 0.04em;
+    color: var(--text-hi);
+  }
+  .wordmark .dot { color: var(--crimson); }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+  }
+  .nav-links a {
+    position: relative;
+    font-family: var(--f-sans);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-md);
+    padding: 6px 0;
+    letter-spacing: 0.01em;
+    transition: color 160ms ease;
+  }
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: var(--crimson);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 220ms ease;
+  }
+  .nav-links a:hover {
+    color: var(--text-hi);
+  }
+  .nav-links a:hover::after {
+    transform: scaleX(1);
+  }
+  .nav-links a.active {
+    color: var(--text-hi);
+  }
+  .nav-links a.active::after {
+    transform: scaleX(1);
+  }
+
+  .nav-right a {
+    font-family: var(--f-sans);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-md);
+    transition: color 160ms ease;
+  }
+  .nav-right a:hover { color: var(--crimson); }
+
+  @media (max-width: 980px) {
+    .nav-links { display: none; }
+  }
+
+  /* =========================================================
+     2. HERO
+     ========================================================= */
+  .hero {
+    position: relative;
+    min-height: 95vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 32px 80px;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 60%, rgba(200,32,44,0.10), transparent 50%);
+  }
+  .hero-grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .hero-content {
+    position: relative;
+    width: 100%;
+    max-width: 880px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    color: var(--crimson);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .hero-title {
+    font-family: var(--f-sans);
+    font-weight: 700;
+    font-size: 5.5rem;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--text-hi);
+    margin: 0 0 28px;
+  }
+  .hero-title em {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--crimson);
+  }
+
+  .hero-sub {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--text-md);
+    max-width: 620px;
+    margin: 0 auto 48px;
+  }
+
+  /* The search bar — focal point */
+  .search-wrap {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 80px;
+    padding: 8px 8px 8px 24px;
+    background: var(--surface-1);
+    border: 1px solid var(--hairline);
+    border-radius: 14px;
+    transition: border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
+  }
+  .search-bar:focus-within {
+    border-color: var(--crimson);
+    box-shadow: 0 0 0 4px var(--crimson-soft);
+  }
+  .search-icon {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    color: var(--text-md);
+    transition: color 220ms ease;
+  }
+  .search-bar:focus-within .search-icon { color: var(--text-hi); }
+
+  .search-input-stack {
+    position: relative;
+    flex: 1 1 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+  #search-input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: 0;
+    outline: none;
+    color: var(--text-hi);
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+  }
+  #search-input::placeholder {
+    color: var(--text-mu);
+    transition: opacity 360ms ease;
+  }
+  #search-input.fade::placeholder { opacity: 0; }
+
+  .search-btn {
+    flex: 0 0 auto;
+    background: var(--crimson);
+    color: #fff;
+    border: 0;
+    font-family: var(--f-sans);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+    padding: 14px 28px;
+    border-radius: 10px;
+    transition: background 180ms ease, transform 180ms ease;
+  }
+  .search-btn:hover { background: var(--crimson-deep); }
+  .search-btn:active { transform: translateY(1px); }
+
+  /* WHY input */
+  .why-wrap {
+    margin-top: 22px;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }
+  .why-label {
+    color: var(--text-mu);
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
+  .why-input {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--hairline);
+    color: var(--text-hi);
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 15px;
+    padding: 10px 4px 12px;
+    outline: none;
+    transition: border-color 220ms ease;
+    resize: none;
+    overflow: hidden;
+  }
+  .why-input::placeholder { color: var(--text-mu); }
+  .why-input:focus { border-bottom-color: var(--crimson); }
+
+  /* Trending row */
+  .trending {
+    margin-top: 44px;
+    max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .trending-eyebrow {
+    color: var(--crimson);
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .pill {
+    background: var(--surface-1);
+    border: 1px solid var(--hairline);
+    color: var(--text-md);
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    transition: border-color 200ms ease, color 200ms ease, background 200ms ease;
+    cursor: pointer;
+  }
+  .pill:hover {
+    border-color: var(--crimson);
+    color: var(--text-hi);
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%);
+    color: var(--text-mu);
+    animation: bounce 2.4s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translate(-50%, 0); opacity: 0.7; }
+    50%      { transform: translate(-50%, 6px); opacity: 1; }
+  }
+
+  /* =========================================================
+     3. CATALOG ROW — "Tonight on visurena."
+     ========================================================= */
+  .section {
+    padding: 110px 0;
+  }
+  .section-eyebrow {
+    color: var(--crimson);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: var(--f-sans);
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: -0.01em;
+    color: var(--text-hi);
+    margin: 0 0 36px;
+  }
+  .section-title .stop { color: var(--crimson); }
+
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+  }
+  @media (max-width: 1024px) { .grid-4 { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 768px)  { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px)  { .grid-4 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 240ms ease, border-color 240ms ease;
+    cursor: pointer;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: var(--crimson);
+  }
+  .card:hover .card-title { color: var(--text-hi); }
+
+  .card-media {
+    aspect-ratio: 16 / 10;
+    width: 100%;
+    background: var(--surface-2);
+    overflow: hidden;
+    position: relative;
+  }
+  .card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.95) contrast(1.02);
+  }
+
+  .card-game {
+    aspect-ratio: 16 / 10;
+    width: 100%;
+    background: linear-gradient(135deg, #1F1F25 0%, #16161A 100%);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .card-game-name {
+    font-family: var(--f-sans);
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    color: var(--text-hi);
+    line-height: 1.05;
+  }
+  .card-game::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 0%, rgba(240,64,96,0.07), transparent 55%);
+    pointer-events: none;
+  }
+
+  .card-body {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1 1 auto;
+  }
+  .card-kind {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .card-kind.music { color: var(--listen); }
+  .card-kind.play  { color: var(--play); }
+
+  .card-title {
+    font-family: var(--f-sans);
+    font-weight: 500;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    color: var(--text-md);
+    transition: color 220ms ease;
+    margin: 2px 0 0;
+  }
+  .card-desc {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--text-md);
+    line-height: 1.5;
+    margin: 0;
+  }
+  .card-desc.italic { font-style: italic; }
+
+  .card-meta {
+    margin-top: auto;
+    padding-top: 12px;
+    color: var(--text-mu);
+  }
+
+  /* =========================================================
+     4. SIX ROOMS
+     ========================================================= */
+  .palette-strip-wrap {
+    margin-bottom: 28px;
+  }
+  .palette-eyebrow {
+    color: var(--text-md);
+    margin-bottom: 12px;
+  }
+  .palette-strip {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+  }
+  .swatch {
+    position: relative;
+    flex: 1 1 0;
+    height: 88px;
+    border-radius: 6px;
+    border: 1px solid var(--hairline);
+    overflow: hidden;
+  }
+  .swatch--accent {
+    flex: 1.35 1 0;
+    height: 96px;
+  }
+  .swatch-label {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--text-hi);
+    background: rgba(10,10,11,0.62);
+    padding: 3px 6px;
+    border-radius: 3px;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  .rooms-head {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 36px;
+    max-width: 720px;
+  }
+  .rooms-sub {
+    font-size: 16px;
+    color: var(--text-md);
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .rooms {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 14px;
+  }
+  @media (max-width: 1100px) { .rooms { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 640px)  { .rooms { grid-template-columns: repeat(2, 1fr); } }
+
+  .room {
+    position: relative;
+    background: var(--surface-1);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    padding: 28px 22px 26px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 220ms ease;
+    isolation: isolate;
+  }
+  .room::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--room-tint, transparent);
+    opacity: 1;
+    z-index: -1;
+    transition: background 220ms ease;
+  }
+  .room::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 2px;
+    background: var(--room-accent, var(--crimson));
+    transition: height 220ms ease;
+  }
+  .room:hover::after { height: 3px; }
+  .room:hover::before { background: var(--room-tint-hover, var(--room-tint)); }
+
+  .room-eyebrow {
+    color: var(--room-accent);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .room-title {
+    font-family: var(--f-sans);
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--text-hi);
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+  .room-desc {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--text-md);
+    line-height: 1.5;
+    margin: 0;
+  }
+  .room-hex {
+    margin-top: 10px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-md);
+  }
+  .room-open {
+    display: inline-block;
+    margin-top: 10px;
+    font-family: var(--f-sans);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.01em;
+    color: var(--room-accent);
+    opacity: 0.78;
+    transition: opacity 220ms ease, filter 220ms ease;
+  }
+  .room:hover .room-open {
+    opacity: 1;
+    filter: brightness(1.25);
+  }
+
+  /* room tints (accent at 12% over surface-1) — set per room */
+  .room--search   { --room-accent: #C8202C; --room-tint: rgba(200,32,44,0.12);  --room-tint-hover: rgba(200,32,44,0.20); }
+  .room--watch    { --room-accent: #8B1A28; --room-tint: rgba(139,26,40,0.12);  --room-tint-hover: rgba(139,26,40,0.20); }
+  .room--read     { --room-accent: #C9763D; --room-tint: rgba(201,118,61,0.12); --room-tint-hover: rgba(201,118,61,0.20); }
+  .room--play     { --room-accent: #F04060; --room-tint: rgba(240,64,96,0.12);  --room-tint-hover: rgba(240,64,96,0.20); }
+  .room--listen   { --room-accent: #7B2C4E; --room-tint: rgba(123,44,78,0.12);  --room-tint-hover: rgba(123,44,78,0.20); }
+  .room--research { --room-accent: #8C7568; --room-tint: rgba(140,117,104,0.12); --room-tint-hover: rgba(140,117,104,0.20); }
+
+  /* =========================================================
+     4b. COLOR SYSTEM SHOWCASE — editorial swatch spread
+     ========================================================= */
+  .palette-showcase {
+    padding: 100px 0 110px;
+    position: relative;
+  }
+  .palette-showcase .container { max-width: 1240px; }
+
+  .ps-eyebrow {
+    color: var(--crimson);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .ps-headline {
+    font-family: var(--f-sans);
+    font-weight: 700;
+    font-size: 7rem;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: var(--text-hi);
+    margin: 0 0 32px;
+    max-width: 1100px;
+  }
+  .ps-headline em {
+    font-family: "Spectral", "Fraunces", Georgia, serif;
+    font-style: italic;
+    font-weight: 700;
+    color: var(--crimson);
+    letter-spacing: -0.03em;
+  }
+  .ps-sub {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--text-md);
+    max-width: 700px;
+    margin: 0 0 72px;
+  }
+
+  /* Parent palette band — connected horizontal strip */
+  .ps-parent-band {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: 220px;
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 80px;
+    box-shadow: 0 24px 60px -24px rgba(0,0,0,0.6);
+  }
+  .ps-chip {
+    position: relative;
+    border-right: 1px solid var(--hairline);
+    overflow: hidden;
+    transition: transform 240ms ease;
+  }
+  .ps-chip:last-child { border-right: 0; }
+  .ps-chip--accent::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255,255,255,0.10), transparent 70%);
+    pointer-events: none;
+  }
+  .ps-chip-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #fff;
+    background: rgba(0,0,0,0.45);
+    padding: 5px 8px;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  .ps-chip-panel {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    padding: 10px 12px 11px;
+    border-radius: 4px;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    max-width: calc(100% - 28px);
+  }
+  .ps-chip-panel--dark {
+    background: rgba(0,0,0,0.42);
+    color: var(--text-hi);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .ps-chip-panel--light {
+    background: rgba(255,255,255,0.78);
+    color: #0A0A0B;
+    border: 1px solid rgba(0,0,0,0.10);
+  }
+  .ps-chip-label {
+    font-family: var(--f-sans);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .ps-chip-hex {
+    font-family: var(--f-mono);
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .ps-chip-usage {
+    font-family: var(--f-sans);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.4;
+    opacity: 0.92;
+    display: block;
+  }
+
+  /* 6 ROOMS bento grid */
+  .ps-bento {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 16px;
+  }
+  .ps-tile {
+    --tile-accent: var(--crimson);
+    --tile-text: #F7E9E8;
+    --tile-shadow: rgba(200,32,44,0.35);
+    position: relative;
+    display: flex;
+    background: var(--tile-accent);
+    border-radius: 10px;
+    padding: 32px 30px 28px;
+    min-height: 280px;
+    overflow: hidden;
+    cursor: pointer;
+    color: var(--tile-text);
+    transition: transform 220ms ease, box-shadow 220ms ease, opacity 220ms ease;
+    opacity: 0;
+    transform: translateY(8px);
+    will-change: transform, opacity;
+    isolation: isolate;
+  }
+  .ps-tile.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 400ms ease calc(50ms * var(--i, 0)),
+      transform 400ms ease calc(50ms * var(--i, 0)),
+      box-shadow 220ms ease,
+      filter 220ms ease;
+  }
+  .ps-bento:hover .ps-tile.is-revealed:not(:hover) { opacity: 0.85; }
+  .ps-tile.is-revealed:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 60px -12px var(--tile-shadow);
+  }
+  .ps-tile.is-revealed:hover .ps-tile-hex { transform: scale(1.02); }
+  .ps-tile.is-revealed:hover .ps-tile-open .arrow { transform: translateX(4px); }
+  .ps-tile:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+  .ps-tile:active { transform: translateY(-2px) scale(0.99); }
+
+  .ps-tile--for-you  { --tile-accent: #C8202C; --tile-text: #FFFFFF; --tile-shadow: rgba(200,32,44,0.40); }
+  .ps-tile--watch    { --tile-accent: #8B1A28; --tile-text: #F5E9E2; --tile-shadow: rgba(139,26,40,0.45); }
+  .ps-tile--read     { --tile-accent: #C9763D; --tile-text: #1A0F08; --tile-shadow: rgba(201,118,61,0.40); }
+  .ps-tile--play     { --tile-accent: #F04060; --tile-text: #FFFFFF; --tile-shadow: rgba(240,64,96,0.38); }
+  .ps-tile--listen   { --tile-accent: #7B2C4E; --tile-text: #F5E4EB; --tile-shadow: rgba(123,44,78,0.45); }
+  .ps-tile--research { --tile-accent: #8C7568; --tile-text: #1A1410; --tile-shadow: rgba(140,117,104,0.40); }
+
+  .ps-tile-inner {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    width: 100%;
+    z-index: 1;
+  }
+  .ps-tile-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+  .ps-tile-name {
+    font-family: var(--f-sans);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--tile-text);
+    opacity: 0.92;
+  }
+  .ps-tile-mid {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px 0 20px;
+  }
+  .ps-tile-hex {
+    font-family: var(--f-mono);
+    font-weight: 500;
+    font-size: 3rem;
+    letter-spacing: 0.02em;
+    color: var(--tile-text);
+    margin: 0;
+    line-height: 1;
+    transform-origin: left center;
+    transition: transform 220ms ease;
+  }
+  .ps-tile-usage {
+    font-family: var(--f-sans);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--tile-text);
+    opacity: 0.86;
+    margin: 0;
+  }
+  .ps-tile-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .ps-tile-demo {
+    max-width: 170px;
+    flex: 0 1 auto;
+  }
+  .ps-tile-open {
+    font-family: var(--f-sans);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--tile-text);
+    opacity: 0.92;
+    flex: 0 0 auto;
+    align-self: flex-end;
+  }
+  .ps-tile-open .arrow {
+    display: inline-block;
+    transition: transform 220ms ease;
+    margin-left: 4px;
+  }
+
+  /* Mini live-demo elements inside tiles */
+  .demo-pill {
+    display: inline-block;
+    background: #fff;
+    color: #C8202C;
+    font-family: var(--f-sans);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    padding: 7px 12px;
+    border-radius: 999px;
+  }
+  .demo-card {
+    background: rgba(0,0,0,0.32);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-top: 2px solid #8B1A28;
+    border-radius: 4px;
+    padding: 8px 10px 9px;
+    width: 150px;
+  }
+  .demo-card-eyebrow {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #F5E9E2;
+    margin-bottom: 3px;
+  }
+  .demo-card-title {
+    font-family: var(--f-sans);
+    font-weight: 500;
+    font-size: 11px;
+    color: #F5E9E2;
+  }
+  .demo-link {
+    font-family: var(--f-sans);
+    font-weight: 500;
+    font-size: 12px;
+    color: #1A0F08;
+    background: rgba(255,255,255,0.55);
+    border-bottom: 1px solid #1A0F08;
+    padding: 4px 8px 5px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .demo-pill-arcade {
+    display: inline-block;
+    background: rgba(0,0,0,0.30);
+    color: #fff;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.22);
+  }
+  .demo-track {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,0,0,0.28);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-family: var(--f-sans);
+    font-size: 11px;
+    color: #F5E4EB;
+  }
+  .demo-track .play-icon { font-size: 10px; opacity: 0.9; }
+  .demo-track .track-time {
+    margin-left: auto;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    opacity: 0.7;
+  }
+  .demo-meta {
+    display: inline-block;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #1A1410;
+    background: rgba(255,255,255,0.42);
+    padding: 5px 9px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.10);
+  }
+
+  /* Bento layout — 12 col rhythm */
+  .ps-tile--for-you  { grid-column: span 6; }
+  .ps-tile--watch    { grid-column: span 6; }
+  .ps-tile--read     { grid-column: span 4; }
+  .ps-tile--play     { grid-column: span 4; }
+  .ps-tile--listen   { grid-column: span 4; }
+  .ps-tile--research { grid-column: span 12; min-height: 160px; }
+  .ps-tile--research .ps-tile-mid { padding: 8px 0; }
+  .ps-tile--research .ps-tile-hex { font-size: 2.6rem; }
+
+  @media (max-width: 1024px) {
+    .ps-headline { font-size: 5rem; }
+    .ps-tile--for-you, .ps-tile--watch, .ps-tile--read, .ps-tile--play, .ps-tile--listen { grid-column: span 6; }
+    .ps-tile--research { grid-column: span 12; }
+  }
+  @media (max-width: 768px) {
+    .palette-showcase { padding: 72px 0 80px; }
+    .ps-headline { font-size: 3.4rem; }
+    .ps-sub { font-size: 17px; margin-bottom: 48px; }
+    .ps-parent-band { height: auto; grid-template-columns: repeat(2, 1fr); }
+    .ps-parent-band .ps-chip { min-height: 160px; border-right: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); }
+    .ps-parent-band .ps-chip:nth-child(2n) { border-right: 0; }
+    .ps-parent-band .ps-chip:nth-last-child(-n+2) { border-bottom: 0; }
+    .ps-tile { grid-column: span 12 !important; min-height: 240px; padding: 24px 22px 22px; }
+    .ps-tile-hex { font-size: 2.4rem; }
+  }
+  @media (max-width: 480px) {
+    .ps-headline { font-size: 2.4rem; }
+    .ps-parent-band { grid-template-columns: 1fr; }
+    .ps-parent-band .ps-chip { min-height: 130px; border-right: 0; border-bottom: 1px solid var(--hairline); }
+    .ps-parent-band .ps-chip:last-child { border-bottom: 0; }
+    .ps-tile-hex { font-size: 2rem; }
+  }
+
+  .ps-rule {
+    margin-top: 56px;
+    padding-top: 22px;
+    border-top: 1px solid var(--hairline);
+    color: var(--text-md);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* =========================================================
+     5. MANIFESTO
+     ========================================================= */
+  .manifesto-wrap { padding: 0 0 40px; }
+  .manifesto {
+    background: var(--surface-1);
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    padding: 90px 32px;
+  }
+  .manifesto-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .manifesto-eyebrow {
+    color: var(--crimson);
+    margin-bottom: 28px;
+  }
+  .manifesto-quote {
+    font-family: var(--f-sans);
+    font-weight: 600;
+    font-style: italic;
+    font-size: 3rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--text-hi);
+    margin: 0 0 56px;
+    max-width: 900px;
+  }
+  .manifesto-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+  }
+  @media (max-width: 768px) {
+    .manifesto-cols { grid-template-columns: 1fr; gap: 32px; }
+    .manifesto-quote { font-size: 1.85rem; }
+  }
+  .manifesto-cols p {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--text-md);
+    margin: 0;
+  }
+  .manifesto-link {
+    display: inline-block;
+    margin-top: 36px;
+    color: var(--crimson);
+    font-family: var(--f-sans);
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+    border-bottom: 1px solid transparent;
+    transition: border-color 200ms ease, color 200ms ease;
+  }
+  .manifesto-link:hover {
+    border-bottom-color: var(--crimson);
+    color: #fff;
+  }
+
+  /* =========================================================
+     6. ENGINE — three steps
+     ========================================================= */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 56px;
+  }
+  @media (max-width: 900px) { .steps { grid-template-columns: 1fr; gap: 40px; } }
+
+  .step-num {
+    font-family: var(--f-sans);
+    font-weight: 700;
+    font-size: 6rem;
+    line-height: 1;
+    color: var(--crimson);
+    letter-spacing: -0.04em;
+    margin-bottom: 18px;
+  }
+  .step-eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .step-title {
+    font-family: var(--f-sans);
+    font-weight: 600;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--text-hi);
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+  }
+  .step-desc {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-md);
+    margin: 0;
+    max-width: 320px;
+  }
+
+  /* =========================================================
+     7. FOOTER
+     ========================================================= */
+  .footer {
+    border-top: 1px solid var(--hairline);
+    padding: 64px 0 28px;
+    color: var(--text-mu);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 2fr 1fr;
+    gap: 48px;
+    align-items: flex-start;
+  }
+  @media (max-width: 900px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 36px; }
+  }
+
+  .footer-brand .wordmark { display: inline-block; margin-bottom: 10px; color: var(--text-hi); }
+  .footer-tag {
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-mu);
+    margin: 0;
+  }
+
+  .footer-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 600px) { .footer-cols { grid-template-columns: repeat(2, 1fr); } }
+  .footer-col h4 {
+    font-family: var(--f-sans);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-hi);
+    margin: 0 0 14px;
+    letter-spacing: 0.02em;
+  }
+  .footer-col ul { list-style: none; padding: 0; margin: 0; }
+  .footer-col li { margin-bottom: 8px; }
+  .footer-col a {
+    font-size: 13px;
+    color: var(--text-md);
+    transition: color 180ms ease;
+  }
+  .footer-col a:hover { color: var(--crimson); }
+
+  .footer-right {
+    text-align: right;
+  }
+  @media (max-width: 900px) { .footer-right { text-align: left; } }
+  .footer-right a {
+    color: var(--crimson);
+    font-family: var(--f-sans);
+    font-weight: 500;
+    font-size: 13px;
+  }
+  .footer-right a:hover { color: #fff; }
+
+  .footer-strip {
+    margin-top: 48px;
+    padding-top: 22px;
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--text-mu);
+  }
+  .footer-strip .build {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .footer-strip .tag-final {
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  /* =========================================================
+     RESPONSIVE — hero scaling
+     ========================================================= */
+  @media (max-width: 1024px) {
+    .hero-title { font-size: 4.2rem; }
+  }
+  @media (max-width: 768px) {
+    .container { padding: 0 22px; }
+    .hero { padding: 96px 22px 80px; min-height: 92vh; }
+    .hero-title { font-size: 3rem; }
+    .hero-sub { font-size: 17px; margin-bottom: 36px; }
+    .search-bar { height: 68px; padding: 6px 6px 6px 18px; gap: 10px; }
+    #search-input { font-size: 16px; }
+    .search-btn { padding: 12px 18px; font-size: 13px; }
+    .section { padding: 80px 0; }
+    .section-title { font-size: 24px; }
+    .step-num { font-size: 4.5rem; }
+    .manifesto { padding: 64px 22px; }
+    .manifesto-quote { font-size: 1.7rem; }
+  }
+  @media (max-width: 480px) {
+    .hero-title { font-size: 2.4rem; }
+    .hero-sub { font-size: 15px; }
+    .search-bar { height: 60px; border-radius: 12px; }
+    .search-btn { padding: 10px 14px; font-size: 12px; }
+    .nav-inner { height: 56px; }
+    .wordmark { font-size: 15px; }
+    .section { padding: 64px 0; }
+    .section-title { font-size: 20px; }
+    .manifesto-quote { font-size: 1.5rem; }
+    .step-num { font-size: 3.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     1. NAV
+     ========================================================= -->
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="#" class="wordmark" aria-label="ViSuReNa home">VISURENA<span class="dot">.</span></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#" class="active">Search</a>
+      <a href="#">For You</a>
+      <a href="#">Watch</a>
+      <a href="#">Read</a>
+      <a href="#">Play</a>
+      <a href="#">Listen</a>
+      <a href="#">Research</a>
+    </nav>
+    <div class="nav-right">
+      <a href="#">Become a member &rarr;</a>
+    </div>
+  </div>
+</header>
+
+<!-- =========================================================
+     2. HERO
+     ========================================================= -->
+<section class="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-grain" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <div class="eyebrow">&#9654; ViSuReNa &middot; The catalog you wish existed</div>
+
+    <h1 class="hero-title">Search the catalog you <em>wish</em> existed.</h1>
+
+    <p class="hero-sub">When enough of you search for the same thing, we make it. Crowd-steered, AI-produced, editorially directed.</p>
+
+    <div class="search-wrap">
+      <form class="search-bar" onsubmit="event.preventDefault();" role="search" aria-label="Search the catalog you wish existed">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <div class="search-input-stack">
+          <input id="search-input" type="text" autocomplete="off" spellcheck="false"
+                 placeholder="A film you can&#39;t stop thinking about&hellip;"
+                 aria-label="Search ViSuReNa" />
+        </div>
+        <button class="search-btn" type="submit">Search</button>
+      </form>
+
+      <div class="why-wrap">
+        <div class="mono why-label">// Add the WHY &middot; powers our recommendation engine</div>
+        <textarea class="why-input" rows="1" placeholder="What hooked you. Plot, mood, a single image&hellip;"></textarea>
+      </div>
+
+      <div class="trending">
+        <div class="mono trending-eyebrow">// TRENDING TONIGHT</div>
+        <div class="pills">
+          <button class="pill" type="button">slow-burn sci-fi mystery</button>
+          <button class="pill" type="button">mid-budget heist</button>
+          <button class="pill" type="button">electronic dream-pop</button>
+          <button class="pill" type="button">first-person walking sims</button>
+          <button class="pill" type="button">sapphic regency</button>
+          <button class="pill" type="button">vinyl-warm jazz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mono scroll-indicator" aria-hidden="true">&darr; Browse the catalog</div>
+</section>
+
+<!-- =========================================================
+     3. TONIGHT ON VISURENA
+     ========================================================= -->
+<section class="section">
+  <div class="container">
+    <div class="mono section-eyebrow">// 12 ITEMS LIVE &middot; UPDATED HOURLY</div>
+    <h2 class="section-title">Tonight on visurena<span class="stop">.</span></h2>
+
+    <div class="grid-4">
+
+      <!-- Music 1 -->
+      <article class="card">
+        <div class="card-media">
+          <img src="https://img.youtube.com/vi/7p4Lusyuoa8/maxresdefault.jpg" alt="Original Composition I cover art" loading="lazy" />
+        </div>
+        <div class="card-body">
+          <div class="card-kind music mono">MUSIC</div>
+          <h3 class="card-title">Original Composition I</h3>
+          <p class="card-desc">A first piece written for the studio. Spare, patient, late-night architecture.</p>
+          <div class="mono card-meta">// 4:20 &middot; 2025</div>
+        </div>
+      </article>
+
+      <!-- Music 2 -->
+      <article class="card">
+        <div class="card-media">
+          <img src="https://img.youtube.com/vi/GLrnybyJKDo/maxresdefault.jpg" alt="Original Composition II cover art" loading="lazy" />
+        </div>
+        <div class="card-body">
+          <div class="card-kind music mono">MUSIC</div>
+          <h3 class="card-title">Original Composition II</h3>
+          <p class="card-desc">A companion track. Warmer keys, slower bloom, the same midnight room.</p>
+          <div class="mono card-meta">// 4:20 &middot; 2025</div>
+        </div>
+      </article>
+
+      <!-- Game: Cosmic Defense -->
+      <article class="card">
+        <div class="card-game">
+          <div class="card-game-name">Cosmic Defense</div>
+        </div>
+        <div class="card-body">
+          <div class="card-kind play mono">PLAY</div>
+          <p class="card-desc italic">A wave-shooter against the dark.</p>
+          <div class="mono card-meta">// BROWSER &middot; FREE</div>
+        </div>
+      </article>
+
+      <!-- Game: Neon Tetris -->
+      <article class="card">
+        <div class="card-game">
+          <div class="card-game-name">Neon Tetris</div>
+        </div>
+        <div class="card-body">
+          <div class="card-kind play mono">PLAY</div>
+          <p class="card-desc italic">Falling blocks, brighter edges.</p>
+          <div class="mono card-meta">// BROWSER &middot; FREE</div>
+        </div>
+      </article>
+
+      <!-- Game: Snake Evolution -->
+      <article class="card">
+        <div class="card-game">
+          <div class="card-game-name">Snake Evolution</div>
+        </div>
+        <div class="card-body">
+          <div class="card-kind play mono">PLAY</div>
+          <p class="card-desc italic">The classic, iterated.</p>
+          <div class="mono card-meta">// BROWSER &middot; FREE</div>
+        </div>
+      </article>
+
+      <!-- Game: Pac-Runner -->
+      <article class="card">
+        <div class="card-game">
+          <div class="card-game-name">Pac-Runner</div>
+        </div>
+        <div class="card-body">
+          <div class="card-kind play mono">PLAY</div>
+          <p class="card-desc italic">Maze-chase, restless ghosts.</p>
+          <div class="mono card-meta">// BROWSER &middot; FREE</div>
+        </div>
+      </article>
+
+      <!-- Game: Asteroid Blaster -->
+      <article class="card">
+        <div class="card-game">
+          <div class="card-game-name">Asteroid Blaster</div>
+        </div>
+        <div class="card-body">
+          <div class="card-kind play mono">PLAY</div>
+          <p class="card-desc italic">Vector rocks, vector physics.</p>
+          <div class="mono card-meta">// BROWSER &middot; FREE</div>
+        </div>
+      </article>
+
+      <!-- Game: Missile Defense -->
+      <article class="card">
+        <div class="card-game">
+          <div class="card-game-name">Missile Defense</div>
+        </div>
+        <div class="card-body">
+          <div class="card-kind play mono">PLAY</div>
+          <p class="card-desc italic">Trace arcs, hold the city.</p>
+          <div class="mono card-meta">// BROWSER &middot; FREE</div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     4. THE COLOR SYSTEM — editorial swatch spread
+     ========================================================= -->
+<section class="palette-showcase" id="rooms" aria-label="The color system">
+  <div class="container">
+    <div class="mono ps-eyebrow">// THE PALETTE &middot; 1 PARENT &middot; 6 ROOMS &middot; 1 BRAND</div>
+    <h2 class="ps-headline">The colors of this <em>page</em>.</h2>
+    <p class="ps-sub">Every color you see &mdash; the surface beneath this paragraph, the underline under SEARCH, the ring around the search bar, the eyebrow above each section &mdash; comes from this palette. One parent. Six derived rooms. All shown below, with their hex and where they live.</p>
+
+    <!-- Parent palette band: 4 connected swatches -->
+    <div class="ps-parent-band" aria-label="Parent palette">
+      <div class="ps-chip" style="background: #0A0A0B;">
+        <div class="ps-chip-panel ps-chip-panel--dark">
+          <span class="ps-chip-label">Background</span>
+          <span class="ps-chip-hex">#0A0A0B</span>
+          <span class="ps-chip-usage">Page background. Where everything else sits.</span>
+        </div>
+      </div>
+      <div class="ps-chip" style="background: #16161A;">
+        <div class="ps-chip-panel ps-chip-panel--dark">
+          <span class="ps-chip-label">Surface</span>
+          <span class="ps-chip-hex">#16161A</span>
+          <span class="ps-chip-usage">Cards, the search bar, the manifesto block.</span>
+        </div>
+      </div>
+      <div class="ps-chip" style="background: #1F1F25;">
+        <div class="ps-chip-panel ps-chip-panel--dark">
+          <span class="ps-chip-label">Raised</span>
+          <span class="ps-chip-hex">#1F1F25</span>
+          <span class="ps-chip-usage">Game tiles, raised media wells, hover lifts.</span>
+        </div>
+      </div>
+      <div class="ps-chip ps-chip--accent" style="background: #C8202C;">
+        <span class="ps-chip-badge">&#9733; Parent Accent</span>
+        <div class="ps-chip-panel ps-chip-panel--dark">
+          <span class="ps-chip-label">Crimson</span>
+          <span class="ps-chip-hex">#C8202C</span>
+          <span class="ps-chip-usage">The verb. Search underline, focus ring, every eyebrow.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 ROOMS bento -->
+    <div class="ps-bento" aria-label="Six derived room accents">
+
+      <a class="ps-tile ps-tile--for-you" style="--i: 1;" href="01-onyx-crimson.html#hero">
+        <div class="ps-tile-inner">
+          <div class="ps-tile-top"><span class="ps-tile-name">For You</span></div>
+          <div class="ps-tile-mid">
+            <p class="ps-tile-hex">#C8202C</p>
+            <p class="ps-tile-usage">The everything-feed.</p>
+          </div>
+          <div class="ps-tile-bottom">
+            <div class="ps-tile-demo"><span class="demo-pill">Submit taste</span></div>
+            <span class="ps-tile-open">Open <span class="arrow">&rarr;</span></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="ps-tile ps-tile--watch" style="--i: 2;" href="01-onyx-crimson-watch.html">
+        <div class="ps-tile-inner">
+          <div class="ps-tile-top"><span class="ps-tile-name">Watch</span></div>
+          <div class="ps-tile-mid">
+            <p class="ps-tile-hex">#8B1A28</p>
+            <p class="ps-tile-usage">Films, shorts, scenes.</p>
+          </div>
+          <div class="ps-tile-bottom">
+            <div class="ps-tile-demo">
+              <div class="demo-card">
+                <div class="demo-card-eyebrow">// WATCH</div>
+                <div class="demo-card-title">Slow-burn sci-fi</div>
+              </div>
+            </div>
+            <span class="ps-tile-open">Open <span class="arrow">&rarr;</span></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="ps-tile ps-tile--read" style="--i: 3;" href="01-onyx-crimson-read.html">
+        <div class="ps-tile-inner">
+          <div class="ps-tile-top"><span class="ps-tile-name">Read</span></div>
+          <div class="ps-tile-mid">
+            <p class="ps-tile-hex">#C9763D</p>
+            <p class="ps-tile-usage">Stories, chapters, novels.</p>
+          </div>
+          <div class="ps-tile-bottom">
+            <div class="ps-tile-demo"><span class="demo-link">Read chapter &rarr;</span></div>
+            <span class="ps-tile-open">Open <span class="arrow">&rarr;</span></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="ps-tile ps-tile--play" style="--i: 4;" href="01-onyx-crimson-play.html">
+        <div class="ps-tile-inner">
+          <div class="ps-tile-top"><span class="ps-tile-name">Play</span></div>
+          <div class="ps-tile-mid">
+            <p class="ps-tile-hex">#F04060</p>
+            <p class="ps-tile-usage">Browser games, retro reborn.</p>
+          </div>
+          <div class="ps-tile-bottom">
+            <div class="ps-tile-demo"><span class="demo-pill-arcade">Play &middot; Arcade</span></div>
+            <span class="ps-tile-open">Open <span class="arrow">&rarr;</span></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="ps-tile ps-tile--listen" style="--i: 5;" href="01-onyx-crimson-listen.html">
+        <div class="ps-tile-inner">
+          <div class="ps-tile-top"><span class="ps-tile-name">Listen</span></div>
+          <div class="ps-tile-mid">
+            <p class="ps-tile-hex">#7B2C4E</p>
+            <p class="ps-tile-usage">Tracks, EPs, originals.</p>
+          </div>
+          <div class="ps-tile-bottom">
+            <div class="ps-tile-demo">
+              <div class="demo-track">
+                <span class="play-icon">&#9656;</span>
+                <span>Original I</span>
+                <span class="track-time">4:20</span>
+              </div>
+            </div>
+            <span class="ps-tile-open">Open <span class="arrow">&rarr;</span></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="ps-tile ps-tile--research" style="--i: 6;" href="01-onyx-crimson-research.html">
+        <div class="ps-tile-inner">
+          <div class="ps-tile-top"><span class="ps-tile-name">Research</span></div>
+          <div class="ps-tile-mid">
+            <p class="ps-tile-hex">#8C7568</p>
+            <p class="ps-tile-usage">Build log, transparency.</p>
+          </div>
+          <div class="ps-tile-bottom">
+            <div class="ps-tile-demo"><span class="demo-meta">// 6 MIN READ &middot; BUILD LOG</span></div>
+            <span class="ps-tile-open">Open <span class="arrow">&rarr;</span></span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="ps-rule">// EVERY HEX ABOVE APPEARS SOMEWHERE ON THIS PAGE &middot; CLICK A ROOM TO SEE IT IN CONTEXT</div>
+  </div>
+</section>
+
+<!-- =========================================================
+     5. MANIFESTO
+     ========================================================= -->
+<section class="manifesto-wrap">
+  <div class="manifesto">
+    <div class="manifesto-inner">
+      <div class="mono manifesto-eyebrow">// THE THESIS</div>
+      <p class="manifesto-quote">&ldquo;Most platforms ship what&rsquo;s already made. We ship what you ask for.&rdquo;</p>
+      <div class="manifesto-cols">
+        <p>The streaming era was a distribution revolution that left the catalog itself untouched &mdash; the same studios, the same green-light committees, the same films you didn&rsquo;t ask for. ViSuReNa starts on the demand side. You search for what you wish existed. We listen, cluster, and only then commit to making it. The catalog is the answer to a question you actually asked.</p>
+        <p>Crowd-steered is not crowd-written. Demand sets the direction; editorial sets the bar. AI handles production at a scale and speed that no traditional studio can match, but every chapter, scene, and track passes through human taste before it ships. The audience picks the destination. The studio drives. That separation is the whole point.</p>
+      </div>
+      <a href="#" class="manifesto-link">Read the full BRD &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     6. HOW THE ENGINE WORKS
+     ========================================================= -->
+<section class="section">
+  <div class="container">
+    <div class="mono section-eyebrow">// THE ENGINE</div>
+    <h2 class="section-title">How the engine works<span class="stop">.</span></h2>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-eyebrow" style="color: #C8202C;">SEARCH</div>
+        <h3 class="step-title"><em>You ask.</em></h3>
+        <p class="step-desc">Submit what you wish existed. We catalog the why.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-eyebrow" style="color: #C9763D;">DEMAND CLUSTER</div>
+        <h3 class="step-title"><em>We aggregate.</em></h3>
+        <p class="step-desc">Patterns emerge. &ldquo;23% want slow-burn sci-fi mystery.&rdquo;</p>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-eyebrow" style="color: #F04060;">ORIGINAL</div>
+        <h3 class="step-title"><em>We ship.</em></h3>
+        <p class="step-desc">New chapter, track, scene &mdash; editorially directed.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     7. FOOTER
+     ========================================================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="wordmark">VISURENA<span class="dot" style="color: var(--crimson);">.</span></span>
+        <p class="footer-tag">An editorial AI streaming studio.</p>
+      </div>
+
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Catalog</h4>
+          <ul>
+            <li><a href="#">Watch</a></li>
+            <li><a href="#">Read</a></li>
+            <li><a href="#">Play</a></li>
+            <li><a href="#">Listen</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>About</h4>
+          <ul>
+            <li><a href="#">The thesis</a></li>
+            <li><a href="#">Editorial</a></li>
+            <li><a href="#">Research</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="#">Newsletter</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">RSS</a></li>
+            <li><a href="#">Become a member</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-right">
+        <a href="#">Membership opens at end of Phase 3 &rarr;</a>
+      </div>
+    </div>
+
+    <div class="footer-strip">
+      <span>&copy; 2026 ViSuReNa Studio.</span>
+      <span class="build">// VISURENA &middot; v0.1 &middot; phase 0 &middot; 2026</span>
+      <span class="tag-final">Crowd-steered. Editorially directed. AI-produced.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- =========================================================
+     JS — rotating placeholder
+     ========================================================= -->
+<script>
+  (function () {
+    var input = document.getElementById('search-input');
+    if (!input) return;
+    var prompts = [
+      "A film you can’t stop thinking about…",
+      "A song that hit just right…",
+      "A novel ending that wrecked you…",
+      "A game you wish someone would make…"
+    ];
+    var i = 0;
+    function tick() {
+      // skip rotation while user is typing or focused
+      if (document.activeElement === input || input.value.length > 0) return;
+      input.classList.add('fade');
+      setTimeout(function () {
+        i = (i + 1) % prompts.length;
+        input.setAttribute('placeholder', prompts[i]);
+        input.classList.remove('fade');
+      }, 360);
+    }
+    setInterval(tick, 3000);
+  })();
+
+  // Staggered scroll-reveal for color showcase tiles
+  (function () {
+    var tiles = document.querySelectorAll('.ps-tile');
+    if (!tiles.length) return;
+    if (!('IntersectionObserver' in window)) {
+      tiles.forEach(function (t) { t.classList.add('is-revealed'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    tiles.forEach(function (t) { io.observe(t); });
+  })();
+</script>
+
+</body>
+</html>

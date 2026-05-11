@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Aurora Indigo — parent palette (used on every page) */
+    --color-bg:               #0A0E2A;
+    --color-surface-1:        #131A3D;
+    --color-surface-2:        #1D2552;
+    --color-hairline:         #2A3268;
+    --color-text-high:        #F0F2FF;
+    --color-text-mid:         #9DA8D9;
+    --color-text-muted:       #5C66A0;
+    --color-accent-parent:    #6B7DFF;
+
+    /* Section accent primitives (the aurora glints) */
+    --color-aurora-indigo:    #6B7DFF;
+    --color-aurora-pink:      #F472B6;
+    --color-aurora-gold:      #F4C04E;
+    --color-aurora-lime:      #B5E853;
+    --color-aurora-cyan:      #2DD4BF;
+    --color-aurora-lavender:  #A78BFA;
+    --color-aurora-platinum:  #C0C8E0;
+
+    /* Section accent semantics (set per page) */
+    --color-accent-home:      var(--color-aurora-indigo);
+    --color-accent-movies:    var(--color-aurora-pink);
+    --color-accent-music:     var(--color-aurora-gold);
+    --color-accent-games:     var(--color-aurora-lime);
+    --color-accent-story:     var(--color-aurora-cyan);
+    --color-accent-vrworld:   var(--color-aurora-lavender);
+    --color-accent-blog:      var(--color-aurora-platinum);
+
+    /* Default room: home */
+    --color-accent-room:      var(--color-accent-home);
+
+    /* Typography tokens */
+    --font-sans:    'Inter', system-ui, -apple-system, sans-serif;
+    --font-italic:  'DM Serif Display', 'Spectral', Georgia, serif;
+    --font-mono:    'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  }
+
+  /* Per-room override pattern — set data-room on <html> or <body> based on the page */
+  html[data-room="home"]     { --color-accent-room: var(--color-accent-home); }
+  html[data-room="movies"]   { --color-accent-room: var(--color-accent-movies); }
+  html[data-room="music"]    { --color-accent-room: var(--color-accent-music); }
+  html[data-room="games"]    { --color-accent-room: var(--color-accent-games); }
+  html[data-room="story"]    { --color-accent-room: var(--color-accent-story); }
+  html[data-room="vrworld"]  { --color-accent-room: var(--color-accent-vrworld); }
+  html[data-room="blog"]     { --color-accent-room: var(--color-accent-blog); }
+
+  /* Custom font imports */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text-high);
+  }
+
+  /* Visible focus rings — accessibility + brand */
+  :focus-visible {
+    outline: 2px solid var(--color-accent-parent);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Aurora Indigo — small utility classes */
+  .aurora-mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent-room);
+  }
+
+  .aurora-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent-room);
+    margin-bottom: 16px;
+  }
+
+  .aurora-italic {
+    font-family: var(--font-italic);
+    font-style: italic;
+    color: var(--color-accent-room);
+  }
+}
+
+@layer utilities {
+  /* Aspect ratio utilities */
+  .aspect-w-16 {
+    position: relative;
+    padding-bottom: calc(9 / 16 * 100%);
+  }
+
+  .aspect-w-16 > * {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+}

@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VISURENA — You tell us what to make. We make it.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,900;1,9..144,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cobalt:#1B2A6E;
+    --cobalt-2:#172459;
+    --cream:#F7E9C9;
+    --lemon:#FFD43B;
+    --red:#FF5A5F;
+    --cream-muted:rgba(247,233,201,0.6);
+    --cobalt-muted:rgba(27,42,110,0.66);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--cobalt);color:var(--cream);font-family:"DM Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+  button,input,textarea{font-family:inherit;}
+
+  /* Subtle paper grain overlay applied to cobalt sections */
+  .grain{position:relative;}
+  .grain::before{
+    content:"";
+    position:absolute;inset:0;
+    pointer-events:none;
+    opacity:.04;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    z-index:0;
+  }
+  .grain > *{position:relative;z-index:1;}
+
+  /* ====== NAV ====== */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:var(--cobalt);
+    border-bottom:1px solid rgba(247,233,201,0.12);
+  }
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 40px;
+    max-width:1480px;margin:0 auto;
+    gap:24px;
+  }
+  .wordmark{
+    font-family:"Fraunces",serif;font-weight:900;font-style:italic;
+    font-size:22px;color:var(--lemon);letter-spacing:-0.01em;
+  }
+  .nav-links{display:flex;gap:28px;list-style:none;}
+  .nav-links a{
+    font-family:"DM Sans",sans-serif;font-weight:700;font-size:13px;
+    text-transform:uppercase;letter-spacing:0.12em;color:var(--cream);
+    padding-bottom:3px;border-bottom:2px solid transparent;
+    transition:border-color .15s ease;
+  }
+  .nav-links a:hover{border-bottom-color:var(--lemon);}
+  .btn-member{
+    background:var(--lemon);color:var(--cobalt);
+    font-family:"DM Sans",sans-serif;font-weight:700;font-size:12px;
+    text-transform:uppercase;letter-spacing:0.14em;
+    padding:11px 20px;border:none;border-radius:999px;cursor:pointer;
+    transition:transform .15s ease;
+  }
+  .btn-member:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--cream);}
+
+  .nav-toggle{display:none;background:none;border:1px solid var(--cream);color:var(--cream);padding:8px 12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;}
+
+  /* ====== HERO ====== */
+  .hero{
+    background:var(--cobalt);
+    min-height:95vh;
+    padding:80px 40px 120px;
+    overflow:hidden;
+  }
+  .hero-inner{
+    max-width:1480px;margin:0 auto;
+    display:grid;grid-template-columns:60% 40%;
+    gap:0;align-items:start;
+    position:relative;
+  }
+  .hero-left{padding-right:24px;padding-top:24px;}
+  .eyebrow{
+    display:inline-block;
+    font-family:"DM Sans",sans-serif;font-weight:700;font-size:11px;
+    text-transform:uppercase;letter-spacing:0.22em;
+    color:var(--cobalt);background:var(--lemon);
+    padding:6px 12px;margin-bottom:32px;
+    transform:rotate(-1.5deg);
+  }
+  .hero h1{
+    font-family:"Fraunces",serif;font-weight:900;
+    font-variation-settings:"opsz" 144;
+    color:var(--cream);
+    font-size:clamp(3rem, 9vw, 8rem);
+    line-height:0.85;
+    letter-spacing:-0.035em;
+    text-transform:uppercase;
+  }
+  .hero h1 .yellow{color:var(--lemon);}
+  .hero .we-make{
+    font-family:"Fraunces",serif;font-weight:900;
+    font-variation-settings:"opsz" 144;
+    font-size:clamp(4rem, 13vw, 11.5rem);
+    line-height:0.82;letter-spacing:-0.045em;
+    text-transform:uppercase;color:var(--cream);
+    margin-top:8px;
+  }
+  .hero .we-make .lemon-it{color:var(--lemon);}
+  .kicker{
+    font-family:"DM Sans",sans-serif;font-weight:500;font-size:18px;
+    color:var(--cream-muted);max-width:560px;line-height:1.45;
+    margin-top:32px;
+  }
+
+  /* ====== INTAKE FORM (poster paste) ====== */
+  .intake{
+    background:var(--cream);color:var(--cobalt);
+    padding:36px 32px 32px;
+    border:3px solid var(--cobalt);
+    transform:rotate(-1.2deg);
+    margin-left:-40px;margin-top:24px;
+    box-shadow:10px 10px 0 var(--lemon);
+    position:relative;z-index:2;
+  }
+  .stamp{
+    display:inline-block;
+    font-family:"DM Sans",sans-serif;font-weight:700;font-size:11px;
+    letter-spacing:0.18em;text-transform:uppercase;
+    background:var(--lemon);color:var(--cobalt);
+    padding:5px 10px;border:1.5px solid var(--cobalt);
+    transform:rotate(-2deg);margin-bottom:22px;
+  }
+  .intake h2{
+    font-family:"Fraunces",serif;font-weight:900;
+    font-size:1.6rem;line-height:1;letter-spacing:-0.02em;
+    text-transform:uppercase;color:var(--cobalt);
+    margin-bottom:18px;
+  }
+  .step-label{
+    display:block;
+    font-family:"DM Sans",sans-serif;font-weight:700;
+    font-size:11px;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--cobalt);
+    border-bottom:3px solid var(--lemon);
+    padding-bottom:4px;margin-bottom:10px;
+    width:max-content;max-width:100%;
+  }
+  .field{
+    width:100%;
+    background:transparent;
+    color:var(--cobalt);
+    border:1px solid var(--cobalt);
+    border-radius:0;
+    padding:12px 14px;
+    font-size:15px;
+    font-family:"DM Sans",sans-serif;
+    margin-bottom:18px;
+    outline:none;
+  }
+  .field::placeholder{color:rgba(27,42,110,0.5);}
+  .field:focus{background:#fff5dc;}
+  textarea.field{min-height:78px;resize:vertical;}
+  .submit{
+    display:inline-block;
+    background:var(--lemon);color:var(--cobalt);
+    border:2.5px solid var(--cobalt);
+    padding:16px 22px;
+    font-family:"Fraunces",serif;font-weight:900;
+    font-size:1.05rem;letter-spacing:-0.01em;
+    text-transform:uppercase;cursor:pointer;
+    transform:rotate(-1deg);
+    transition:transform .15s ease, box-shadow .15s ease;
+    width:100%;
+    text-align:left;
+  }
+  .submit:hover{
+    transform:rotate(-1deg) translate(-3px,-3px);
+    box-shadow:6px 6px 0 var(--cobalt);
+  }
+  .micro{
+    font-family:"DM Sans",sans-serif;font-style:italic;
+    font-size:11.5px;color:var(--cobalt-muted);
+    margin-top:14px;
+  }
+
+  /* big type number behind hero — subtle poster element */
+  .hero-num{
+    position:absolute;
+    right:-20px;bottom:-90px;
+    font-family:"Fraunces",serif;font-weight:900;font-style:italic;
+    color:rgba(255,212,59,0.10);
+    font-size:clamp(8rem,22vw,22rem);
+    line-height:1;pointer-events:none;
+    letter-spacing:-0.05em;
+  }
+
+  /* ====== ALREADY SHIPPED ====== */
+  .shipped{
+    background:var(--cream);color:var(--cobalt);
+    padding:120px 40px;
+  }
+  .shipped-inner{max-width:1480px;margin:0 auto;}
+  .section-head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    flex-wrap:wrap;gap:24px;
+    margin-bottom:56px;
+  }
+  .shipped h2{
+    font-family:"Fraunces",serif;font-weight:900;
+    font-size:clamp(2.8rem,6.5vw,5.4rem);
+    line-height:0.9;letter-spacing:-0.035em;
+    text-transform:uppercase;color:var(--cobalt);
+  }
+  .shipped .sub{
+    font-family:"DM Sans",sans-serif;font-weight:500;
+    font-size:18px;color:var(--cobalt-muted);
+    max-width:380px;line-height:1.4;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:28px;
+  }
+  .card{
+    border:3px solid var(--cobalt);
+    background:var(--cream);
+    aspect-ratio:3/4;
+    position:relative;overflow:hidden;
+    transition:transform .18s ease, box-shadow .18s ease;
+    display:flex;flex-direction:column;
+  }
+  .card:hover{
+    transform:translate(-4px,-4px);
+    box-shadow:8px 8px 0 var(--lemon);
+  }
+  .card.red:hover{box-shadow:8px 8px 0 var(--red);}
+  .card.cream-bg:hover{box-shadow:8px 8px 0 var(--cobalt);}
+  .card .thumb{
+    flex:1;background-size:cover;background-position:center;
+    border-bottom:3px solid var(--cobalt);
+    position:relative;
+  }
+  .card .meta{
+    padding:14px 16px;
+    background:var(--cream);
+    display:flex;align-items:center;justify-content:space-between;
+    gap:10px;
+  }
+  .card .title{
+    font-family:"Fraunces",serif;font-weight:900;
+    font-size:1.05rem;line-height:1;letter-spacing:-0.01em;
+    text-transform:uppercase;color:var(--cobalt);
+  }
+  .card .tag{
+    font-family:"DM Sans",sans-serif;font-weight:700;font-size:10px;
+    letter-spacing:0.16em;text-transform:uppercase;
+    background:var(--lemon);color:var(--cobalt);
+    padding:4px 7px;border:1.5px solid var(--cobalt);
+    transform:rotate(-2deg);white-space:nowrap;
+  }
+
+  /* solid color game cards — title fills the thumb area */
+  .card .blockfill{
+    flex:1;
+    border-bottom:3px solid var(--cobalt);
+    display:flex;align-items:flex-end;
+    padding:20px;
+    position:relative;overflow:hidden;
+  }
+  .card .blockfill .bigtitle{
+    font-family:"Fraunces",serif;font-weight:900;
+    font-size:clamp(1.6rem,2.4vw,2.4rem);
+    line-height:0.85;letter-spacing:-0.03em;
+    text-transform:uppercase;
+    word-break:break-word;
+  }
+  .card .blockfill .corner-num{
+    position:absolute;top:10px;right:14px;
+    font-family:"Fraunces",serif;font-weight:900;
+    font-size:14px;letter-spacing:0.05em;
+  }
+  .fill-cobalt{background:var(--cobalt);} .fill-cobalt .bigtitle, .fill-cobalt .corner-num{color:var(--lemon);}
+  .fill-lemon{background:var(--lemon);} .fill-lemon .bigtitle, .fill-lemon .corner-num{color:var(--cobalt);}
+  .fill-red{background:var(--red);} .fill-red .bigtitle, .fill-red .corner-num{color:var(--cream);}
+  .fill-cream{background:var(--cream);border:0;} .fill-cream .bigtitle, .fill-cream .corner-num{color:var(--cobalt);}
+
+  /* ====== MANIFESTO ====== */
+  .manifesto{
+    background:var(--red);color:var(--cream);
+    padding:140px 40px;
+    text-align:center;
+    position:relative;
+  }
+  .manifesto-inner{max-width:1100px;margin:0 auto;}
+  .pill-stamp{
+    display:inline-block;
+    background:var(--cream);color:var(--cobalt);
+    border:2px solid var(--cobalt);
+    font-family:"DM Sans",sans-serif;font-weight:700;
+    font-size:11px;letter-spacing:0.18em;text-transform:uppercase;
+    padding:7px 14px;border-radius:999px;
+    transform:rotate(-2deg);
+    margin-bottom:40px;
+  }
+  .quote{
+    font-family:"Fraunces",serif;font-weight:900;font-style:italic;
+    font-size:clamp(2.4rem,5.2vw,5rem);
+    line-height:0.95;letter-spacing:-0.025em;
+    text-transform:uppercase;color:var(--cream);
+  }
+  .quote em{font-style:italic;color:var(--cobalt);background:var(--cream);padding:0 0.1em;display:inline-block;transform:rotate(-0.5deg);}
+  .manifesto-body{
+    margin-top:64px;
+    display:grid;grid-template-columns:1fr 1fr;gap:48px;
+    text-align:left;
+  }
+  .manifesto-body p{
+    font-family:"DM Sans",sans-serif;font-weight:400;
+    font-size:17px;line-height:1.55;color:var(--cream);
+  }
+  .manifesto-body p strong{color:var(--cream);font-weight:700;border-bottom:2px solid var(--cobalt);padding-bottom:1px;}
+
+  /* ====== ENGINE ====== */
+  .engine{background:var(--cobalt);padding:140px 40px;}
+  .engine-inner{max-width:1480px;margin:0 auto;}
+  .engine-head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    flex-wrap:wrap;gap:24px;
+    margin-bottom:80px;
+  }
+  .engine h2{
+    font-family:"Fraunces",serif;font-weight:900;
+    font-size:clamp(2.8rem,6vw,5rem);line-height:0.9;
+    letter-spacing:-0.035em;text-transform:uppercase;color:var(--cream);
+  }
+  .engine h2 .l{color:var(--lemon);}
+  .engine .sub{
+    font-family:"DM Sans",sans-serif;font-weight:500;
+    font-size:17px;color:var(--cream-muted);max-width:360px;line-height:1.45;
+  }
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;}
+  .step{
+    background:var(--cobalt-2);
+    border:3px solid var(--lemon);
+    padding:36px 32px 40px;
+    position:relative;
+    overflow:hidden;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .step:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 var(--lemon);}
+  .step .num{
+    font-family:"Fraunces",serif;font-weight:900;font-style:italic;
+    color:var(--lemon);
+    font-size:clamp(6rem,11vw,10rem);
+    line-height:0.85;letter-spacing:-0.05em;
+    margin-bottom:20px;display:block;
+  }
+  .step h3{
+    font-family:"Fraunces",serif;font-weight:900;
+    font-size:28px;line-height:1;letter-spacing:-0.02em;
+    text-transform:uppercase;color:var(--cream);
+    margin-bottom:14px;
+  }
+  .step p{
+    font-family:"DM Sans",sans-serif;font-weight:400;
+    font-size:15px;line-height:1.5;color:var(--cream-muted);
+  }
+  .step p em{color:var(--lemon);font-style:italic;font-weight:500;}
+
+  /* ====== FOOTER ====== */
+  footer{background:var(--cream);color:var(--cobalt);padding:90px 40px 32px;}
+  .foot-inner{max-width:1480px;margin:0 auto;display:grid;grid-template-columns:2fr 2fr 1fr;gap:48px;align-items:start;}
+  .foot-mark{
+    font-family:"Fraunces",serif;font-weight:900;font-style:italic;
+    font-size:32px;color:var(--cobalt);letter-spacing:-0.02em;
+  }
+  .foot-tag{
+    font-family:"DM Sans",sans-serif;font-weight:500;font-size:15px;
+    color:var(--cobalt-muted);margin-top:10px;max-width:280px;line-height:1.4;
+  }
+  .foot-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .foot-cols h4{
+    font-family:"DM Sans",sans-serif;font-weight:700;font-size:11px;
+    letter-spacing:0.18em;text-transform:uppercase;color:var(--cobalt);
+    margin-bottom:14px;border-bottom:2px solid var(--lemon);padding-bottom:6px;width:max-content;
+  }
+  .foot-cols ul{list-style:none;}
+  .foot-cols li{margin-bottom:8px;}
+  .foot-cols a{
+    font-family:"DM Sans",sans-serif;font-weight:500;font-size:14px;color:var(--cobalt);
+  }
+  .foot-cols a:hover{color:var(--red);}
+  .foot-stamp{
+    display:inline-block;
+    background:var(--lemon);color:var(--cobalt);
+    border:2px solid var(--cobalt);
+    font-family:"DM Sans",sans-serif;font-weight:700;font-size:11px;
+    letter-spacing:0.18em;text-transform:uppercase;
+    padding:8px 12px;
+    transform:rotate(-2deg);
+  }
+  .foot-bottom{
+    max-width:1480px;margin:64px auto 0;
+    border-top:1.5px solid var(--cobalt);
+    padding-top:20px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+    font-family:"DM Sans",sans-serif;font-size:12.5px;color:var(--cobalt-muted);
+  }
+  .foot-bottom .italic{font-style:italic;}
+
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 980px){
+    .nav-inner{padding:14px 20px;gap:12px;}
+    .nav-links{display:none;}
+    .nav-toggle{display:inline-block;}
+    .hero{padding:48px 20px 80px;min-height:auto;}
+    .hero-inner{grid-template-columns:1fr;gap:24px;}
+    .hero-left{padding-right:0;}
+    .hero h1{font-size:3.5rem;}
+    .hero .we-make{font-size:4rem;}
+    .intake{
+      margin-left:0;margin-top:8px;
+      transform:rotate(-0.6deg);
+      box-shadow:6px 6px 0 var(--lemon);
+    }
+    .hero-num{display:none;}
+    .shipped, .manifesto, .engine{padding:80px 20px;}
+    .grid{grid-template-columns:repeat(3,1fr);gap:18px;}
+    .manifesto-body{grid-template-columns:1fr;gap:24px;}
+    .steps{grid-template-columns:1fr;gap:20px;}
+    .foot-inner{grid-template-columns:1fr;gap:32px;}
+    footer{padding:60px 20px 24px;}
+  }
+  @media (max-width: 620px){
+    .grid{grid-template-columns:repeat(2,1fr);gap:14px;}
+    .hero h1{font-size:3rem;}
+    .hero .we-make{font-size:3.4rem;}
+    .shipped h2{font-size:2.4rem;}
+    .quote{font-size:2.1rem;}
+    .foot-cols{grid-template-columns:repeat(2,1fr);}
+  }
+
+  /* selection */
+  ::selection{background:var(--lemon);color:var(--cobalt);}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#" class="wordmark">VISURENA</a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#">Discover</a></li>
+        <li><a href="#">Watch</a></li>
+        <li><a href="#">Read</a></li>
+        <li><a href="#">Play</a></li>
+        <li><a href="#">Listen</a></li>
+        <li><a href="#">Research</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">Menu</button>
+    <button class="btn-member">Become a Member</button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero grain">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <span class="eyebrow">Phase 00 · Demand-driven AI studio</span>
+      <h1>You tell us<br><span class="yellow">What to make.</span></h1>
+      <div class="we-make">We <span class="lemon-it">make</span> it.</div>
+      <p class="kicker">A streaming platform where the audience writes the brief. AI does production. Editorial directs the cut.</p>
+    </div>
+
+    <aside class="intake" aria-labelledby="intake-title">
+      <span class="stamp">Taste Intake · 02 Steps</span>
+      <h2 id="intake-title">Submit a brief</h2>
+
+      <form onsubmit="event.preventDefault(); try{const d={love:document.getElementById('love').value,why:document.getElementById('why').value,at:new Date().toISOString()}; const k='visurena.taste.v1'; const arr=JSON.parse(localStorage.getItem(k)||'[]'); arr.push(d); localStorage.setItem(k,JSON.stringify(arr));}catch(e){} this.querySelector('.submit').innerText='Saved. Thank you. ✓'.replace(' ✓','');">
+        <label class="step-label" for="love">Step 01 · Type a film, book, or song you love</label>
+        <input class="field" id="love" name="love" placeholder="e.g. Past Lives · The Overstory · Pyramid Song" required />
+
+        <label class="step-label" for="why">Step 02 · Why · One sentence</label>
+        <textarea class="field" id="why" name="why" placeholder="What about it hit you? What did it leave you thinking about?" required></textarea>
+
+        <button class="submit" type="submit">Find what's like this →</button>
+        <p class="micro">Goes to localStorage for now. Soon: powers our recommendation engine.</p>
+      </form>
+    </aside>
+
+    <div class="hero-num" aria-hidden="true">00</div>
+  </div>
+</section>
+
+<!-- ============ ALREADY SHIPPED ============ -->
+<section class="shipped">
+  <div class="shipped-inner">
+    <div class="section-head">
+      <h2>Already<br>shipped.</h2>
+      <p class="sub">10 games. 2 tracks. A research feed. All free. No "Coming Soon."</p>
+    </div>
+
+    <div class="grid">
+      <!-- 2 music -->
+      <a class="card" href="#">
+        <div class="thumb" style="background-image:url('https://img.youtube.com/vi/7p4Lusyuoa8/maxresdefault.jpg');"></div>
+        <div class="meta">
+          <span class="title">Original Composition I</span>
+          <span class="tag">Music</span>
+        </div>
+      </a>
+      <a class="card" href="#">
+        <div class="thumb" style="background-image:url('https://img.youtube.com/vi/GLrnybyJKDo/maxresdefault.jpg');"></div>
+        <div class="meta">
+          <span class="title">Original Composition II</span>
+          <span class="tag">Music</span>
+        </div>
+      </a>
+
+      <!-- 6 games (rotate cobalt → lemon → red → cream) -->
+      <a class="card" href="#">
+        <div class="blockfill fill-cobalt"><span class="corner-num">G/01</span><span class="bigtitle">Cosmic Defense</span></div>
+        <div class="meta"><span class="title">Cosmic Defense</span><span class="tag">Game</span></div>
+      </a>
+      <a class="card red" href="#">
+        <div class="blockfill fill-lemon"><span class="corner-num">G/02</span><span class="bigtitle">Neon Tetris</span></div>
+        <div class="meta"><span class="title">Neon Tetris</span><span class="tag">Game</span></div>
+      </a>
+      <a class="card" href="#">
+        <div class="blockfill fill-red"><span class="corner-num">G/03</span><span class="bigtitle">Snake Evolution</span></div>
+        <div class="meta"><span class="title">Snake Evolution</span><span class="tag">Game</span></div>
+      </a>
+      <a class="card cream-bg" href="#">
+        <div class="blockfill fill-cream" style="border-bottom:3px solid var(--cobalt);"><span class="corner-num">G/04</span><span class="bigtitle">Pac-Runner</span></div>
+        <div class="meta"><span class="title">Pac-Runner</span><span class="tag">Game</span></div>
+      </a>
+      <a class="card" href="#">
+        <div class="blockfill fill-cobalt"><span class="corner-num">G/05</span><span class="bigtitle">Asteroid Blaster</span></div>
+        <div class="meta"><span class="title">Asteroid Blaster</span><span class="tag">Game</span></div>
+      </a>
+      <a class="card red" href="#">
+        <div class="blockfill fill-red"><span class="corner-num">G/06</span><span class="bigtitle">Missile Defense</span></div>
+        <div class="meta"><span class="title">Missile Defense</span><span class="tag">Game</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MANIFESTO ============ -->
+<section class="manifesto">
+  <div class="manifesto-inner">
+    <span class="pill-stamp">The Thesis · 01</span>
+    <p class="quote">Most platforms ship what's <em>already made</em>. We ship <em>what you ask for</em>.</p>
+
+    <div class="manifesto-body">
+      <p><strong>Demand-first.</strong> Streaming caught up to taste; it never caught up to demand. Catalogs are still finished cans of film, lined up to be browsed. We invert it. The home page is not a wall of posters — it's a brief box. You name the thing that hit you, and why. That signal becomes the production order. The platform is the studio's intake desk, not its lobby.</p>
+      <p><strong>Crowd-steered, not crowd-written.</strong> Audiences are great at telling you what's missing and terrible at writing the script. We aggregate the briefs into demand clusters, editorial sets the angle, AI does the heavy lift, and a human director signs the cut. The crowd decides the destination. The studio decides the road. That is the line we will not cross.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ENGINE ============ -->
+<section class="engine grain">
+  <div class="engine-inner">
+    <div class="engine-head">
+      <h2>How the <span class="l">engine</span><br>works.</h2>
+      <p class="sub">Three steps. A studio production line wired backwards: from demand to ship, not from script to release.</p>
+    </div>
+
+    <div class="steps">
+      <article class="step">
+        <span class="num">01</span>
+        <h3>Taste Capture</h3>
+        <p><em>You tell us.</em> Submit a film, chapter, or song that hit. We catalog the why.</p>
+      </article>
+      <article class="step">
+        <span class="num">02</span>
+        <h3>Demand Clusters</h3>
+        <p><em>We aggregate.</em> Patterns emerge. The crowd has a shape.</p>
+      </article>
+      <article class="step">
+        <span class="num">03</span>
+        <h3>Originals Ship</h3>
+        <p><em>We make it.</em> New chapter, track, or scene. Crowd-steered, editorially directed, AI-produced.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="foot-mark">VISURENA</div>
+      <p class="foot-tag">An editorial AI studio. The audience writes the brief. We make it.</p>
+    </div>
+
+    <div class="foot-cols">
+      <div>
+        <h4>Catalog</h4>
+        <ul>
+          <li><a href="#">Watch</a></li>
+          <li><a href="#">Read</a></li>
+          <li><a href="#">Play</a></li>
+          <li><a href="#">Listen</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>About</h4>
+        <ul>
+          <li><a href="#">Manifesto</a></li>
+          <li><a href="#">Editorial</a></li>
+          <li><a href="#">Research</a></li>
+          <li><a href="#">Phase 00</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#">Submit a brief</a></li>
+          <li><a href="#">Newsletter</a></li>
+          <li><a href="#">RSS</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="text-align:right;">
+      <span class="foot-stamp">Est. 2026 · Phase 0</span>
+    </div>
+  </div>
+
+  <div class="foot-bottom">
+    <span>© 2026 ViSuReNa Studio. All briefs welcome.</span>
+    <span class="italic">Crowd-steered. Editorially directed. AI-produced.</span>
+  </div>
+</footer>
+
+</body>
+</html>
