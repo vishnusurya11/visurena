@@ -5,5 +5,6 @@ const nextConfig = {
   output: 'export',
   trailingSlash: true,
   transpilePackages: ['@visurena/design-tokens', '@visurena/core', '@visurena/ui'],
+  experimental: { externalDir: true },
 }
 module.exports = nextConfig
