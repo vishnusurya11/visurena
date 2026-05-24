@@ -14,6 +14,9 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.1",
+    "@visurena/core": "workspace:^",
+    "@visurena/design-tokens": "workspace:^",
+    "@visurena/ui": "workspace:^",
     "autoprefixer": "^10.4.17",
     "aws-sdk": "^2.1540.0",
     "framer-motion": "^11.0.3",
