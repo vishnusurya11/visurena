@@ -9,19 +9,19 @@
 
 **Legend:** `[ ]` todo · `[~]` in progress · `[x]` done · 📄 = has a detailed plan · 📝 = plan still to be written
 
-**Current focus:** 🎯 Phase 0 → Phase 1 (foundation, then the redesigned homepage).
+**Current focus:** 🎯 Phase 1 (the redesigned homepage). Phase 0 foundation done ✅.
 
 ---
 
 ## Phase 0 — Foundation 📄  (no backend; prerequisite for everything)
 Detailed plan: `2026-05-23-foundation-and-redesign.md` (Tasks 1–6)
 
-- [ ] 0.1 Safety branch + verify current build is green
-- [ ] 0.2 pnpm workspace + Turborepo scaffolding at repo root
-- [ ] 0.3 Move `visurena-next` → `apps/web`; switch to pnpm
-- [ ] 0.4 Shared config package (`@visurena/config` tsconfig base)
-- [ ] 0.5 Test tooling (Vitest + React Testing Library) in `apps/web`
-- [ ] 0.6 Scaffold empty packages: `design-tokens`, `core`, `ui`
+- [x] 0.1 Safety branch + verify current build is green
+- [x] 0.2 pnpm workspace + Turborepo scaffolding at repo root
+- [x] 0.3 Move `visurena-next` → `apps/web`; switch to pnpm
+- [x] 0.4 Shared config package (`@visurena/config` tsconfig base)
+- [x] 0.5 Test tooling (Vitest + React Testing Library) in `apps/web`
+- [x] 0.6 Scaffold empty packages: `design-tokens`, `core`, `ui`
 
 ## Phase 1 — Redesign + nebula: homepage 📄  (no backend)
 Detailed plan: `2026-05-23-foundation-and-redesign.md` (Tasks 7–17)
@@ -97,3 +97,4 @@ Plan to be written: `phase-5-search.md`
 | Date | Phase | Note |
 |---|---|---|
 | 2026-05-23 | — | Tracker created. Phase 0 + 1 detailed plan ready. Starting execution. |
+| 2026-05-23 | 0 | Foundation complete: pnpm+turbo monorepo, app moved to apps/web, config + test tooling + empty packages. Build green, pushed. |
