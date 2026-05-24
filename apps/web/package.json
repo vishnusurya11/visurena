@@ -1,5 +1,5 @@
 {
-  "name": "visurena-next",
+  "name": "@visurena/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next export"
+    "typecheck": "tsc --noEmit",
+    "export": "next build"
   },
   "dependencies": {
     "@heroicons/react": "^2.1.1",
