@@ -46,13 +46,13 @@ export default function Blog({ blogPosts }: BlogProps) {
   };
 
   return (
-    <div className="min-h-screen bg-comfy-bg">
+    <div className="min-h-screen bg-transparent">
       {/* Navigation Back */}
-      <div className="border-b border-comfy-border">
+      <div className="border-b border-jewel-ivory/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
           <button
             onClick={() => router.push('/')}
-            className="text-comfy-muted hover:text-comfy-accent transition-colors text-sm flex items-center gap-2"
+            className="text-jewel-ivory/60 hover:text-jewel-amber transition-colors text-sm flex items-center gap-2"
           >
             <span>←</span>
             <span>Back to Home</span>
@@ -61,15 +61,15 @@ export default function Blog({ blogPosts }: BlogProps) {
       </div>
 
       {/* Header */}
-      <header className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16 border-b border-comfy-border">
+      <header className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16 border-b border-jewel-ivory/10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="font-spectral text-5xl sm:text-6xl font-bold text-comfy-heading mb-4">
+          <h1 className="font-display text-5xl sm:text-6xl font-bold text-jewel-ivory mb-4">
             ViSuReNa Blog
           </h1>
-          <p className="text-xl text-comfy-text font-sans">
+          <p className="text-xl text-jewel-ivory/60 font-body">
             ComfyUI experiments, AI research, and technical insights
           </p>
 
@@ -81,8 +81,8 @@ export default function Blog({ blogPosts }: BlogProps) {
                 onClick={() => setSelectedTag(tag)}
                 className={`px-3 py-1.5 text-sm rounded-full transition-all ${
                   selectedTag === tag
-                    ? 'bg-comfy-accent text-white font-medium'
-                    : 'bg-comfy-card text-comfy-muted border border-comfy-border hover:border-comfy-accent hover:text-comfy-accent'
+                    ? 'bg-jewel-amber text-ink-base font-medium'
+                    : 'bg-ink-raise text-jewel-ivory/60 border border-jewel-ivory/10 hover:border-jewel-amber hover:text-jewel-amber'
                 }`}
               >
                 {tag.charAt(0).toUpperCase() + tag.slice(1)}
@@ -116,7 +116,7 @@ export default function Blog({ blogPosts }: BlogProps) {
         {/* Regular Posts Section */}
         {filteredRegular.length > 0 ? (
           <section>
-            <h2 className="font-spectral text-2xl font-bold text-comfy-heading mb-8 pb-4 border-b border-comfy-border">
+            <h2 className="font-display text-2xl font-bold text-jewel-ivory mb-8 pb-4 border-b border-jewel-ivory/10">
               All Posts
             </h2>
             {filteredRegular.map((post) => (
@@ -136,12 +136,12 @@ export default function Blog({ blogPosts }: BlogProps) {
         ) : (
           selectedTag !== 'all' && (
             <div className="text-center py-20">
-              <p className="text-comfy-muted text-lg">
-                No posts found with the tag "{selectedTag}"
+              <p className="text-jewel-ivory/60 text-lg">
+                No posts found with the tag &quot;{selectedTag}&quot;
               </p>
               <button
                 onClick={() => setSelectedTag('all')}
-                className="mt-4 text-comfy-accent hover:underline"
+                className="mt-4 text-jewel-amber hover:underline"
               >
                 View all posts
               </button>
@@ -152,8 +152,8 @@ export default function Blog({ blogPosts }: BlogProps) {
         {/* Empty State */}
         {blogPosts.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-comfy-muted text-lg mb-4">No blog posts yet</p>
-            <p className="text-comfy-text text-sm">
+            <p className="text-jewel-ivory/60 text-lg mb-4">No blog posts yet</p>
+            <p className="text-jewel-ivory/40 text-sm">
               Check back soon for ComfyUI experiments and AI research!
             </p>
           </div>
@@ -161,8 +161,8 @@ export default function Blog({ blogPosts }: BlogProps) {
       </main>
 
       {/* Footer */}
-      <footer className="max-w-4xl mx-auto px-4 sm:px-6 py-12 mt-20 border-t border-comfy-border">
-        <div className="text-center text-comfy-muted text-sm">
+      <footer className="max-w-4xl mx-auto px-4 sm:px-6 py-12 mt-20 border-t border-jewel-ivory/10">
+        <div className="text-center text-jewel-ivory/40 text-sm">
           <p>© 2025 ViSuReNa. All rights reserved.</p>
         </div>
       </footer>
