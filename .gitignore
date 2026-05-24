@@ -1,6 +1,6 @@
 tutorial-env/
 __pycache__/
-.claude/
+
 
 # Node.js / Next.js
 node_modules/
@@ -42,3 +42,11 @@ yarn-error.log*
 # Temporary files
 *.tmp
 *.temp
+
+# Monorepo (pnpm + Turborepo)
+node_modules/
+.turbo/
+**/.next/
+**/out/
+**/dist/
+*.tsbuildinfo
