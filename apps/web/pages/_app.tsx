@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+import { ThemeProvider, NebulaBackground } from "@visurena/ui";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -41,7 +42,10 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="msapplication-TileColor" content="#000000" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </Head>
-      <Component {...pageProps} />
+      <ThemeProvider section={(pageProps as any).section ?? "stories"}>
+        <NebulaBackground />
+        <Component {...pageProps} />
+      </ThemeProvider>
     </>
   );
 }
