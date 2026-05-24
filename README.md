@@ -1,117 +1,82 @@
-# ViSuReNa Website
+# Visurena
 
-A modern, responsive website built with Next.js, featuring movies, music, games, and blog content.
+A cinematic creative-studio platform — **Stories, Movies, Music, Games** — with a dark,
+jewel-toned editorial design and a subtle animated nebula-gas background. Built React-first
+in a monorepo so a future mobile app can reuse the design language and logic.
 
-## 🚀 Quick Start
+> 📐 **Design & architecture:** see [ARCHITECTURE.md](ARCHITECTURE.md) (the living source of
+> truth) and the build plans in [docs/superpowers/plans/](docs/superpowers/plans/).
+> The per-phase task tracker is [docs/superpowers/plans/TASKS.md](docs/superpowers/plans/TASKS.md).
 
-### Local Development
-
-```bash
-# Navigate to project
-cd visurena-next
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Open http://localhost:3000
-```
-
-### Build & Test
-
-```bash
-# Build for production
-npm run build
-
-# Test production build locally
-npm run start
-
-# Generate static export
-npm run export
-```
-
-## 📁 Project Structure
+## 🧱 Monorepo layout (pnpm + Turborepo)
 
 ```
 visurena/
-├── visurena-next/          # Main Next.js application
-│   ├── pages/             # Website pages
-│   ├── components/        # React components
-│   ├── posts/             # Blog posts (markdown/html)
-│   ├── public/images/     # Static images
-│   └── content-config.json # Movies/music content
-├── infrastructure/         # AWS deployment files
-└── docs/                  # Detailed documentation
+├─ apps/
+│  └─ web/              # Next.js site (Pages Router, static export)
+├─ packages/
+│  ├─ design-tokens/    # jewel palette, section accents, motion, Tailwind preset
+│  ├─ ui/               # shared React components (nebula, theme, chrome, cards)
+│  ├─ core/             # content types + content selectors (framework-agnostic)
+│  └─ config/           # shared tsconfig base
+├─ content-local/       # local JSON content for dev (real content lives in S3 later)
+├─ infrastructure/      # AWS deploy (S3 + CloudFront)
+└─ docs/                # guides, architecture plans
 ```
+
+## 🚀 Quick Start
+
+**Prerequisites:** Node 18+ and pnpm (via Corepack).
+
+```bash
+# one-time: enable pnpm
+corepack enable && corepack prepare pnpm@9 --activate
+
+# from the repo root
+pnpm install
+
+# run the web app
+pnpm --filter @visurena/web dev
+# → open http://localhost:3000
+```
+
+Stop the dev server with `Ctrl-C`. If you see stale errors after big changes,
+delete the cache and restart: `rm -rf apps/web/.next && pnpm --filter @visurena/web dev`.
+
+## 🧪 Tests
+
+```bash
+# all packages
+pnpm test
+
+# a single package
+pnpm --filter @visurena/ui test
+pnpm --filter @visurena/web test
+```
+
+## 📦 Build (static export)
+
+```bash
+pnpm --filter @visurena/web build
+# static site is emitted to apps/web/out/
+```
+
+## 🎨 The design system
+
+- **Palette (jewel):** amber = Stories, emerald = Movies, ruby = Music, amethyst = Games, on near-black.
+- **Background:** one persistent CSS/SVG **nebula-gas** layer (`@visurena/ui` `NebulaBackground`),
+  section-tinted via `ThemeProvider`, honoring `prefers-reduced-motion`.
+- **Type:** Fraunces (display) · Spectral (body) · JetBrains Mono (labels).
+- Tokens live in `@visurena/design-tokens` and are consumed by Tailwind via a shared preset.
 
 ## 🚀 Deployment
 
-### One-time Infrastructure Setup
+Static export → **AWS S3 + CloudFront**. See [infrastructure/](infrastructure/) and the
+deploy scripts. Deployment of the redesign is wired up as the redesign branches merge.
 
-```bash
-cd infrastructure
-./deploy-infrastructure.sh
-```
+## 📋 Status
 
-### GitHub Actions Setup
-
-Add these secrets in GitHub Settings → Secrets:
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `S3_BUCKET`
-- `CLOUDFRONT_DISTRIBUTION_ID`
-
-Deployment happens automatically when you merge to main branch.
-
-## 📝 Content Management
-
-### Adding Blog Posts
-Drop `.md` or `.html` files in `visurena-next/posts/`
-
-### Adding Movies/Music
-Edit `visurena-next/content-config.json`
-
-## 📚 Documentation
-
-For detailed guides, see the `docs/` folder:
-- [Blog Guide](docs/blog-guide.md) - How to create blog posts
-- [Content Management](docs/content-management.md) - Managing movies/music
-- [Testing Guide](docs/testing.md) - Testing procedures
-- [DNS Setup](docs/dns-setup.md) - Domain configuration
-- [Security Guide](docs/security.md) - Security best practices
-
-## 🛠️ Tech Stack
-
-- **Frontend**: Next.js, React, TypeScript, Tailwind CSS
-- **Hosting**: AWS S3 + CloudFront CDN
-- **Deployment**: GitHub Actions
-- **Content**: Markdown/HTML for blogs, JSON for media
-
-## 📋 Requirements
-
-- Node.js 18+
-- AWS CLI (for deployment)
-- GitHub account (for automated deployment)
-
-## 🧪 Testing
-
-```bash
-# Run development server
-npm run dev
-
-# Check TypeScript
-npm run type-check
-
-# Build and preview
-npm run build && npm run start
-```
-
-## 🌐 Live Site
-
-Visit: [https://visurena.com](https://visurena.com)
-
----
-
-For questions or issues, check the `docs/` folder for detailed guides.
+Redesign in progress on branch `redesign/foundation`:
+- ✅ **Phase 0** — monorepo foundation (pnpm + Turborepo, shared packages, test tooling)
+- ✅ **Phase 1** — homepage rebuilt in "The Studio" jewel design + nebula background; section pages rethemed
+- ⏭️ Next: Phase 1b (section/detail pages + story reader), then content infra (S3 + DynamoDB), auth (Cognito), engagement, search — see [ARCHITECTURE.md](ARCHITECTURE.md) §3.
