@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --font-display: "Fraunces";
+  --font-body: "Spectral";
+  --font-mono: "JetBrains Mono";
+}
+html, body { background: #0a0a0b; color: #f5efdb; }
+body { font-family: var(--font-body), system-ui, sans-serif; }
+
 @layer base {
   /* Custom font imports */
   @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');

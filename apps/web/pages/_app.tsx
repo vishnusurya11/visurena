@@ -6,15 +6,18 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>ViSuReNa - Ultimate Entertainment Platform</title>
-        <meta name="description" content="Your gateway to personalized entertainment - movies, music, games, stories and AI-generated content" />
+        <title>Visurena</title>
+        <meta name="description" content="Visurena — a cinematic creative studio. Stories, films, music, and games." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
         <link rel="icon" href="/favicon.ico" />
 
         {/* Google Fonts - Spectral for blog */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Spectral:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+          rel="stylesheet"
+        />
 
         {/* PWA Configuration */}
         <link rel="manifest" href="/manifest.json" />
