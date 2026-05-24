@@ -331,3 +331,4 @@ Under the $10 ceiling; search starts free; analytics is pennies-per-query.
 | 2026-05-23 | Added D27 (serialized chapters). **Finalized full design document** (sections §1–§12 fleshed out). Status → design complete, pending owner review. |
 | 2026-05-23 | Owner: **deferred multi-language (D26) — out of scope for now**; kept serialized chapters (D27). Stripped per-language fields from folder layout, `item.json`, data model, and search index. |
 | 2026-05-23 | Moved `ARCHITECTURE.md` + `CLAUDE.md` into `visurena/` (the git repo) for version control. Corrected stale CLAUDE.md content (JSON not HTML; status → design approved). |
+| 2026-05-23 | Built Step 0 (monorepo) + Step 1 homepage: design-tokens, core content layer, ui (theme, nebula, chrome, cards), redesigned homepage reading the content layer. 16 tests passing; static export green. |

@@ -26,17 +26,17 @@ Detailed plan: `2026-05-23-foundation-and-redesign.md` (Tasks 1–6)
 ## Phase 1 — Redesign + nebula: homepage 📄  (no backend)
 Detailed plan: `2026-05-23-foundation-and-redesign.md` (Tasks 7–17)
 
-- [ ] 1.1 Jewel design tokens (palette, section accents, motion)
-- [ ] 1.2 Tailwind preset + jewel fonts wired into `apps/web`
-- [ ] 1.3 Content types + local content loader/selectors (`core`)
-- [ ] 1.4 Seed local content (`content-local/stories.json`) + web adapter
-- [ ] 1.5 `ThemeProvider` (section/item accent resolution)
-- [ ] 1.6 `NebulaBackground` (CSS/SVG, reduced-motion aware)
-- [ ] 1.7 App shell wiring (persistent nebula + theme in `_app`)
-- [ ] 1.8 Chrome: `TopStatusBar`, `Header` nav, `Footer`
-- [ ] 1.9 Content components: `Hero`, `ContentCard`, `CardRow`, `NewsletterCTA`
-- [ ] 1.10 Assemble the homepage in The Studio design
-- [ ] 1.11 Build + responsive + reduced-motion QA; update change log
+- [x] 1.1 Jewel design tokens (palette, section accents, motion)
+- [x] 1.2 Tailwind preset + jewel fonts wired into `apps/web`
+- [x] 1.3 Content types + local content loader/selectors (`core`)
+- [x] 1.4 Seed local content (`content-local/stories.json`) + web adapter
+- [x] 1.5 `ThemeProvider` (section/item accent resolution)
+- [x] 1.6 `NebulaBackground` (CSS/SVG, reduced-motion aware)
+- [x] 1.7 App shell wiring (persistent nebula + theme in `_app`)
+- [x] 1.8 Chrome: `TopStatusBar`, `Header` nav, `Footer`
+- [x] 1.9 Content components: `Hero`, `ContentCard`, `CardRow`, `NewsletterCTA`
+- [x] 1.10 Assemble the homepage in The Studio design
+- [x] 1.11 Build + responsive + reduced-motion QA; update change log
 
 ## Phase 1b — Section + detail pages 📝  (no backend)
 Plan to be written: `2026-05-23-redesign-section-detail-pages.md`
@@ -98,3 +98,4 @@ Plan to be written: `phase-5-search.md`
 |---|---|---|
 | 2026-05-23 | — | Tracker created. Phase 0 + 1 detailed plan ready. Starting execution. |
 | 2026-05-23 | 0 | Foundation complete: pnpm+turbo monorepo, app moved to apps/web, config + test tooling + empty packages. Build green, pushed. |
+| 2026-05-23 | 1 | Homepage redesign complete: jewel tokens, nebula background, theme immersion plumbing, chrome + cards, homepage from content layer. 16 tests green, build green. |
