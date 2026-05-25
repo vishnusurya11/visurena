@@ -9,7 +9,7 @@
 
 **Legend:** `[ ]` todo · `[~]` in progress · `[x]` done · 📄 = has a detailed plan · 📝 = plan still to be written
 
-**Current focus:** 🎯 Phase 1 (the redesigned homepage). Phase 0 foundation done ✅.
+**Current focus:** 🎯 Phase 1b detail pages (story reader + movie/music detail). Section pages done ✅.
 
 ---
 
@@ -41,12 +41,12 @@ Detailed plan: `2026-05-23-foundation-and-redesign.md` (Tasks 7–17)
 ## Phase 1b — Section + detail pages 📝  (no backend)
 Plan to be written: `2026-05-23-redesign-section-detail-pages.md`
 
-- [ ] 1b.1 Stories section page (latest + trending + genre shelves)
-- [ ] 1b.2 Movies / Music / Games "coming soon" section pages
-- [ ] 1b.3 Research section + article page
-- [ ] 1b.4 Story detail / reader (chapters) with **per-item immersion** (`itemAccent`)
+- [x] 1b.1 Stories section page (latest + trending + genre shelves)
+- [x] 1b.2 Movies / Music section pages (full "The Studio" pages; Games already has playable content)
+- [~] 1b.3 Research section page done; article page (`research/[slug]`) still to do
+- [~] 1b.4 Story detail page (`stories/[slug]`) live — hero with per-story tint bleed, chapter index, reader's notes, related; dedicated in-page reader (typography controls) still to do
 - [ ] 1b.5 Movie / Music / Game detail pages
-- [ ] 1b.6 `TrendingList`, `ShelfCard`, `Reader` components + tests
+- [~] 1b.6 Studio motion/atom components shipped in `@visurena/ui` (`VRRowHeader`, `VRPoster`, `VRTilt`, `VRFade`, `VRSplitText`, `VRCounter`, `VRMarquee`, `VRShaderBg`, `VRCursorDot`, `VRScrollProgress`, `VRMagnetic`, `VRStripe`); dedicated `Reader` still to do
 
 ## Phase 2 — Content infrastructure on AWS 📝  (backend)
 Plan to be written: `phase-2-content-infra.md`
@@ -99,3 +99,4 @@ Plan to be written: `phase-5-search.md`
 | 2026-05-23 | — | Tracker created. Phase 0 + 1 detailed plan ready. Starting execution. |
 | 2026-05-23 | 0 | Foundation complete: pnpm+turbo monorepo, app moved to apps/web, config + test tooling + empty packages. Build green, pushed. |
 | 2026-05-23 | 1 | Homepage redesign complete: jewel tokens, nebula background, theme immersion plumbing, chrome + cards, homepage from content layer. 16 tests green, build green. |
+| 2026-05-23 | 1b | "The Studio" port: full homepage + Stories/Movies/Music/Research section pages from `visurenawebtemp`. 12 studio motion components added to `@visurena/ui`. Added `next` peer dep to `ui` (fixes `next/link` resolution); jsdom IntersectionObserver stub. Static export of 26 pages green, all tests green. |

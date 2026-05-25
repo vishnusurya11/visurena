@@ -8,3 +8,18 @@ if (!window.matchMedia) {
     addListener: () => {}, removeListener: () => {}, dispatchEvent: () => false,
   }) as unknown as MediaQueryList;
 }
+
+// jsdom doesn't implement IntersectionObserver; stub it for scroll-reveal components.
+if (!("IntersectionObserver" in globalThis)) {
+  class StubIntersectionObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords() { return []; }
+  }
+  (globalThis as unknown as { IntersectionObserver: unknown }).IntersectionObserver =
+    StubIntersectionObserver;
+}
+
+// jsdom throws on canvas getContext; return null so canvas components bail out cleanly.
+HTMLCanvasElement.prototype.getContext = (() => null) as typeof HTMLCanvasElement.prototype.getContext;
