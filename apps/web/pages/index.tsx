@@ -331,7 +331,7 @@ export default function Home({ stories = [], games = [] }: Partial<HomeProps>) {
 
   return (
     <>
-      <Head><title>{"Visurena — Stories & Games"}</title></Head>
+      <Head><title>{"Visurena — A demand-driven AI content studio"}</title></Head>
       <div className="vr-app" style={{ background: "transparent", color: IVORY, fontFamily: F_BODY, fontSize: 16, lineHeight: 1.55 }}>
         <Header />
         <main className="vr-page">
