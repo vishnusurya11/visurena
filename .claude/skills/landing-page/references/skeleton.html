@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acme — 24/7 Emergency Plumbing in Newcastle</title>
+  <meta name="description" content="Fast, reliable emergency plumbing across Newcastle and the Hunter Valley. Licensed plumbers, upfront pricing, on call 24/7." />
+  <link rel="canonical" href="https://acmeplumbing.example/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://acmeplumbing.example/" />
+  <meta property="og:title" content="Acme — 24/7 Emergency Plumbing in Newcastle" />
+  <meta property="og:description" content="Licensed plumbers, upfront pricing, on call 24/7." />
+  <meta property="og:image" content="https://acmeplumbing.example/og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Acme Plumbing van and crew" />
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Acme — 24/7 Emergency Plumbing in Newcastle" />
+  <meta name="twitter:description" content="Licensed plumbers, upfront pricing, on call 24/7." />
+  <meta name="twitter:image" content="https://acmeplumbing.example/og.jpg" />
+
+  <!-- No-flash dark mode: run BEFORE paint, before Tailwind, in <head> -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Tailwind Play CDN (v3). Dev/prototype use; not for high-traffic production. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#1E40AF', light: '#3B82F6', dark: '#1E3A8A' },
+            accent:  { DEFAULT: '#F59E0B', light: '#FBBF24', dark: '#D97706' },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- FAQ structured data (mirror visible FAQ text exactly) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Are you available 24/7?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. We answer emergency calls any time, day or night, across Newcastle and the Hunter Valley." } },
+      { "@type": "Question", "name": "Do you charge a call-out fee?",
+        "acceptedAnswer": { "@type": "Answer", "text": "We quote upfront before any work begins, so there are no surprise charges." } }
+    ]
+  }
+  </script>
+
+  <style>
+    /* Scroll-reveal: hidden until .in-view; respects reduced motion */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .5s ease-out, transform .5s ease-out; }
+    .reveal.in-view { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-white">Skip to content</a>
+
+  <!-- NAV -->
+  <header class="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur dark:border-slate-800/70 dark:bg-slate-950/80">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3" aria-label="Primary">
+      <a href="#" class="text-lg font-bold tracking-tight">Acme<span class="text-primary">Plumbing</span></a>
+      <div class="hidden items-center gap-6 md:flex">
+        <a href="#features" class="text-sm hover:text-primary">Services</a>
+        <a href="#proof" class="text-sm hover:text-primary">Reviews</a>
+        <a href="#pricing" class="text-sm hover:text-primary">Pricing</a>
+        <a href="#faq" class="text-sm hover:text-primary">FAQ</a>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="theme-toggle" type="button" aria-label="Toggle dark mode"
+          class="rounded-md p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          <svg class="h-5 w-5 dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <svg class="hidden h-5 w-5 dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>
+        </button>
+        <a href="#cta" class="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Get a Quote</a>
+        <button id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu" class="rounded-md p-2 md:hidden hover:bg-slate-100 dark:hover:bg-slate-800">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </nav>
+    <div id="mobile-menu" class="hidden border-t border-slate-200 px-4 py-3 md:hidden dark:border-slate-800">
+      <a href="#features" class="block py-2 text-sm">Services</a>
+      <a href="#proof" class="block py-2 text-sm">Reviews</a>
+      <a href="#pricing" class="block py-2 text-sm">Pricing</a>
+      <a href="#faq" class="block py-2 text-sm">FAQ</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-20 md:grid-cols-2 md:py-28">
+      <div class="reveal">
+        <p class="mb-3 inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent-dark dark:text-accent">Licensed &amp; insured</p>
+        <h1 class="text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">Burst pipe? We're there in under an hour.</h1>
+        <p class="mt-4 max-w-prose text-lg text-slate-600 dark:text-slate-300">24/7 emergency plumbing across Newcastle and the Hunter Valley. Upfront pricing, no call-out surprises.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="tel:+61240000000" class="rounded-md bg-primary px-6 py-3 font-semibold text-white hover:bg-primary-dark">Call Now: (02) 4000 0000</a>
+          <a href="#features" class="rounded-md border border-slate-300 px-6 py-3 font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">See Services</a>
+        </div>
+      </div>
+      <!-- Set width/height (or aspect-ratio) to prevent layout shift (CLS) -->
+      <img src="https://placehold.co/1200x900/1E40AF/FFFFFF?text=Acme+Plumbing" alt="Acme plumber fixing a sink" width="1200" height="900" class="reveal w-full rounded-2xl shadow-xl" />
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="mx-auto max-w-6xl px-4 py-16">
+      <h2 class="text-center text-3xl font-bold">What we do</h2>
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- repeat per service -->
+        <article class="reveal rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
+          <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold">Emergency repairs</h3>
+          <p class="mt-2 text-slate-600 dark:text-slate-300">Burst pipes, blocked drains, hot water failures — fixed fast.</p>
+        </article>
+        <article class="reveal rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
+          <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold">Upfront pricing</h3>
+          <p class="mt-2 text-slate-600 dark:text-slate-300">A clear quote before we start. No hidden call-out fees.</p>
+        </article>
+        <article class="reveal rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
+          <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold">Available 24/7</h3>
+          <p class="mt-2 text-slate-600 dark:text-slate-300">Real plumbers answer the phone any time, day or night.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SOCIAL PROOF -->
+    <section id="proof" class="bg-slate-50 py-16 dark:bg-slate-900/50">
+      <div class="mx-auto max-w-6xl px-4">
+        <h2 class="text-center text-3xl font-bold">Trusted by 2,000+ locals</h2>
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+          <figure class="reveal rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-900">
+            <div class="mb-3 text-accent" aria-label="5 out of 5 stars">★★★★★</div>
+            <blockquote class="text-slate-700 dark:text-slate-200">"Fixed our burst pipe at 2am. Lifesavers."</blockquote>
+            <figcaption class="mt-4 text-sm text-slate-500 dark:text-slate-400">— Sarah M., Merewether</figcaption>
+          </figure>
+          <figure class="reveal rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-900">
+            <div class="mb-3 text-accent" aria-label="5 out of 5 stars">★★★★★</div>
+            <blockquote class="text-slate-700 dark:text-slate-200">"Quoted upfront, charged exactly that. Rare these days."</blockquote>
+            <figcaption class="mt-4 text-sm text-slate-500 dark:text-slate-400">— James T., Maitland</figcaption>
+          </figure>
+          <figure class="reveal rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-900">
+            <div class="mb-3 text-accent" aria-label="5 out of 5 stars">★★★★★</div>
+            <blockquote class="text-slate-700 dark:text-slate-200">"Polite, fast, and tidy. Booked them for the bathroom reno too."</blockquote>
+            <figcaption class="mt-4 text-sm text-slate-500 dark:text-slate-400">— Priya K., Charlestown</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING (optional) -->
+    <section id="pricing" class="mx-auto max-w-6xl px-4 py-16">
+      <h2 class="text-center text-3xl font-bold">Simple, upfront pricing</h2>
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+        <div class="reveal rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
+          <h3 class="text-lg font-semibold">Call-out</h3>
+          <p class="mt-2 text-3xl font-bold">$0<span class="text-base font-normal text-slate-500"> assessment</span></p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300"><li>On-site quote</li><li>No obligation</li></ul>
+          <a href="#cta" class="mt-6 block rounded-md border border-primary px-4 py-2 text-center font-semibold text-primary hover:bg-primary hover:text-white">Book</a>
+        </div>
+        <div class="reveal rounded-2xl border-2 border-primary p-6 shadow-lg">
+          <p class="mb-2 inline-block rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white">Most popular</p>
+          <h3 class="text-lg font-semibold">Standard repair</h3>
+          <p class="mt-2 text-3xl font-bold">from $149</p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300"><li>Most common jobs</li><li>12-month warranty</li></ul>
+          <a href="#cta" class="mt-6 block rounded-md bg-primary px-4 py-2 text-center font-semibold text-white hover:bg-primary-dark">Get a Quote</a>
+        </div>
+        <div class="reveal rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
+          <h3 class="text-lg font-semibold">Maintenance plan</h3>
+          <p class="mt-2 text-3xl font-bold">$29<span class="text-base font-normal text-slate-500">/mo</span></p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300"><li>Annual inspection</li><li>Priority booking</li></ul>
+          <a href="#cta" class="mt-6 block rounded-md border border-primary px-4 py-2 text-center font-semibold text-primary hover:bg-primary hover:text-white">Subscribe</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA + FORM (with client-side validation) -->
+    <section id="cta" class="bg-primary py-16 text-white">
+      <div class="mx-auto max-w-xl px-4 text-center">
+        <h2 class="text-3xl font-bold">Get a fast, free quote</h2>
+        <p class="mt-2 text-white/80">We'll call you back within 15 minutes during business hours.</p>
+        <form class="mt-8 space-y-4 text-left" novalidate>
+          <div>
+            <label for="name" class="mb-1 block text-sm font-medium">Name</label>
+            <input id="name" name="name" type="text" required minlength="2"
+              class="w-full rounded-md border-0 px-3 py-2 text-slate-900 focus:outline focus:outline-2 focus:outline-accent"
+              aria-describedby="name-err" />
+            <p id="name-err" class="mt-1 hidden text-sm text-accent-light">Please enter your name.</p>
+          </div>
+          <div>
+            <label for="phone" class="mb-1 block text-sm font-medium">Phone</label>
+            <input id="phone" name="phone" type="tel" required
+              pattern="[0-9 +()-]{8,}" inputmode="tel"
+              class="w-full rounded-md border-0 px-3 py-2 text-slate-900 focus:outline focus:outline-2 focus:outline-accent"
+              aria-describedby="phone-err" />
+            <p id="phone-err" class="mt-1 hidden text-sm text-accent-light">Enter a valid phone number.</p>
+          </div>
+          <button type="submit" class="w-full rounded-md bg-accent px-6 py-3 font-semibold text-slate-900 hover:bg-accent-light">Request callback</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- FAQ (native accordion, no JS) -->
+    <section id="faq" class="mx-auto max-w-3xl px-4 py-16">
+      <h2 class="text-center text-3xl font-bold">Frequently asked questions</h2>
+      <div class="mt-10 divide-y divide-slate-200 dark:divide-slate-800">
+        <details class="group py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between font-medium">
+            Are you available 24/7?
+            <svg class="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-slate-600 dark:text-slate-300">Yes. We answer emergency calls any time, day or night, across Newcastle and the Hunter Valley.</p>
+        </details>
+        <details class="group py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between font-medium">
+            Do you charge a call-out fee?
+            <svg class="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-slate-600 dark:text-slate-300">We quote upfront before any work begins, so there are no surprise charges.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-200 py-10 dark:border-slate-800">
+    <div class="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-4 md:flex-row">
+      <div>
+        <p class="font-bold">Acme<span class="text-primary">Plumbing</span></p>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Newcastle, NSW · Licence #L00000 · ABN 00 000 000 000</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400">(02) 4000 0000 · hello@acmeplumbing.example</p>
+      </div>
+      <nav class="flex gap-6 text-sm" aria-label="Footer">
+        <a href="#" class="hover:text-primary">Privacy</a>
+        <a href="#" class="hover:text-primary">Terms</a>
+        <a href="#" class="hover:text-primary">Contact</a>
+      </nav>
+    </div>
+    <p class="mx-auto mt-8 max-w-6xl px-4 text-sm text-slate-400">&copy; <span id="year"></span> Acme Plumbing. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Auto year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Dark mode toggle (persists choice)
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var root = document.documentElement;
+      root.classList.toggle('dark');
+      try { localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light'); } catch (e) {}
+    });
+
+    // Mobile menu
+    var menuBtn = document.getElementById('menu-toggle');
+    var menu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', function () {
+      var open = menu.classList.toggle('hidden') === false;
+      menuBtn.setAttribute('aria-expanded', String(open));
+    });
+
+    // Scroll reveal (fires once, opacity/transform only)
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+    // Form validation (client-side)
+    document.querySelector('#cta form').addEventListener('submit', function (e) {
+      var ok = true;
+      var name = this.name, phone = this.phone;
+      var showErr = function (input, errId, bad) {
+        document.getElementById(errId).classList.toggle('hidden', !bad);
+        if (bad) ok = false;
+      };
+      showErr(name, 'name-err', !name.value.trim() || name.value.trim().length < 2);
+      showErr(phone, 'phone-err', !phone.checkValidity());
+      if (!ok) { e.preventDefault(); }
+      // On success, POST to your backend / form service here.
+    });
+  </script>
+</body>
+</html>

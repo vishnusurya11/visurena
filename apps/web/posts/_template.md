@@ -1,5 +1,5 @@
 ---
-title: "[Template]ComfyUI Workflow - Your Title Here"
+title: "ComfyUI Workflow - Your Title Here"
 description: "Brief description of your ComfyUI experiment or research"
 date: "2025-11-08"
 image: "/images/featured-image.png"
@@ -32,49 +32,6 @@ You can just add images one after another:
 ![Image 1](/images/img1.png)
 ![Image 2](/images/img2.png)
 ![Image 3](/images/img3.png)
-
-### Image Comparison Slider (Before/After) ✨
-
-**Perfect for showing improvements, model comparisons, or any before/after scenarios!**
-
-**Package already installed**: `react-compare-slider` ✓
-
-**Basic Usage:**
-
-```html
-<div class="image-comparison"
-     data-before="/images/before.png"
-     data-after="/images/after.png"
-     data-before-label="Before"
-     data-after-label="After">
-</div>
-```
-
-**Advanced Example:**
-
-```html
-<div class="image-comparison"
-     data-before="/images/old-model-output.png"
-     data-after="/images/new-model-output.png"
-     data-before-label="Original Flux Model"
-     data-after-label="Optimized LoRA Model">
-</div>
-```
-
-**Tips for best results:**
-- Use images with **same dimensions** for seamless comparison
-- Recommended formats: PNG, JPG, WebP
-- Keep file sizes reasonable (under 2MB for web performance)
-- Place images in `/public/images/` folder
-- The slider starts at 50% by default - users drag to compare
-
-**Great use cases:**
-- Model comparisons (Flux vs SDXL)
-- Before/after LoRA training results
-- Different sampler/scheduler outputs
-- Upscaling quality demonstrations
-- Color correction or post-processing effects
-- Workflow optimization results
 
 ## Video Demo
 

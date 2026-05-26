@@ -1,0 +1,31 @@
+# Normalize line endings so the repo behaves identically on macOS and Windows.
+# Text is stored as LF in the repository; working trees check out per the rules below.
+* text=auto
+
+# Always LF — CRLF breaks these
+*.sh   text eol=lf
+
+# Always CRLF — Windows shells expect it
+*.ps1  text eol=crlf
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+# Binary assets — never normalize, never diff as text
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.webp  binary
+*.avif  binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.otf   binary
+*.eot   binary
+*.pdf   binary
+*.mp3   binary
+*.mp4   binary
+*.webm  binary
+*.mov   binary
+*.zip   binary

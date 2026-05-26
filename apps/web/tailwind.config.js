@@ -1,14 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  presets: [require("@visurena/design-tokens/tailwind-preset.cjs")],
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        // Netflix-style base colors (legacy, preserved untouched)
+        // Netflix-style base colors
         'netflix': {
           black: '#000000',
           dark: '#141414',
@@ -17,90 +19,61 @@ module.exports = {
           gray: '#808080',
           muted: '#b3b3b3'
         },
-        // Comfy.org inspired blog colors (legacy, preserved untouched)
+        // Comfy.org inspired blog colors
         'comfy': {
           bg: '#0a0a0a',        // Main background (soft black)
           card: '#111111',      // Card background
           text: '#e5e5e5',      // Body text (readable)
           heading: '#ffffff',   // Headings (crisp white)
           muted: '#999999',     // Secondary text
-          accent: '#2563eb',    // Links/highlights (Comfy.org blue)
+          accent: '#3b82f6',    // Links/highlights (blue)
           border: '#2a2a2a',    // Borders
           code: '#1e1e1e',      // Code block background
         },
-        // Aurora Indigo brand tokens v1.3 — locked parent palette + section accents.
-        // Use these for all NEW components.
-        'aurora': {
-          bg:        '#0A0E2A',  // parent bg
-          surface:   '#131A3D',  // surface 1
-          raised:    '#1D2552',  // surface 2
-          hairline:  '#2A3268',
-          text:      '#F0F2FF',
-          textMid:   '#9DA8D9',
-          textMuted: '#5C66A0',
-          accent:    '#6B7DFF',  // parent accent — THE VERB (links, focus rings, primary CTAs)
-          // Section accents (the aurora glints)
-          pink:      '#F472B6',  // Movies
-          gold:      '#F4C04E',  // Music
-          lime:      '#B5E853',  // Games
-          cyan:      '#2DD4BF',  // Story
-          lavender:  '#A78BFA',  // VR World (NEW)
-          platinum:  '#C0C8E0',  // Blog
-        },
-        // Section theme palette — KEYS preserved for backward compatibility,
-        // VALUES remapped to Aurora Indigo accents (v1.3).
+        // Sophisticated streaming service inspired colors
         'theme': {
-          // Movies — aurora pink
+          // Movies - Netflix inspired warm red with subtle gradient feel
           movies: {
-            primary:   '#F472B6',
-            secondary: '#F9A8D4',
-            muted:     '#9D2E72'
+            primary: '#e50914',
+            secondary: '#f40612', 
+            muted: '#831a1a'
           },
-          // Music — warm gold
+          // Music - Sophisticated teal/cyan like premium music services
           music: {
-            primary:   '#F4C04E',
-            secondary: '#F8D77A',
-            muted:     '#A07720'
+            primary: '#1db584',
+            secondary: '#14a085',
+            muted: '#0f6b5c'
           },
-          // Games — electric lime
+          // Games - Rich purple inspired by gaming platforms
           games: {
-            primary:   '#B5E853',
-            secondary: '#CFEF85',
-            muted:     '#6E9628'
+            primary: '#6f42c1',
+            secondary: '#8a63d2',
+            muted: '#4a2c85'
           },
-          // Story — soft cyan
+          // Story - Warm amber/gold for literature feel
           story: {
-            primary:   '#2DD4BF',
-            secondary: '#5EE3D2',
-            muted:     '#1A8273'
+            primary: '#f59e0b',
+            secondary: '#fbbf24',
+            muted: '#92400e'
           },
-          // Blog — cool platinum (was Comfy blue)
+          // Blog - Professional blue like medium/substack
           blog: {
-            primary:   '#C0C8E0',
-            secondary: '#D8DEEC',
-            muted:     '#6F7A99'
+            primary: '#3b82f6',
+            secondary: '#60a5fa',
+            muted: '#1e40af'
           },
-          // VR — electric lavender (was VR cyan)
+          // VR - Futuristic cyan for virtual reality
           vr: {
-            primary:   '#A78BFA',
-            secondary: '#C4B5FD',
-            muted:     '#6845C7'
+            primary: '#06b6d4',
+            secondary: '#22d3ee',
+            muted: '#0891b2'
           }
         }
       },
       fontFamily: {
-        // Aurora Indigo locked stack
-        sans:       ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        display:    ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        italic:     ['"DM Serif Display"', '"Spectral"', 'Georgia', 'serif'],  // editorial italic for emphasis (used italic only)
-        mono:       ['"JetBrains Mono"', '"SF Mono"', 'Menlo', 'monospace'],
-        // Legacy aliases (kept for blog and other existing usages)
-        spectral:   ['Spectral', 'Georgia', 'Cambria', '"Times New Roman"', 'serif'],
-        serif:      ['Spectral', 'Georgia', 'Cambria', '"Times New Roman"', 'serif'],
-      },
-      boxShadow: {
-        'aurora-glow':       '0 0 0 4px rgba(107, 125, 255, 0.18)',
-        'aurora-card-hover': '0 24px 60px -12px rgba(107, 125, 255, 0.35)',
+        'spectral': ['Spectral', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
+        'serif': ['Spectral', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
+        'sans': ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

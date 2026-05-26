@@ -3,12 +3,6 @@ import { useRouter } from 'next/router';
 import { getAllPosts, getPostBySlug } from '../../lib/blog';
 import { marked } from 'marked';
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
-import dynamic from 'next/dynamic';
-
-const ImageComparisonSlider = dynamic(() => import('../../components/ImageComparisonSlider'), {
-  ssr: false
-});
 
 interface BlogPostProps {
   post: {
@@ -32,60 +26,22 @@ marked.setOptions({
 export default function BlogPost({ post }: BlogPostProps) {
   const router = useRouter();
 
-  // Initialize image comparison sliders after content loads
-  useEffect(() => {
-    const initializeSliders = () => {
-      const sliderDivs = document.querySelectorAll('.image-comparison');
-
-      sliderDivs.forEach((div) => {
-        // Skip if already initialized
-        if (div.querySelector('.react-compare-slider')) return;
-
-        const before = div.getAttribute('data-before');
-        const after = div.getAttribute('data-after');
-        const beforeLabel = div.getAttribute('data-before-label') || 'Before';
-        const afterLabel = div.getAttribute('data-after-label') || 'After';
-
-        if (before && after) {
-          // Create a React root and render the slider
-          import('react-dom/client').then(({ createRoot }) => {
-            const root = createRoot(div);
-            import('../../components/ImageComparisonSlider').then(({ default: Slider }) => {
-              root.render(
-                <Slider
-                  beforeImage={before}
-                  afterImage={after}
-                  beforeLabel={beforeLabel}
-                  afterLabel={afterLabel}
-                />
-              );
-            });
-          });
-        }
-      });
-    };
-
-    // Run after content is rendered
-    const timer = setTimeout(initializeSliders, 100);
-    return () => clearTimeout(timer);
-  }, [post.content]);
-
   if (router.isFallback) {
     return (
-      <div className="min-h-screen bg-comfy-bg flex items-center justify-center">
-        <div className="text-comfy-text">Loading...</div>
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
+        <div className="text-jewel-ivory/60">Loading...</div>
       </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-comfy-bg flex items-center justify-center">
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-comfy-heading mb-4">Post not found</h1>
+          <h1 className="font-display text-2xl font-bold text-jewel-ivory mb-4">Post not found</h1>
           <button
             onClick={() => router.push('/blog')}
-            className="text-comfy-accent hover:underline"
+            className="text-jewel-amber hover:underline"
           >
             ← Back to Blog
           </button>
@@ -95,13 +51,13 @@ export default function BlogPost({ post }: BlogPostProps) {
   }
 
   return (
-    <div className="min-h-screen bg-comfy-bg">
+    <div className="min-h-screen bg-transparent">
       {/* Back Button - Fixed at top */}
-      <div className="sticky top-0 z-10 bg-comfy-bg/95 backdrop-blur-sm border-b border-comfy-border">
+      <div className="sticky top-0 z-10 bg-ink-base/95 backdrop-blur-sm border-b border-jewel-ivory/10">
         <div className="container mx-auto px-4 sm:px-6 py-4 max-w-4xl">
           <button
             onClick={() => router.push('/blog')}
-            className="text-comfy-muted hover:text-comfy-accent transition-colors text-sm font-sans flex items-center gap-2"
+            className="text-jewel-ivory/60 hover:text-jewel-amber transition-colors text-sm font-body flex items-center gap-2"
           >
             <span>←</span>
             <span>Back to Blog</span>
@@ -116,23 +72,23 @@ export default function BlogPost({ post }: BlogPostProps) {
         >
           {/* Header */}
           <header className="mb-12">
-            <h1 className="text-4xl sm:text-5xl font-bold text-comfy-heading mb-6 leading-tight font-serif">
+            <h1 className="font-display text-4xl sm:text-5xl font-bold text-jewel-ivory mb-6 leading-tight">
               {post.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-comfy-muted border-b border-comfy-border pb-6 font-sans">
-              <span className="font-medium text-comfy-text">{post.author || 'ViSuReNa'}</span>
-              <span className="text-comfy-border">·</span>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-jewel-ivory/60 border-b border-jewel-ivory/10 pb-6 font-body">
+              <span className="font-medium text-jewel-ivory">{post.author || 'ViSuReNa'}</span>
+              <span className="text-jewel-ivory/20">·</span>
               <time>{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
 
               {post.tags && post.tags.length > 0 && (
                 <>
-                  <span className="text-comfy-border">·</span>
+                  <span className="text-jewel-ivory/20">·</span>
                   <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-comfy-card text-comfy-muted rounded text-xs border border-comfy-border hover:border-comfy-accent hover:text-comfy-accent transition-colors"
+                        className="px-2 py-1 bg-ink-raise text-jewel-ivory/60 rounded text-xs border border-jewel-ivory/10 hover:border-jewel-amber hover:text-jewel-amber transition-colors"
                       >
                         {tag}
                       </span>
@@ -165,18 +121,18 @@ export default function BlogPost({ post }: BlogPostProps) {
           </div>
 
           {/* Footer */}
-          <footer className="mt-16 pt-8 border-t border-comfy-border">
-            <div className="flex items-center justify-between font-sans">
+          <footer className="mt-16 pt-8 border-t border-jewel-ivory/10">
+            <div className="flex items-center justify-between font-body">
               <button
                 onClick={() => router.push('/blog')}
-                className="text-comfy-accent hover:text-comfy-heading transition-colors flex items-center gap-2"
+                className="text-jewel-amber hover:text-jewel-ivory transition-colors flex items-center gap-2"
               >
                 <span>←</span>
                 <span>More Posts</span>
               </button>
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="text-comfy-muted hover:text-comfy-accent transition-colors flex items-center gap-2"
+                className="text-jewel-ivory/60 hover:text-jewel-amber transition-colors flex items-center gap-2"
               >
                 <span>Back to Top</span>
                 <span>↑</span>
@@ -235,14 +191,14 @@ export default function BlogPost({ post }: BlogPostProps) {
 
         /* Links */
         .comfy-blog-content a {
-          color: #3b82f6;
+          color: #f59e0b;
           text-decoration: none;
           border-bottom: 1px solid transparent;
           transition: border-color 0.2s;
         }
 
         .comfy-blog-content a:hover {
-          border-bottom-color: #3b82f6;
+          border-bottom-color: #f59e0b;
         }
 
         /* Strong/Bold */
@@ -273,12 +229,12 @@ export default function BlogPost({ post }: BlogPostProps) {
         }
 
         .comfy-blog-content li::marker {
-          color: #3b82f6;
+          color: #f59e0b;
         }
 
         /* Blockquotes */
         .comfy-blog-content blockquote {
-          border-left: 4px solid #3b82f6;
+          border-left: 4px solid #f59e0b;
           padding-left: 1.5rem;
           margin: 2rem 0;
           color: #999999;
@@ -292,7 +248,7 @@ export default function BlogPost({ post }: BlogPostProps) {
           margin: 3rem 0;
         }
 
-        /* Images - Full-width, responsive, Comfy.org style */
+        /* Images - Full-width, responsive */
         .comfy-blog-content img {
           width: 100%;
           height: auto;
@@ -315,7 +271,7 @@ export default function BlogPost({ post }: BlogPostProps) {
         /* Code - Inline */
         .comfy-blog-content code {
           background-color: #1e1e1e;
-          color: #3b82f6;
+          color: #f59e0b;
           padding: 0.2rem 0.4rem;
           border-radius: 0.25rem;
           font-family: 'Monaco', 'Courier New', monospace;

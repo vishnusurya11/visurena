@@ -1,465 +1,355 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import Layout from '../components/Layout';
-import contentData from '../content-config.json';
-import { getAllPosts } from '../lib/blog';
+// pages/index.tsx — Home. Real content only: Stories (from the content folder) +
+// Games (from content-config.json). Movies/Music are not real yet, so they're not
+// shown here. Journal/Research live under /about now (moved off the homepage).
 
-// ---------- Types ----------
-interface BlogPost {
+import React, { useRef, useEffect } from "react";
+import type { GetStaticProps } from "next";
+import Link from "next/link";
+import Head from "next/head";
+import {
+  VRFade, VRTilt, VRPoster, VRStripe, VRRowHeader, VRMarquee, Header, Footer,
+} from "@visurena/ui";
+import { getStories, type Story } from "../lib/content";
+import contentConfig from "../content-config.json";
+
+// ─── Design constants ───────────────────────────────────────────
+const F_DISPLAY = "'Newsreader', 'Tiempos Headline', serif";
+const F_BODY    = "'Spectral', serif";
+const F_MONO    = "'JetBrains Mono', ui-monospace, monospace";
+const F_WEIGHT  = 600;
+const IVORY     = "#f5efdb";
+const AMBER     = "#f5b831"; // Stories (Amber room)
+const AMETHYST  = "#c084fc"; // Games (Amethyst room)
+
+interface Game {
   slug: string;
   title: string;
-  description: string;
+  description?: string;
   thumbnail?: string;
+  playUrl?: string;
   duration?: string;
+  tags?: string[];
+  rating?: number;
+  featured?: boolean;
   releaseDate?: string;
 }
 
 interface HomeProps {
-  blogPosts: BlogPost[];
+  section: "home"; // drives the Diamond hub theme + studio (all-jewel) nebula in _app
+  stories: Story[];
+  games: Game[];
 }
 
-// ---------- Static config ----------
-const SEARCH_PLACEHOLDERS = [
-  "A film you can't stop thinking about…",
-  'A novel ending that wrecked you…',
-  'A song that hit just right…',
-  'A game you wish someone would make…',
-];
+// A normalized card the home rows can render regardless of kind.
+interface Card {
+  kind: "Story" | "Game";
+  accent: string;
+  href: string;
+  title: string;
+  image?: string;
+  meta: string;
+  blurb?: string;
+}
 
-const TRENDING_PILLS = [
-  'slow-burn sci-fi mystery',
-  'mid-budget heist',
-  'electronic dream-pop',
-  'first-person walking sims',
-  'sapphic regency',
-  'vinyl-warm jazz',
-];
+function storyCard(s: Story): Card {
+  return {
+    kind: "Story",
+    accent: s.accent || AMBER,
+    href: `/stories/${s.slug}`,
+    title: s.title,
+    image: s.cover34,
+    meta: [s.genre, s.readMinutes ? `${s.readMinutes} min` : null].filter(Boolean).join(" · "),
+    blurb: s.summary,
+  };
+}
+function gameCard(g: Game): Card {
+  return {
+    kind: "Game",
+    accent: AMETHYST,
+    href: g.playUrl || `/games/${g.slug}`,
+    title: g.title,
+    image: g.thumbnail,
+    meta: [g.duration, g.tags?.[0]].filter(Boolean).join(" · "),
+    blurb: g.description,
+  };
+}
 
-// ---------- Helpers ----------
-const formatDate = (iso?: string) => {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).toUpperCase();
-};
+// ─── Hero (the latest story) ─────────────────────────────────────
+function HomeHero({ story }: { story?: Story }) {
+  const tint = story?.accent || AMBER;
+  const bg = story?.cover169 || story?.cover34 || "";
+  const heroRef  = useRef<HTMLElement>(null);
+  const bgRef    = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
 
-// ---------- Page ----------
-export default function Home({ blogPosts }: HomeProps) {
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [why, setWhy] = useState('');
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [placeholderVisible, setPlaceholderVisible] = useState(true);
-  const [searchFocused, setSearchFocused] = useState(false);
-
-  // Rotating placeholder — pause if user is mid-typing.
   useEffect(() => {
-    const id = window.setInterval(() => {
-      if (searchFocused && searchQuery.length > 0) return;
-      setPlaceholderVisible(false);
-      window.setTimeout(() => {
-        setPlaceholderIndex((prev) => (prev + 1) % SEARCH_PLACEHOLDERS.length);
-        setPlaceholderVisible(true);
-      }, 420);
-    }, 3000);
-    return () => window.clearInterval(id);
-  }, [searchFocused, searchQuery.length]);
+    const hero = heroRef.current;
+    if (!hero || typeof window === "undefined") return;
+    if (window.matchMedia?.("(pointer: coarse)").matches) return;
+    let raf = 0;
+    const onMove = (e: MouseEvent) => {
+      const r = hero.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        if (bgRef.current)    bgRef.current.style.transform    = `translate3d(${-x * 28}px, ${-y * 28}px, 0)`;
+        if (titleRef.current) titleRef.current.style.transform = `translate3d(${-x * 12}px, ${-y * 12}px, 0)`;
+      });
+    };
+    const onLeave = () => {
+      cancelAnimationFrame(raf);
+      [bgRef, titleRef].forEach((ref) => { if (ref.current) ref.current.style.transform = ""; });
+    };
+    hero.addEventListener("mousemove", onMove);
+    hero.addEventListener("mouseleave", onLeave);
+    return () => { cancelAnimationFrame(raf); hero.removeEventListener("mousemove", onMove); hero.removeEventListener("mouseleave", onLeave); };
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const q = searchQuery.trim();
-    if (!q) return;
-    const params = new URLSearchParams({ q });
-    if (why.trim()) params.set('why', why.trim());
-    router.push(`/search?${params.toString()}`);
-  };
-
-  const fillFromPill = (label: string) => {
-    setSearchQuery(label);
-  };
-
-  // ---------- Catalog row data: 2 music + 6 games ----------
-  const musicCards = (contentData.music || []).slice(0, 2);
-  const gameCards = (contentData.games || []).slice(0, 6);
+  const title = story?.title ?? "Visurena";
+  const head = title.split(" ").slice(0, -1).join(" ");
+  const tail = title.split(" ").slice(-1).join(" ");
+  const meta = story
+    ? ["A Visurena Original", story.genre, story.readMinutes ? `${story.readMinutes} min read` : null].filter(Boolean).join(" — ")
+    : "Stories & games, made in the open";
 
   return (
-    <Layout pageTheme="home">
-      {/* ============================================================ */}
-      {/* HERO — search as hero (~95vh)                                */}
-      {/* ============================================================ */}
-      <section className="relative min-h-[95vh] flex items-center justify-center px-5 sm:px-8 pt-16 pb-20 overflow-hidden -mt-20">
-        {/* Aurora atmospheric blobs */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1100px] h-[720px] max-w-[140vw] z-0 blur-[8px]"
-          style={{
-            background:
-              'radial-gradient(ellipse at 35% 50%, rgba(107,125,255,0.18), transparent 55%), radial-gradient(ellipse at 70% 65%, rgba(244,114,182,0.10), transparent 55%)',
-          }}
-        />
-        {/* Subtle SVG noise overlay */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0 opacity-[0.04] mix-blend-overlay"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
-          }}
-        />
+    <section data-vr-hero ref={heroRef} style={{ position: "relative", height: "88vh", minHeight: 720, maxHeight: 1000, overflow: "hidden", isolation: "isolate" }}>
+      <div ref={bgRef} style={{ position: "absolute", inset: "-8%", willChange: "transform" }}>
+        <div className="vr-hero-zoom" style={{
+          width: "100%", height: "100%",
+          background: bg ? `url("${bg}") center 28% / cover no-repeat` : `radial-gradient(ellipse at 70% 35%, ${tint}55 0%, #0a0a0a 70%)`,
+        }} />
+      </div>
 
-        <div className="relative z-10 max-w-[920px] w-full text-center">
-          <div className="mb-7 font-mono text-[11px] tracking-[0.18em] uppercase text-aurora-accent">
-            &#9656; ViSuReNa &middot; Phase 0 &middot; The catalog you wish existed
-          </div>
+      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.0) 18%, rgba(10,10,10,0.0) 42%, rgba(10,10,10,0.85) 88%, rgba(10,10,10,1) 100%), linear-gradient(90deg, rgba(10,10,10,0.78) 0%, rgba(10,10,10,0.18) 38%, rgba(10,10,10,0.0) 65%, rgba(10,10,10,0.3) 100%)" }} />
+      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: `radial-gradient(ellipse at 78% 38%, ${tint}45 0%, transparent 55%)`, mixBlendMode: "screen", opacity: 0.6 }} />
 
-          <h1
-            className="font-sans font-bold text-aurora-text mb-7 tracking-[-0.035em] leading-[1.04]"
-            style={{ fontSize: 'clamp(2.4rem, 8vw, 5.6rem)' }}
-          >
-            Find what{' '}
-            <span className="font-italic italic font-normal text-aurora-accent">
-              comes&nbsp;next
-            </span>
-            .
+      <VRFade style={{ position: "absolute", left: "clamp(28px, 4vw, 80px)", top: 120, display: "flex", alignItems: "center", gap: 14, fontFamily: F_MONO, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#cdc6b6", flexWrap: "wrap" }}>
+        <span style={{ color: AMBER, display: "inline-flex", alignItems: "center", gap: 8 }}>
+          <span style={{ width: 6, height: 6, background: AMBER, borderRadius: "50%", display: "inline-block", boxShadow: `0 0 12px ${AMBER}` }} />
+          {story ? "This week's lead · Stories" : "Visurena"}
+        </span>
+        <VRStripe color="#5a5345" width={48} />
+        <span>{meta}</span>
+      </VRFade>
+
+      <div ref={titleRef} style={{ position: "absolute", left: "clamp(28px, 4vw, 80px)", right: "clamp(28px, 4vw, 80px)", bottom: 170, maxWidth: 1100, willChange: "transform" }}>
+        <VRFade delay={80}>
+          <h1 className="vr-halo" style={{ fontFamily: F_DISPLAY, fontWeight: F_WEIGHT, fontSize: "clamp(56px, 8vw, 132px)", lineHeight: 0.94, margin: 0, letterSpacing: "-0.03em", color: IVORY }}>
+            {head}{head ? <br /> : null}<em style={{ fontStyle: "italic", color: tint, textShadow: `0 4px 40px ${tint}80` }}>{tail}</em>
           </h1>
-
-          <p className="mx-auto mb-12 max-w-[640px] text-aurora-text-mid text-[16px] sm:text-[19px] leading-[1.6]">
-            A streaming search engine for what hasn&rsquo;t been made yet. When the audience asks for it,
-            ViSuReNa makes it. Crowd-steered. Editorially directed. AI-produced.
-          </p>
-
-          {/* Search bar */}
-          <form
-            onSubmit={handleSubmit}
-            className={`mx-auto mb-6 max-w-[720px] flex items-center gap-2 sm:gap-3 bg-aurora-surface/65 backdrop-blur-xl rounded-2xl border transition-[border-color,box-shadow] duration-200 ease-out h-16 sm:h-20 pl-4 sm:pl-6 pr-2 ${
-              searchFocused
-                ? 'border-aurora-accent shadow-[0_0_0_4px_rgba(107,125,255,0.22)]'
-                : 'border-aurora-accent/30'
-            }`}
-          >
-            <MagnifyingGlassIcon className="flex-shrink-0 h-5 w-5 text-aurora-text-mid" />
-            <div className="flex-1 relative h-full flex items-center min-w-0">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setSearchFocused(false)}
-                placeholder={SEARCH_PLACEHOLDERS[placeholderIndex]}
-                autoComplete="off"
-                aria-label="Search what comes next"
-                className={`w-full bg-transparent border-0 outline-none text-aurora-text font-sans font-normal text-[15px] sm:text-[18px] placeholder:text-aurora-text-muted transition-opacity duration-500 ${
-                  placeholderVisible ? 'opacity-100' : 'opacity-0'
-                }`}
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-aurora-accent hover:bg-[#5566E0] active:scale-[0.98] text-white font-sans font-semibold text-[13px] sm:text-[14px] tracking-[0.02em] px-4 sm:px-7 py-3 sm:py-3.5 rounded-xl transition-[background,transform] duration-200"
-            >
-              Search
-            </button>
-          </form>
-
-          {/* WHY input */}
-          <div className="mx-auto mb-14 max-w-[720px] text-left">
-            <div className="mb-2.5 font-mono text-[11px] tracking-[0.14em] uppercase text-aurora-text-muted">
-              // Add the WHY &middot; powers our recommendation engine
-            </div>
-            <input
-              type="text"
-              value={why}
-              onChange={(e) => setWhy(e.target.value)}
-              placeholder="What hooked you. Plot, mood, a single image…"
-              className="w-full bg-transparent border-0 border-b border-aurora-hairline focus:border-aurora-accent focus:outline-none py-2.5 text-aurora-text font-sans font-italic italic text-[16px] placeholder:text-aurora-text-muted placeholder:italic transition-colors"
-            />
-          </div>
-
-          {/* Trending pills */}
-          <div className="mx-auto mb-14 max-w-[760px]">
-            <div className="mb-4 font-mono text-[11px] tracking-[0.18em] uppercase text-aurora-accent">
-              // TRENDING TONIGHT
-            </div>
-            <div className="flex flex-wrap justify-center gap-2.5">
-              {TRENDING_PILLS.map((pill) => (
-                <button
-                  key={pill}
-                  type="button"
-                  onClick={() => fillFromPill(pill)}
-                  className="bg-aurora-surface border border-aurora-hairline text-aurora-text-mid hover:text-aurora-text hover:border-aurora-accent hover:bg-aurora-raised font-sans font-normal text-[13px] px-4 py-2 rounded-full transition-[color,border-color,background] duration-200"
-                >
-                  {pill}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Browse hint */}
-          <a
-            href="#catalog"
-            className="block animate-bounce font-mono text-[11px] tracking-[0.14em] uppercase text-aurora-text-muted hover:text-aurora-text-mid transition-colors"
-          >
-            &darr; Browse the catalog
-          </a>
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* TONIGHT ON VISURENA — catalog row                            */}
-      {/* ============================================================ */}
-      <section id="catalog" className="px-5 sm:px-8 py-20 sm:py-28">
-        <div className="container mx-auto max-w-[1320px]">
-          <div className="mb-3.5 font-mono text-[11px] tracking-[0.18em] uppercase text-aurora-accent">
-            // 12 ITEMS LIVE &middot; UPDATED HOURLY
-          </div>
-          <h2 className="mb-2 font-sans font-semibold text-[28px] tracking-[-0.02em] text-aurora-text">
-            Tonight on visurena.
-          </h2>
-          <p className="mb-14 max-w-[620px] font-sans text-[16px] text-aurora-text-mid">
-            A small, deliberate catalog. Two original tracks, six retro arcade games, a research blog.
-            We keep it tight on purpose &mdash; every release is intentional.
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-[22px]">
-            {/* MUSIC cards */}
-            {musicCards.map((track) => (
-              <a
-                key={track.id}
-                href={track.videoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block bg-aurora-surface border border-aurora-hairline rounded-xl overflow-hidden transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-aurora-accent hover:shadow-[0_16px_40px_-12px_rgba(107,125,255,0.25)]"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-aurora-raised to-aurora-surface">
-                  {track.thumbnail && (
-                    <img
-                      src={track.thumbnail}
-                      alt={track.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                    />
-                  )}
-                </div>
-                <div className="px-5 pt-4 pb-5">
-                  <div className="mb-2 font-mono text-[10px] tracking-[0.18em] uppercase text-aurora-gold">
-                    MUSIC
-                  </div>
-                  <h3 className="mb-2 font-sans font-medium text-[17px] tracking-[-0.01em] text-aurora-text group-hover:text-white transition-colors">
-                    {track.title}
-                  </h3>
-                  <p className="mb-3 font-sans font-italic italic text-[14px] text-aurora-text-mid leading-[1.5]">
-                    {track.description}
-                  </p>
-                  <div className="font-mono text-[11px] tracking-[0.06em] text-aurora-text-muted">
-                    // {track.duration || '4:20'} &middot; 2025
-                  </div>
-                </div>
-              </a>
-            ))}
-
-            {/* GAME cards */}
-            {gameCards.map((game) => (
-              <Link key={game.id} href={`/games/${game.slug}`}>
-                <article className="group block bg-aurora-surface border border-aurora-hairline rounded-xl overflow-hidden cursor-pointer transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-aurora-accent hover:shadow-[0_16px_40px_-12px_rgba(107,125,255,0.25)]">
-                  <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-aurora-raised to-aurora-surface">
-                    {/* Decorative aurora wash */}
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          'radial-gradient(circle at 20% 30%, rgba(181,232,83,0.10), transparent 50%), radial-gradient(circle at 80% 80%, rgba(107,125,255,0.08), transparent 50%)',
-                      }}
-                    />
-                    <div className="relative w-full h-full flex items-center justify-center">
-                      <span className="font-sans font-bold text-[22px] sm:text-[26px] tracking-[-0.015em] leading-[1.1] text-center px-5 text-aurora-text group-hover:text-white transition-colors">
-                        {game.title}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="px-5 pt-4 pb-5">
-                    <div className="mb-2 font-mono text-[10px] tracking-[0.18em] uppercase text-aurora-lime">
-                      GAMES
-                    </div>
-                    <h3 className="mb-2 font-sans font-medium text-[17px] tracking-[-0.01em] text-aurora-text group-hover:text-white transition-colors">
-                      {game.title}
-                    </h3>
-                    <p className="mb-3 font-sans font-italic italic text-[14px] text-aurora-text-mid leading-[1.5]">
-                      {game.description}
-                    </p>
-                    <div className="font-mono text-[11px] tracking-[0.06em] text-aurora-text-muted">
-                      // ARCADE &middot; BROWSER
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            ))}
-          </div>
-
-          {/* Optional blog peek row — surfaces blogPosts from getStaticProps */}
-          {blogPosts.length > 0 && (
-            <div className="mt-16">
-              <div className="mb-3.5 font-mono text-[11px] tracking-[0.18em] uppercase text-aurora-accent">
-                // FROM THE BUILD LOG
-              </div>
-              <h3 className="mb-8 font-sans font-semibold text-[22px] tracking-[-0.02em] text-aurora-text">
-                Latest dispatches.
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-[22px]">
-                {blogPosts.slice(0, 3).map((post) => (
-                  <Link key={post.slug} href={`/blog/${post.slug}`}>
-                    <article className="group block bg-aurora-surface border border-aurora-hairline rounded-xl overflow-hidden cursor-pointer h-full transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-aurora-accent hover:shadow-[0_16px_40px_-12px_rgba(107,125,255,0.25)]">
-                      <div className="px-5 pt-5 pb-5">
-                        <div className="mb-2 font-mono text-[10px] tracking-[0.18em] uppercase text-aurora-platinum">
-                          BLOG
-                        </div>
-                        <h4 className="mb-2 font-sans font-medium text-[17px] tracking-[-0.01em] text-aurora-text group-hover:text-white transition-colors line-clamp-2">
-                          {post.title}
-                        </h4>
-                        <p className="mb-3 font-sans font-italic italic text-[14px] text-aurora-text-mid leading-[1.5] line-clamp-2">
-                          {post.description}
-                        </p>
-                        <div className="font-mono text-[11px] tracking-[0.06em] text-aurora-text-muted">
-                          // {post.duration || '5 min read'} &middot; {formatDate(post.releaseDate)}
-                        </div>
-                      </div>
-                    </article>
-                  </Link>
-                ))}
-              </div>
-            </div>
+          {story?.summary && (
+            <p style={{ fontFamily: F_BODY, fontStyle: "italic", fontSize: 22, lineHeight: 1.4, color: "#cdc6b6", maxWidth: 620, marginTop: 24, marginBottom: 0 }}>
+              {story.summary}
+            </p>
           )}
-        </div>
-      </section>
+        </VRFade>
+      </div>
 
-      {/* ============================================================ */}
-      {/* MANIFESTO                                                    */}
-      {/* ============================================================ */}
-      <section className="bg-aurora-surface border-t border-b border-aurora-hairline px-5 sm:px-8 py-20 sm:py-28">
-        <div className="mx-auto max-w-[1100px]">
-          <div className="mb-7 font-mono text-[11px] tracking-[0.18em] uppercase text-aurora-accent">
-            // THE THESIS
-          </div>
-
-          <h2
-            className="mb-14 font-italic italic font-normal text-aurora-accent leading-[1.15] tracking-[-0.02em] max-w-[980px]"
-            style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)' }}
-          >
-            &ldquo;Most platforms ship what&rsquo;s already made. We ship what you ask for.&rdquo;
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14">
-            <div>
-              <p className="font-sans font-normal text-[17px] leading-[1.7] text-aurora-text-mid">
-                Streaming is a back-catalog problem. Even the biggest libraries are limited to what was financed
-                five years ago, by people guessing what you&rsquo;d want today. The shelves are full and the search is empty.
-              </p>
-              <p className="mt-4 font-sans font-normal text-[17px] leading-[1.7] text-aurora-text-mid">
-                ViSuReNa flips the order. The search bar comes first. You tell us what&rsquo;s missing &mdash; the film,
-                the album, the novel ending, the game mechanic &mdash; and the WHY behind it.
-              </p>
-            </div>
-            <div>
-              <p className="font-sans font-normal text-[17px] leading-[1.7] text-aurora-text-mid">
-                Demand clusters into signals. Editors pick which signals deserve a real production. Then a hybrid
-                pipeline &mdash; human craft plus AI-native tools &mdash; actually ships the thing, with credits, provenance,
-                and a release date.
-              </p>
-              <p className="mt-4 font-sans font-normal text-[17px] leading-[1.7] text-aurora-text-mid">
-                It&rsquo;s a streaming platform, but the catalog is a verb. The audience writes the brief.
-                We make the work.
-              </p>
-            </div>
-          </div>
-
-          <Link
-            href="/brd"
-            className="inline-block mt-12 font-sans font-medium text-[14px] text-aurora-accent hover:text-[#8A99FF] transition-colors"
-          >
-            Read the full BRD &rarr;
+      {story && (
+        <VRFade delay={140} style={{ position: "absolute", left: "clamp(28px, 4vw, 80px)", bottom: 64, display: "flex", gap: 14 }}>
+          <Link href={`/stories/${story.slug}`} className="vr-cta vr-cta-solid vr-link" style={{ display: "inline-flex", alignItems: "center", gap: 14, padding: "16px 30px", background: IVORY, color: "#0a0a0a", fontFamily: F_MONO, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", textDecoration: "none", boxShadow: "0 12px 30px -8px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.45) inset" }}>
+            <span style={{ width: 0, height: 0, borderLeft: "9px solid #0a0a0a", borderTop: "6px solid transparent", borderBottom: "6px solid transparent" }} />
+            Read it
           </Link>
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* HOW THE ENGINE WORKS                                         */}
-      {/* ============================================================ */}
-      <section id="engine" className="px-5 sm:px-8 py-20 sm:py-28">
-        <div className="container mx-auto max-w-[1320px]">
-          <div className="mb-3.5 font-mono text-[11px] tracking-[0.18em] uppercase text-aurora-accent">
-            // HOW THE ENGINE WORKS
-          </div>
-          <h2 className="mb-2 font-sans font-semibold text-[28px] tracking-[-0.02em] text-aurora-text">
-            Three steps, plainly.
-          </h2>
-          <p className="mb-14 max-w-[620px] font-sans text-[16px] text-aurora-text-mid">
-            From a single search to a finished release. No mysticism, no ten-step funnel &mdash; just the loop, in order.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-14">
-            {[
-              {
-                num: '01',
-                eyebrow: 'ASK',
-                eyebrowColor: 'text-aurora-accent',
-                title: 'You ask.',
-                desc: 'Type what you wish existed. The films, the songs, the endings, the games. The WHY counts as much as the what — that’s the signal we listen for.',
-              },
-              {
-                num: '02',
-                eyebrow: 'DEMAND CLUSTER',
-                eyebrowColor: 'text-aurora-cyan',
-                title: 'We aggregate.',
-                desc: 'Searches collapse into themes. Editors look at clusters of real demand — not vibes, not vanity — and choose the next thing worth making.',
-              },
-              {
-                num: '03',
-                eyebrow: 'ORIGINAL',
-                eyebrowColor: 'text-aurora-pink',
-                title: 'We ship.',
-                desc: 'A small, hybrid crew — human craft plus AI-native tools — produces the work, credits the team, and releases it on the platform that asked for it.',
-              },
-            ].map((step) => (
-              <div key={step.num} className="relative">
-                <div
-                  className="mb-6 font-sans font-bold text-aurora-accent leading-[0.9] tracking-[-0.04em] opacity-95"
-                  style={{ fontSize: 'clamp(3.6rem, 8vw, 6rem)' }}
-                >
-                  {step.num}
-                </div>
-                <div className={`mb-3 font-mono text-[11px] tracking-[0.18em] uppercase ${step.eyebrowColor}`}>
-                  {step.eyebrow}
-                </div>
-                <h3 className="mb-3.5 font-sans font-italic italic font-semibold text-[22px] tracking-[-0.01em] text-aurora-text">
-                  {step.title}
-                </h3>
-                <p className="max-w-[320px] font-sans font-normal text-[15px] leading-[1.6] text-aurora-text-mid">
-                  {step.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </Layout>
+          <Link href="/stories" className="vr-cta vr-link" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 24px", border: "1px solid rgba(255,255,255,0.22)", color: IVORY, fontFamily: F_MONO, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", background: "rgba(20,18,16,0.4)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
+            All stories
+          </Link>
+        </VRFade>
+      )}
+    </section>
   );
 }
 
-export async function getStaticProps() {
-  const blogPosts = (getAllPosts() || []).map((p: any) => ({
-    slug: p.slug,
-    title: p.title,
-    description: p.description,
-    thumbnail: p.thumbnail,
-    duration: p.duration,
-    releaseDate: p.releaseDate,
-  }));
-
-  return {
-    props: {
-      blogPosts,
-    },
-  };
+// ─── New this week (real stories + games) ────────────────────────
+function HomeNewThisWeek({ cards }: { cards: Card[] }) {
+  if (cards.length === 0) return null;
+  return (
+    <section style={{ padding: "64px clamp(28px, 4vw, 80px) 56px" }}>
+      <VRRowHeader eyebrow="Across the studio" title="New this week" meta="Fresh stories and games" right="See all →" />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 18, marginTop: 32 }}>
+        {cards.map((c, i) => (
+          <VRFade key={c.kind + c.href} delay={i * 50}>
+            <Link href={c.href} className="vr-card vr-sheen vr-link" style={{ display: "block", textDecoration: "none" }}>
+              <article style={{ position: "relative" }} className="vr-elevated-soft">
+                <VRPoster seed={i + 10} accent={c.accent} tint={c.accent} image={c.image} style={{ width: "100%", aspectRatio: "3/4", marginBottom: 14 }}>
+                  <div style={{ position: "absolute", inset: 0, padding: 14, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span style={{ fontFamily: F_MONO, fontSize: 9, letterSpacing: "0.2em", color: c.accent, textTransform: "uppercase" }}>&#9679; {c.kind}</span>
+                      <span style={{ fontFamily: F_MONO, fontSize: 9, letterSpacing: "0.18em", color: "rgba(255,255,255,0.55)" }}>NEW</span>
+                    </div>
+                    <div style={{ fontFamily: F_DISPLAY, fontSize: 22, lineHeight: 1.0, color: IVORY, letterSpacing: "-0.01em" }}>{c.title}</div>
+                  </div>
+                  {c.blurb && (
+                    <div className="vr-card-overlay" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.92) 60%)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 16 }}>
+                      <div style={{ fontFamily: F_MONO, fontSize: 9, letterSpacing: "0.18em", color: "#cdc6b6", textTransform: "uppercase", marginBottom: 6 }}>{c.meta}</div>
+                      <p style={{ fontFamily: F_BODY, fontStyle: "italic", fontSize: 12, lineHeight: 1.35, color: "#cdc6b6", margin: 0 }}>{c.blurb}</p>
+                    </div>
+                  )}
+                </VRPoster>
+                <div style={{ display: "flex", justifyContent: "space-between", fontFamily: F_MONO, fontSize: 9, letterSpacing: "0.18em", color: "#7a7363", textTransform: "uppercase" }}>
+                  <span>{c.meta}</span><span>{c.kind}</span>
+                </div>
+              </article>
+            </Link>
+          </VRFade>
+        ))}
+      </div>
+    </section>
+  );
 }
+
+// ─── Trending (ranked, real) ─────────────────────────────────────
+function HomeTrending({ cards }: { cards: Card[] }) {
+  if (cards.length === 0) return null;
+  return (
+    <section style={{ padding: "56px clamp(28px, 4vw, 80px) 72px", background: "rgba(8,8,8,0.5)", borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+      <VRRowHeader eyebrow="Reader charts" title="Trending across the studio" meta="Ranked newest-first until live stats land" right="Full chart →" />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 18, marginTop: 44 }}>
+        {cards.slice(0, 6).map((c, i) => (
+          <VRFade key={c.kind + c.href} delay={i * 60}>
+            <Link href={c.href} className="vr-card vr-link" style={{ display: "grid", gridTemplateColumns: "auto 1fr", alignItems: "end", gap: 0, minWidth: 0, textDecoration: "none" }}>
+              <div style={({ fontFamily: F_DISPLAY, fontSize: "clamp(110px, 9vw, 170px)", lineHeight: 0.78, color: "transparent", WebkitTextStroke: `1.2px ${c.accent}`, fontWeight: F_WEIGHT, marginRight: -8, marginBottom: -4, alignSelf: "end" }) as React.CSSProperties}>{i + 1}</div>
+              <VRPoster seed={i + 50} accent={c.accent} tint={c.accent} image={c.image} style={{ width: "100%", aspectRatio: "3/4", minWidth: 0 }}>
+                <div style={{ position: "absolute", inset: 0, padding: 14, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <span style={{ fontFamily: F_MONO, fontSize: 9, letterSpacing: "0.18em", color: c.accent, textTransform: "uppercase" }}>&#9679; {c.kind}</span>
+                  <div>
+                    <div style={{ fontFamily: F_DISPLAY, fontSize: "clamp(14px, 1.2vw, 18px)", lineHeight: 1.05, color: IVORY, letterSpacing: "-0.01em" }}>{c.title}</div>
+                    {c.meta && <div style={{ fontFamily: F_MONO, fontSize: 9, letterSpacing: "0.18em", color: "rgba(255,255,255,0.55)", marginTop: 6, textTransform: "uppercase" }}>{c.meta}</div>}
+                  </div>
+                </div>
+              </VRPoster>
+            </Link>
+          </VRFade>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─── Marquee (brand flourish) ────────────────────────────────────
+function HomeMarquee() {
+  const items = [
+    { label: "Stories", stone: "Amber", color: AMBER },
+    { label: "Games", stone: "Amethyst", color: AMETHYST },
+  ];
+  return (
+    <section style={{ padding: "44px 0", borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(7,7,7,0.45)", overflow: "hidden" }}>
+      <VRMarquee speed={42} gap={64}>
+        {items.map((s) => (
+          <React.Fragment key={s.label}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 18, fontFamily: F_DISPLAY, fontSize: "clamp(48px, 6vw, 84px)", fontWeight: F_WEIGHT, letterSpacing: "-0.02em", color: IVORY }}>
+              <span style={{ width: 14, height: 14, borderRadius: "50%", background: s.color, boxShadow: `0 0 24px ${s.color}` }} />
+              {s.label}
+              <span style={{ fontFamily: F_BODY, fontStyle: "italic", fontSize: "clamp(20px, 2.4vw, 32px)", color: s.color }}>{s.stone}</span>
+            </span>
+            <span style={{ fontFamily: F_DISPLAY, fontStyle: "italic", color: "#3a3528", fontSize: "clamp(48px, 6vw, 84px)" }}>&#183;</span>
+          </React.Fragment>
+        ))}
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 18, fontFamily: F_DISPLAY, fontSize: "clamp(48px, 6vw, 84px)", fontWeight: F_WEIGHT, letterSpacing: "-0.02em", color: "#5a5345", fontStyle: "italic" }}>&#10022; Visurena &#10022;</span>
+        <span style={{ fontFamily: F_DISPLAY, fontStyle: "italic", color: "#3a3528", fontSize: "clamp(48px, 6vw, 84px)" }}>&#183;</span>
+      </VRMarquee>
+    </section>
+  );
+}
+
+// ─── Spotlights (the two live rooms) ─────────────────────────────
+function HomeSpotlights({ storyCount, gameCount }: { storyCount: number; gameCount: number }) {
+  const tiles = [
+    { slug: "stories", label: "Stories", stone: "Amber",    color: AMBER,    tag: "Read", count: `${storyCount} ${storyCount === 1 ? "story" : "stories"} live` },
+    { slug: "games",   label: "Games",   stone: "Amethyst", color: AMETHYST, tag: "Play", count: `${gameCount} ${gameCount === 1 ? "game" : "games"} to play` },
+  ];
+  return (
+    <section style={{ padding: "84px clamp(28px, 4vw, 80px) 72px" }}>
+      <VRRowHeader eyebrow="One studio · two rooms live" title="What we make" meta="Stories and games now. Film and music, slowly — by Visurena." />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 18, marginTop: 36 }}>
+        {tiles.map((t, i) => (
+          <VRFade key={t.slug} delay={i * 60}>
+            <VRTilt>
+              <Link href={`/${t.slug}`} className="vr-link vr-shelf-tile vr-elevated" style={{ position: "relative", display: "block", aspectRatio: "16/9", overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)", textDecoration: "none" }}>
+                <VRPoster seed={i + 200} accent={t.color} tint={t.color} style={{ position: "absolute", inset: 0 }}>
+                  <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 30% 25%, ${t.color}30 0%, transparent 60%)` }} />
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.88) 100%)" }} />
+                </VRPoster>
+                <div style={{ position: "absolute", inset: 0, padding: 32, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <div>
+                    <div style={{ fontFamily: F_MONO, fontSize: 10, letterSpacing: "0.24em", color: t.color, textTransform: "uppercase", marginBottom: 10 }}>&#9679; {t.tag} &middot; {t.stone} stone</div>
+                    <div style={{ fontFamily: F_DISPLAY, fontSize: "clamp(48px, 5vw, 80px)", lineHeight: 0.9, color: IVORY, letterSpacing: "-0.025em", fontWeight: F_WEIGHT }}>{t.label}</div>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
+                    <p style={{ fontFamily: F_BODY, fontStyle: "italic", fontSize: 15, color: "#cdc6b6", margin: 0 }}>{t.count}</p>
+                    <span style={{ fontFamily: F_MONO, fontSize: 11, letterSpacing: "0.22em", color: IVORY, textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: 8, paddingBottom: 4, borderBottom: `1px solid ${t.color}` }}>Enter &rarr;</span>
+                  </div>
+                </div>
+              </Link>
+            </VRTilt>
+          </VRFade>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─── Newsletter (signup form hidden until wired — see TODO) ──────
+function HomeNewsletter() {
+  return (
+    <section style={{ padding: "120px clamp(28px, 4vw, 80px)", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(5,5,5,0.4)" }}>
+      <VRFade>
+        <div style={{ fontFamily: F_MONO, fontSize: 10, letterSpacing: "0.3em", color: IVORY, textTransform: "uppercase", marginBottom: 22 }}>&#10022; The Monday Post &#10022;</div>
+        <h2 style={{ fontFamily: F_DISPLAY, fontWeight: F_WEIGHT, fontSize: "clamp(56px, 7vw, 96px)", lineHeight: 0.95, color: IVORY, letterSpacing: "-0.025em", margin: 0, maxWidth: 1000, marginInline: "auto" }}>
+          New work in your inbox,<br />
+          <em style={{ fontStyle: "italic", color: IVORY, textShadow: "0 0 28px rgba(245,239,219,0.45)" }}>every Monday morning.</em>
+        </h2>
+        <p style={{ fontFamily: F_BODY, fontStyle: "italic", fontSize: 20, color: "#a8a18d", marginTop: 28, maxWidth: 640, marginInline: "auto" }}>
+          One short story and one game we made that week. No tracking, no ads. Free during open beta.
+        </p>
+        {/*
+          TODO(future): real newsletter signup — FORM HIDDEN until it works. It only
+          preventDefault()'d and discarded the email (no list/storage/capture endpoint).
+          Restore the <form> below and wire it to a real subscribe API (success/error states).
+
+          <form style={{ display: "inline-flex", gap: 0, marginTop: 44, alignItems: "stretch", width: "min(560px, 100%)" }} onSubmit={e => e.preventDefault()}>
+            <input placeholder="your@email" style={{ flex: 1, background: "transparent", border: "1px solid rgba(255,255,255,0.22)", borderRight: "none", padding: "16px 22px", color: IVORY, fontFamily: F_BODY, fontSize: 16, outline: "none" }} />
+            <button className="vr-cta" type="submit" style={{ background: IVORY, color: "#0a0a0a", border: `1px solid ${IVORY}`, padding: "16px 28px", fontFamily: F_MONO, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer" }}>Subscribe</button>
+          </form>
+        */}
+      </VRFade>
+    </section>
+  );
+}
+
+// ─── Page ────────────────────────────────────────────────────────
+export default function Home({ stories = [], games = [] }: Partial<HomeProps>) {
+  const featured = stories[0];
+  const storyCards = stories.map(storyCard);
+  const gameCards = games.map(gameCard);
+  // "New this week" = the newest few across both kinds (stories lead, then games).
+  const newCards = [...storyCards.slice(0, 4), ...gameCards.slice(0, 4)].slice(0, 8);
+  // Trending = stories (newest) then top games.
+  const trendingCards = [...storyCards, ...gameCards].slice(0, 6);
+
+  return (
+    <>
+      <Head><title>{"Visurena — Stories & Games"}</title></Head>
+      <div className="vr-app" style={{ background: "transparent", color: IVORY, fontFamily: F_BODY, fontSize: 16, lineHeight: 1.55 }}>
+        <Header />
+        <main className="vr-page">
+          <HomeHero story={featured} />
+          <HomeNewThisWeek cards={newCards} />
+          <HomeTrending cards={trendingCards} />
+          <HomeMarquee />
+          <HomeSpotlights storyCount={stories.length} gameCount={games.length} />
+          <HomeNewsletter />
+        </main>
+        <Footer />
+      </div>
+    </>
+  );
+}
+
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+  const stories = getStories();
+  const games = ((contentConfig as { games?: Game[] }).games ?? []) as Game[];
+  return { props: JSON.parse(JSON.stringify({ section: "home", stories, games })) };
+};

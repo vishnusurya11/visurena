@@ -1,1101 +1,454 @@
-# ViSuReNa — Architecture Document
+# Visurena — Architecture & Design Document
 
-| | |
-|---|---|
-| **Version** | 1.0 |
-| **Status** | Draft — reflects target architecture per [BRD.md](BRD.md) v1.0 |
-| **Last updated** | 2026-05-09 |
-| **Companion document** | [BRD.md](BRD.md) — this document is the **engineering** counterpart to the BRD's **product** specification. The BRD defines WHAT and WHY; this document defines HOW. |
-| **Cross-repo reference** | Other repos in the ecosystem MUST link to this document at the pinned commit they were built against |
+> **Living document.** This is the single source of truth for Visurena's architecture.
+> Update it (relevant section + decisions table §2 + change log §13) in the *same* change
+> whenever an architecture decision is made or changed. See `CLAUDE.md` for the rule.
 
-> This document is the engineering source of truth for the ViSuReNa system. Read alongside the [BRD](BRD.md). Where the BRD specifies a behavior, this document specifies the implementation. Updates to this document MUST stay in sync with the BRD; if they diverge, raise a PR against both.
+- **Status:** 🟢 Design complete — pending owner review, then implementation planning.
+- **Last updated:** 2026-05-23
+- **Owner:** Vishnu (vishnusurya11@gmail.com)
 
 ---
 
-## Table of contents
+## 1. Vision
 
-0. [Reading guide](#0-reading-guide)
-1. [Architectural principles — invariant across phases](#1-architectural-principles--invariant-across-phases)
-2. [Phase 0 architecture — Brand & Foundation (current)](#2-phase-0-architecture--brand--foundation-current)
-3. [Brand & visual system](#3-brand--visual-system)
-4. [Phase 1 architecture — Recommendation Engine Live](#4-phase-1-architecture--recommendation-engine-live)
-5. [Phase 2 architecture — Accounts & Refinement](#5-phase-2-architecture--accounts--refinement)
-6. [Phase 3 architecture — First Original + Orchestration](#6-phase-3-architecture--first-original--orchestration)
-7. [Phase 4 architecture — Multi-medium Expansion](#7-phase-4-architecture--multi-medium-expansion)
-8. [Phase 5 architecture — Membership & Monetization](#8-phase-5-architecture--membership--monetization)
-9. [Cross-cutting concerns](#9-cross-cutting-concerns)
-10. [Component deep-dives](#10-component-deep-dives)
-11. [Sequence diagrams reference](#11-sequence-diagrams-reference)
-12. [Cost model & growth projections](#12-cost-model--growth-projections)
-13. [Disaster recovery & runbooks](#13-disaster-recovery--runbooks)
-14. [Appendix — IaC templates](#appendix--iac-templates)
+Visurena is a cinematic creative-studio platform — written **Stories**, plus **Movies**,
+**Music**, and **Games** — with a dark, jewel-toned editorial look and a subtle animated
+"nebula gas" background. It is being rebuilt from a static brochure site into a real
+platform: automated content infrastructure, user accounts, engagement (likes / progress /
+comments / follows), interaction analytics, and search. Built React-first so a future
+mobile app reuses the design language and logic.
 
 ---
 
-## 0. Reading guide
+## 2. Locked decisions
 
-This document is **phase-organized**. Each phase section shows:
-
-1. **Topology diagram** — what exists at end of phase
-2. **What's added vs prior phase**
-3. **Component contracts** — IAM, API specs, S3 paths, schemas in use
-4. **What's deferred to a later phase**
-
-If you're building or integrating today, **start at the phase the platform is currently in** (Phase 0 as of this version), then read forward only as far as you need.
-
-If you're building a content engine, also read Section 10.2 (Content engine integration patterns) and BRD Appendix C (bootstrap checklist).
-
-If you're building orchestration or analytics, read Sections 6 and 10.3–10.4 in addition.
-
----
-
-## 1. Architectural principles — invariant across phases
-
-These principles MUST hold at every phase. If a design choice violates them, it's wrong.
-
-### 1.1 Single source of truth for shape
-
-**Every data shape used across repos is defined in `visurena-platform/schemas/`.** No engine, surface, or service may invent its own shape. Schema is the contract.
-
-### 1.2 Static-first surfaces
-
-The web surface is a **static export**, served from S3 + CloudFront. No SSR, no per-request rendering. Everything that can be resolved at build time MUST be resolved at build time. Mobile/TV/VR surfaces are runtime-fetching but consume the same manifest+content endpoints.
-
-Implication: **content updates require a rebuild** of the affected surfaces. Acceptable trade-off — rebuild is fast (< 5 min), CDN cache is global, hosting is ~free.
-
-### 1.3 Trust boundaries dictate bucket boundaries
-
-User-generated data lives in a **separate bucket** from public content. Analytics outputs live in a **third bucket**. One IAM mistake should never leak both content and user data.
-
-### 1.4 The platform owns infrastructure
-
-All AWS resources for the entire ecosystem are defined in `visurena-platform/infrastructure/`. Other repos declare their needs in their READMEs and open PRs against the platform repo. **No repo creates AWS resources directly.**
-
-### 1.5 Repos communicate by data, not by code dependency
-
-Engines, orchestration, and analytics communicate by **writing/reading S3 objects**, not by importing each other's code. The only code dependency anywhere is the **schemas** (vendored or submoduled into engines).
-
-### 1.6 Idempotency and replayability
-
-Every automated process (generation, manifest rebuild, analytics jobs) MUST be idempotent: running the same operation twice with the same inputs produces the same result. This makes recovery trivial — if a job fails halfway, just re-run.
-
-### 1.7 Least privilege IAM
-
-Every Lambda, every CI runner, every IAM role has scope limited to its specific bucket prefix and specific operations. No `s3:*` policies, no `Resource: "*"` policies anywhere.
-
-### 1.8 Observability before scale
-
-By Phase 2, every service writes structured logs to CloudWatch with trace IDs that connect across components. We do not wait for problems before adding telemetry.
-
----
-
-## 2. Phase 0 architecture — Brand & Foundation (current)
-
-### 2.1 Topology
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                            END USER                                      │
-│                              │                                           │
-│                              ▼                                           │
-│              ┌─────────────────────────────┐                             │
-│              │     visurena.com (CF)        │  ← CloudFront E19J2MV0E1W0DD │
-│              └──────────────┬──────────────┘                             │
-│                              │                                           │
-│                              ▼                                           │
-│              ┌─────────────────────────────┐                             │
-│              │  s3://visurena.com-...       │  ← static site bucket       │
-│              │  (HTML, JS, CSS, images)     │                             │
-│              └─────────────────────────────┘                             │
-│                                                                          │
-│  Build & deploy:                                                         │
-│   GitHub push → Actions → next build → s3 sync → CloudFront invalidate   │
-│                                                                          │
-│  Content sources (compiled in at build time):                            │
-│   • apps/web/posts/*.{md,html}      ← blog posts (file-based)       │
-│   • apps/web/content-config.json    ← cards (hand-edited)           │
-│                                                                          │
-│  User data collection:                                                   │
-│   • localStorage only (no backend)                                       │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-**One repo. One surface. Zero backend.** This is the simplest possible system that proves the brand thesis.
-
-### 2.2 Component inventory
-
-| Component | Location | Purpose |
+| # | Decision | Value |
 |---|---|---|
-| Static site bucket | `s3://visurena.com-visurena-bucket` | Hosts the built site |
-| CloudFront | distribution `E19J2MV0E1W0DD` | CDN, custom domain, HTTPS |
-| Route53 zone | `visurena.com.` | DNS |
-| GitHub Actions | `.github/workflows/deploy.yaml` | Build & deploy on push to `master`/`main` |
-
-### 2.3 What's added in Phase 0 (vs the legacy starting point)
-
-- **Schemas folder scaffolded** — `schemas/{blog-post,story-chapter,track,film,game,manifest,taste-input}.schema.json` exist as v1.0.0 stubs, even though no engine consumes them yet. Future engines need a target to build against.
-- **Brand redesign** — typography, single accent color, restrained editorial-streaming aesthetic. See Phase 0 Frontend Design Spec (separate doc, TBD when mockups settle).
-- **Recommendation-intake hero** on the home page. Two-step prompt; saves to `localStorage['visurena.taste-inputs']` as a JSON array. NO backend write yet.
-- **Removed:** "Coming Soon" placeholder pages from primary nav.
-
-### 2.4 Contracts in effect at Phase 0
-
-| Contract | Defined where | Consumed where |
-|---|---|---|
-| Schema files | `visurena-platform/schemas/` | Self-published; no consumers yet |
-| Static site URL | `https://visurena.com/` | End users |
-
-### 2.5 What's deferred
-
-- All backend services (deferred to Phase 1)
-- Multi-bucket S3 layout (deferred to Phase 1 when first content engine integrates)
-- Cross-repo CI/CD coordination (deferred to Phase 1)
-
----
-
-## 3. Brand & visual system
-
-The brand direction (**Aurora Indigo**) was locked on 2026-05-09. Product-side narrative + reference mockups live in `BRD.md` Appendix D. This section is the **engineering source of truth**: token names, contracts surfaces consume, and the per-section accent override pattern.
-
-### 3.1 Token taxonomy
-
-Two layers, per the design-system convention:
-
-1. **Primitive tokens** — raw color values. Named neutrally (`--color-indigo-500`). Do not consume these directly in components.
-2. **Semantic tokens** — role-based aliases (`--color-bg`, `--color-accent-parent`). Components consume these. Theming = remapping semantic tokens to different primitives.
-
-Below: the locked v1 token table. Implementation is CSS custom properties; same names re-map to native variables for ios/android/tv/vr surfaces in later phases.
-
-### 3.2 Parent palette tokens (used on every page)
-
-```css
-:root {
-  /* Primitive */
-  --color-indigo-950: #0A0E2A;
-  --color-indigo-900: #131A3D;
-  --color-indigo-800: #1D2552;
-  --color-indigo-700: #2A3268;
-  --color-indigo-500: #6B7DFF;
-  --color-text-50:    #F0F2FF;
-  --color-text-300:   #9DA8D9;
-  --color-text-500:   #5C66A0;
-
-  /* Semantic — parent (page) */
-  --color-bg:               var(--color-indigo-950);   /* page background */
-  --color-surface-1:        var(--color-indigo-900);   /* cards, nav, panels */
-  --color-surface-2:        var(--color-indigo-800);   /* raised surfaces */
-  --color-hairline:         var(--color-indigo-700);   /* 1px borders */
-  --color-text-high:        var(--color-text-50);      /* primary text */
-  --color-text-mid:         var(--color-text-300);     /* secondary text */
-  --color-text-muted:       var(--color-text-500);     /* tertiary, build info */
-  --color-accent-parent:    var(--color-indigo-500);   /* THE VERB — buttons, links, focus rings */
-}
-```
-
-### 3.3 Section accent tokens (the aurora)
-
-Seven semantic accents: Home (master, inherits parent indigo) + 6 sub-rooms. Each sub-room accent is used ONLY for that section's eyebrow, active-nav indicator (when on that page), ambient hero radial spot, content card category labels, card hover borders, and section CTAs. Parent accent (`--color-accent-parent`) stays glued to global UI (focus rings, recommendation/search button, link underlines) across all rooms.
-
-```css
-:root {
-  /* Primitive — section accent palette (the aurora) */
-  --color-aurora-indigo:    #6B7DFF; /* Home (master) */
-  --color-aurora-pink:      #F472B6; /* Movies */
-  --color-aurora-gold:      #F4C04E; /* Music */
-  --color-aurora-lime:      #B5E853; /* Games */
-  --color-aurora-cyan:      #2DD4BF; /* Story */
-  --color-aurora-lavender:  #A78BFA; /* VR World — NEW (added in v1.2 lock) */
-  --color-aurora-platinum:  #C0C8E0; /* Blog */
-
-  /* Semantic — section accents */
-  --color-accent-home:      var(--color-aurora-indigo);   /* master, inherits parent */
-  --color-accent-movies:    var(--color-aurora-pink);
-  --color-accent-music:     var(--color-aurora-gold);
-  --color-accent-games:     var(--color-aurora-lime);
-  --color-accent-story:     var(--color-aurora-cyan);
-  --color-accent-vrworld:   var(--color-aurora-lavender);
-  --color-accent-blog:      var(--color-aurora-platinum);
-}
-```
-
-### 3.4 Per-section "room override" pattern
-
-Every page is in exactly one room (Home, Movies, Music, Games, Story, VR World, or Blog). The room sets a single semantic token that components consume:
-
-```css
-/* Default (Home — master room) */
-:root {
-  --color-accent-room: var(--color-accent-home);
-}
-
-/* Per-room overrides applied via data-room on <html> or <body> */
-html[data-room="movies"]   { --color-accent-room: var(--color-accent-movies); }
-html[data-room="music"]    { --color-accent-room: var(--color-accent-music); }
-html[data-room="games"]    { --color-accent-room: var(--color-accent-games); }
-html[data-room="story"]    { --color-accent-room: var(--color-accent-story); }
-html[data-room="vrworld"]  { --color-accent-room: var(--color-accent-vrworld); }
-html[data-room="blog"]     { --color-accent-room: var(--color-accent-blog); }
-```
-
-Components reference `var(--color-accent-room)` for room-specific UI (eyebrow, active nav, CTA, card hover border) and `var(--color-accent-parent)` for global UI (recommendation/search button, focus rings).
-
-In Next.js: set `data-room="<room>"` on the `<html>` element from the page's `getLayout`/`_document` based on the route. In static export, render it inline at build time.
-
-### 3.5 Typography tokens
-
-```css
-:root {
-  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-body:    'Inter', system-ui, -apple-system, sans-serif;
-  --font-italic:  'DM Serif Display', 'Spectral', Georgia, serif; /* used italic only, sparingly */
-  --font-mono:    'JetBrains Mono', 'SF Mono', Menlo, monospace;
-}
-```
-
-Load Inter (300/400/500/600/700) + DM Serif Display (italic 400) + JetBrains Mono (400/500) via Google Fonts. Treat DM Serif Display as the editorial pull-word voice — used italic only, in the section accent color, for hero emphasis words and one or two pull-quotes per page.
-
-### 3.6 Where these tokens live
-
-- **Web (current):** `apps/web/styles/globals.css` — define both primitive and semantic layers there. Components reference semantic tokens only.
-- **Tailwind theme integration:** wire semantic tokens into `tailwind.config.js` under `theme.extend.colors` so utilities like `bg-bg`, `text-high`, `accent-room` work directly. Replace the existing per-section color sprawl in the current Tailwind config (`movies/music/games/story/blog/vr` palette objects) with the locked token set.
-- **Future surfaces (ios/android/tv/vr):** mirror the semantic-token names in their native theming systems (Asset Catalog colors on iOS, `colors.xml` on Android, etc.). The names are the contract; primitive values remap freely if a surface has different needs (e.g., higher contrast on TV).
-
-### 3.7 Reference mockups (canonical)
-
-These mockups are the visual source of truth. Match these when implementing or porting to other surfaces:
-
-- Home + color-system showcase: `apps/web/public/mockups-dark/06-aurora-indigo.html`
-- Per-room proofs (each in its own section accent):
-  - Movies: `06-aurora-indigo-watch.html` (visible label MOVIES; file path retained)
-  - Music: `06-aurora-indigo-listen.html` (visible label MUSIC)
-  - Games: `06-aurora-indigo-play.html` (visible label GAMES)
-  - Story: `06-aurora-indigo-read.html` (visible label STORY)
-  - VR World: `06-aurora-indigo-vr-world.html` (NEW)
-  - Blog: `06-aurora-indigo-research.html` (visible label BLOG; file path retained for now)
-
-### 3.8 Migration plan (current Tailwind setup → locked system)
-
-The current `apps/web/tailwind.config.js` defines per-section color objects under `colors.theme.{movies,music,games,story,blog,vr}` plus a `comfy.*` blog palette. These are transitional and MUST be replaced as part of the Phase 0 brand cutover:
-
-1. Add the locked semantic tokens to `globals.css` (this section's tables).
-2. Extend Tailwind to expose them (`theme.extend.colors`).
-3. Sweep components in `apps/web/components/` and `apps/web/pages/` to replace `theme.movies`, `theme.music`, etc. with the new semantic tokens.
-4. Replace the current Layout.tsx `pageTheme` prop with the `data-room` attribute pattern.
-   4a. Map old `pageTheme` values to new `data-room` values: `movies` (was `movies`), `music` (was `music`), `games` (was `games`), `story` (was `story`), `blog` (was `blog`/`research`; tentatively `studio` in v1.2), `vrworld` (was `vr`). Delete legacy values.
-5. Delete the legacy color objects from `tailwind.config.js`.
-6. Visual diff against the mockups.
-
-### 3.9 Nav structure (locked v1.3)
-
-Top-nav order, applied across all surfaces:
-
-```
-HOME · MOVIES · MUSIC · GAMES · STORY · VR WORLD · BLOG
-```
-
-Implementation notes:
-
-- Home is the master room and hosts the recommendation/intake hero. There is no separate "Search" tab — the recommendation entry point lives on Home.
-- Active state is signaled by a 1px section-accent underline + brighter text on the current tab. Hover (on non-active tabs) shows a parent-indigo underline.
-- Mobile (≤768px): nav collapses to a hamburger menu with the same order. Active room is indicated by the section accent on its row.
-- The active accent is read from `var(--color-accent-room)` (set by `data-room` on `<html>`), so the nav's active styling automatically follows the page's room without per-page overrides.
+| D1 | Build approach | Rebuild **in-place** on the existing Next.js app (becomes `apps/web`) |
+| D2 | Homepage direction | **The Studio** (from `visurenawebtemp`) |
+| D3 | Palette | **Jewel** (amber=Stories, emerald=Movies, ruby=Music, amethyst=Games) on black |
+| D4 | Background | **Drifting nebula gas**, section-tinted, subtle, honors reduced-motion |
+| D5 | Phase 1 scope | Homepage + all section/detail pages |
+| D6 | Mobile | **Invest now** — monorepo + shared design tokens/logic for future React Native/Expo app |
+| D7 | Overall architecture | **A · All-AWS serverless** (S3+CloudFront, API GW+Lambda, DynamoDB, Cognito, EventBridge) |
+| D8 | Auth | **AWS Cognito** — Google, Apple, Facebook, email+password. AWS stores credentials, never us. |
+| D9 | Engagement features | Likes, progress/continue, comments & ratings, follow + notify; interaction analytics |
+| D10 | Content storage | Content in **S3** (NOT git). Path `section/YYYY/MM/DD/slug/` by **creation date** (immutable home). Each work self-contained: `item.json` + `body/` + `images/` + `audio/` + `video/` + `extras/` |
+| D11 | Content format | Structured **JSON** documents (+ image/audio/video assets); system renders them into themed components. No HTML/Markdown. Story bodies = block arrays. Renders web **and** mobile. |
+| D12 | Publishing | **Scheduled auto-publish** — `publishAt` flips items (and individual chapters) "coming soon" → live |
+| D13 | Content index | **DynamoDB `Content`** table indexes all items (status, dates, accent, section, chapter availability) and drives listings |
+| D14 | IaC | **AWS CDK** (TypeScript) → synthesizes CloudFormation; existing CFN migrated in |
+| D15 | Budget | Lowest-cost / scale-to-zero first; ~$10/mo ceiling now; non-AWS OK if cheaper & capable |
+| D16 | Per-item immersive theming | Persistent nebula bg never resets; each item's `accent` (authored or auto-extracted from cover) gently bleeds into bg + accents on its page. Overall look unchanged. Intensity: **noticeable but gentle**, tunable. |
+| D17 | Nebula rendering | **Layered CSS/SVG radial-gradient gas + grain**, slow GPU-friendly drift. Pauses on hidden tab, honors `prefers-reduced-motion`, lightens on low-power/mobile. WebGL upgrade later possible. |
+| D18 | Login UI | **Custom jewel-themed** sign-in/up screens on Cognito (via Amplify Auth) |
+| D19 | Notifications | Follow → release alerts via **SES email** first (push later). Doubles as the Monday newsletter engine. |
+| D20 | Search | **Client-side Fuse.js** over a generated index JSON first; **Algolia / OpenSearch Serverless** later |
+| D21 | Authoring = automation, **no admin panel** | A new work arrives as one structured folder (with `item.json`); `content-sync` auto-ingests to the DB; `scheduler` auto-publishes. Hands-off, no admin UI. |
+| D22 | Self-contained works, append-only | Each folder holds only its **own** parts. A separate related work (album, sequel, adaptation) is its **own dated entry** — old folders are never reorganized. Permanent unique `id` per work. |
+| D23 | `Relations` link table | Edge table `fromId, toId, type` (`soundtrack-of`, `sequel`, `from-story`, `in-world`…), auto-built from `item.json.related[]`. Bidirectional. |
+| D24 | Engagement state tables | `Users`; `Likes` (+ cached `likeCount` on Content); `Progress`; `Comments` (text+rating); `Follows` (reverse-indexed for release emails). Join-table pattern. |
+| D25 | Events / interactions log | Append-only stream of every interaction (logged-in + anonymous `sessionId`) → **S3 + Athena** (not DynamoDB). Powers analytics/recs/history. Requires a **cookie/consent notice**. |
+| ~~D26~~ | Multi-language / translations | **Deferred — out of scope for now.** Revisit later as a same-work / language-variant model. Not built initially. |
+| D27 | Serialized chapters | Each chapter has its own `publishAt`/status (live / scheduled / writing). Scheduler flips chapters individually. Content index caches `chaptersLive/Total/nextChapterAt`. "New this week"/Monday newsletter derive from chapters released that week. |
 
 ---
 
-## 4. Phase 1 architecture — Recommendation Engine Live
+## 3. Phase roadmap & build order
 
-### 4.1 Topology
+Design is done up front (this doc). **Building** happens in shippable steps:
 
-```
-┌────────────────────────────────────────────────────────────────────────────┐
-│                              END USER                                       │
-│                                │                                            │
-│              ┌─────────────────┼─────────────────┐                          │
-│              │  POST /api/...  │   GET visurena.com                         │
-│              ▼                 │                 ▼                          │
-│   ┌─────────────────────┐      │    ┌────────────────────────┐              │
-│   │  api.visurena.com   │      │    │   visurena.com (CF)    │              │
-│   │  (API Gateway)      │      │    └────────────┬───────────┘              │
-│   └──────────┬──────────┘      │                 │                          │
-│              │                  │                 ▼                          │
-│              ▼                  │    ┌────────────────────────┐              │
-│   ┌─────────────────────┐      │    │ s3://visurena.com-...  │              │
-│   │  collect Lambda     │      │    │  (static site)         │              │
-│   │  (validates + writes)│     │    └────────────────────────┘              │
-│   └──────────┬──────────┘      │                                            │
-│              │                  │   Build reads at build time:               │
-│              ▼                  │    ┌────────────────────────┐              │
-│   ┌─────────────────────┐      │◀───│ s3://visurena-content/ │ (NEW)        │
-│   │ s3://visurena-data/ │      │    │   manifest.json        │              │
-│   │ + DynamoDB index    │      │    │   blog/{...}.json      │              │
-│   └─────────────────────┘      │    └────────────────────────┘              │
-│                                  │            ▲                              │
-│                                  │            │                              │
-│                                  │  ┌─────────┴────────────┐                 │
-│                                  │  │ manifest-rebuild     │                 │
-│                                  │  │ Lambda (S3-triggered)│                 │
-│                                  │  └──────────────────────┘                 │
-│                                  │            ▲                              │
-│                                  │            │ S3:PutObject events          │
-│                                  │            │                              │
-│                                  │  ┌─────────┴────────────┐                 │
-│                                  │  │ visurena-blog-engine │ (FIRST ENGINE)  │
-│                                  │  │ (separate repo)      │                 │
-│                                  │  └──────────────────────┘                 │
-└────────────────────────────────────────────────────────────────────────────┘
-```
-
-### 4.2 What's added vs Phase 0
-
-**New AWS resources** (defined in `infrastructure/`):
-- `s3://visurena-content/` — public, CloudFront-fronted at `content.visurena.com`
-- `s3://visurena-data/` — private, write-only via `collect` Lambda role
-- `s3://visurena-analytics/` — provisioned but mostly empty until Phase 2
-- `manifest-rebuild` Lambda — S3-event-triggered; rebuilds `manifest.json` on every PutObject
-- `collect` Lambda — validates and writes user data
-- API Gateway HTTP API at `api.visurena.com` — fronts `collect` Lambda
-- DynamoDB table `visurena-recommendations-catalog` — stores the curated catalog of ~500 items with theme/tag indexes
-- IAM role `visurena-engine-blog` — `PutObject` to `s3://visurena-content/blog/*` only
-- CloudFront distribution `content.visurena.com` — fronts content bucket
-
-**New repo:** `visurena-blog-engine` — first content engine, end-to-end handoff working.
-
-**Migration on platform repo:**
-- `apps/web/lib/blog.js` (current file-based reader) → `apps/web/lib/content.ts` (new manifest-driven reader). Both can coexist during the cutover; migrate post types one at a time.
-- New workflow `.github/workflows/content-update.yaml` triggered by `repository_dispatch[content-published]`.
-
-### 4.3 Contracts in effect at Phase 1
-
-#### 4.3.1 Data collection API
-
-```
-POST https://api.visurena.com/taste-input
-Content-Type: application/json
-
-{
-  "anonId": "550e8400-e29b-41d4-a716-446655440000",
-  "loved": { "title": "Annihilation", "medium": "movie", "year": 2018 },
-  "reason": "the way meaning dissolves at the edges",
-  "tags": ["sci-fi", "atmospheric"]
-}
-
-Response 200:
-{ "id": "<uuid>", "submittedAt": "2026-05-09T14:30:00Z" }
-
-Response 400 (schema validation failed):
-{ "error": "validation_failed", "details": [...] }
-```
-
-```
-POST https://api.visurena.com/feedback
-Body: per feedback.schema.json
-```
-
-```
-POST https://api.visurena.com/event
-Body: per event.schema.json
-```
-
-All endpoints validate request body against the corresponding schema. Failed validation → 400 + structured error.
-
-#### 4.3.2 Content publishing handoff (engine → platform)
-
-See [BRD Section 11.1](BRD.md#111-the-content-publish-flow-t0--t7) for the canonical timeline.
-
-In summary: engine uploads to `s3://visurena-content/{type}/...` → S3 event triggers manifest rebuild → engine sends `repository_dispatch` to platform → platform rebuilds → CloudFront invalidates.
-
-#### 4.3.3 Manifest schema
-
-Per `schemas/manifest.schema.json`. The platform reads this; engines never write to it.
-
-### 4.4 IAM matrix at Phase 1
-
-| Role | Permissions | Used by |
-|---|---|---|
-| `visurena-engine-blog` | `s3:PutObject`, `s3:GetObject` on `arn:...:visurena-content/blog/*` | `visurena-blog-engine` GitHub Actions (via OIDC) |
-| `visurena-collect` | `s3:PutObject` on `arn:...:visurena-data/*`, `dynamodb:PutItem` on the catalog table | `collect` Lambda |
-| `visurena-manifest-rebuild` | `s3:ListBucket`, `s3:GetObject`, `s3:PutObject` on `arn:...:visurena-content/*` (excluding `manifest.json` writes — actually, only the manifest itself for write) | `manifest-rebuild` Lambda |
-| `visurena-platform-deploy` | `s3:Put*`, `s3:Delete*` on the static site bucket; `cloudfront:CreateInvalidation` | Platform GitHub Actions (existing) |
-
-OIDC federation (instead of long-lived access keys) for all GitHub Actions — Phase 1 hardening priority.
-
-### 4.5 What's deferred
-
-- Accounts (Phase 2)
-- ML-based recommendations (Phase 2 or 3+)
-- Orchestration (Phase 3)
-- Analytics processing pipeline (Phase 2 minimum, full at Phase 3)
-
----
-
-## 5. Phase 2 architecture — Accounts & Refinement
-
-### 5.1 What's added vs Phase 1
-
-**Accounts:**
-- Cognito User Pool `visurena-users` — email magic-link only, no passwords
-- DynamoDB table `visurena-accounts` — account metadata, taste profile pointer
-- Account-aware versions of `taste-input` and `feedback` (now include `accountId` if present)
-
-**Analytics processing:**
-- New repo: `visurena-analytics`
-- Athena workgroup `visurena-analytics` querying `s3://visurena-data/` (already exists from earlier setup)
-- Scheduled EventBridge Lambda runs daily — reads taste-inputs, computes demand-clusters, writes to `s3://visurena-analytics/demand-clusters/{YYYY-MM-DD}.json`
-- Public dashboard data: `s3://visurena-analytics/public/crowd-dashboard.json` — surfaced on the Discover page
-
-**Recommendation refinement:**
-- The collect Lambda now also writes a per-user "interest vector" to a DynamoDB GSI on the accounts table, allowing personalized re-ranking on subsequent visits
-
-**Email infrastructure:**
-- SES configured for `visurena.com` domain
-- Lambda + EventBridge weekly job sending "new picks for you" emails to opted-in users
-
-### 5.2 New components
-
-| Component | Purpose |
-|---|---|
-| Cognito User Pool | Email magic-link auth |
-| `visurena-accounts` DynamoDB table | Account records + taste profile |
-| `analytics-daily` Lambda | Reads data bucket, writes analytics outputs |
-| Athena workgroup | Ad-hoc and scheduled querying |
-| SES domain identity + DKIM | Outbound email |
-| `email-weekly` Lambda | Sends weekly digests |
-
-### 5.3 Surface changes
-
-- **Account UI** added to the web surface header
-- **Personal taste profile page** — `/profile`, `/profile/inputs`, `/profile/recs`
-- **Public crowd dashboard** — `/crowd` (consumes `crowd-dashboard.json` at build time)
-
-### 5.4 What's deferred
-
-- Membership / payments (Phase 5)
-- Mobile/TV/VR surfaces (Phase 3+)
-- Real-time recommendations (still build-time-fetched manifest until scale demands otherwise)
-
----
-
-## 6. Phase 3 architecture — First Original + Orchestration
-
-### 6.1 Topology change — orchestration is now active
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                                                                         │
-│   visurena-orchestration  (NEW REPO)                                    │
-│   ─────────────────────────                                             │
-│   • Release calendar (in S3 + DynamoDB)                                 │
-│   • Decides when content goes live                                      │
-│   • Owns release-schedule.json                                          │
-│   • Triggers engine workflows on a schedule                             │
-│                                                                         │
-│       ┌───────────────────┐    ┌──────────────────────┐                 │
-│       │ EventBridge crons │───▶│ orchestration Lambda │                 │
-│       └───────────────────┘    └──────────┬───────────┘                 │
-│                                            │                            │
-│                                            ▼                            │
-│                          ┌─────────────────────────────────┐            │
-│                          │ Two writes:                      │            │
-│                          │ 1. release-schedule.json (S3)    │            │
-│                          │ 2. trigger engine workflow       │            │
-│                          │    (gh api dispatch)             │            │
-│                          └─────────────────────────────────┘            │
-│                                                                         │
-│   Manifest rebuild Lambda now CHECKS release-schedule.json:            │
-│     - Items in S3 but not yet released → omitted from manifest.json    │
-│     - At goLiveAt time → EventBridge fires → manifest re-rebuilt       │
-│                                                                         │
-└────────────────────────────────────────────────────────────────────────┘
-```
-
-### 6.2 New components
-
-| Component | Purpose |
-|---|---|
-| `visurena-orchestration` repo | Editorial brain |
-| `release-schedule.json` (in S3) | Source of truth for "when does what go live" |
-| `release-trigger` EventBridge schedule | Re-runs manifest builder when release dates arrive |
-| `commission-engine` Lambda | Triggers content engines via GitHub API based on demand cluster |
-| `visurena-story-engine` repo | Second content engine — generates novel chapters |
-
-### 6.3 Surface changes
-
-- **Reading interface** — `/read/{novel-id}/{chapter-num}` with paragraph-level reactions
-- **Reaction widget** — structured emoji + tag inputs (not free-text comments — too noisy for editorial use)
-- **"What readers wanted" callouts** — each chapter shows themes from previous chapter's feedback that influenced this one
-
-### 6.4 Editorial workflow (new)
-
-```
-Phase 2 analytics emit demand-cluster
-       │
-       ▼
-Owner reviews top clusters in dashboard
-       │
-       ▼
-Owner picks one, drafts a novel concept (spine: premise, characters, arcs)
-       │
-       ▼
-Concept committed to s3://visurena-content/story/{novel-id}/meta.json
-       │
-       ▼
-Orchestration commissions Chapter 1 from story-engine
-       │
-       ▼
-Story-engine generates → uploads → manifest rebuild
-       │
-       ▼
-Orchestration sets release date in release-schedule.json
-       │
-       ▼
-At release time → manifest re-rebuilt → site rebuilds → live
-       │
-       ▼
-Readers react → feedback flows to s3://visurena-data/feedback/
-       │
-       ▼
-Analytics processes feedback → emits "feedback themes" for next chapter
-       │
-       ▼
-Owner reviews feedback themes, decides which to incorporate
-       │
-       ▼
-Orchestration commissions Chapter 2 with feedback themes as inputs
-       │
-       (loop)
-```
-
-### 6.5 What's deferred
-
-- Multi-medium beyond text (Phase 4)
-- Membership (Phase 5 — opens after first novel completes)
-- Mobile app (likely Phase 3+ but not blocking)
-
----
-
-## 7. Phase 4 architecture — Multi-medium Expansion
-
-### 7.1 What's added per medium
-
-Each medium adds ONE content engine repo plus minor surface work. The infrastructure scales linearly because the manifest pattern already handles N content types.
-
-| Sub-phase | New engine repo | New surface page | New schema | New IAM role |
-|---|---|---|---|---|
-| 4a Music | `visurena-music-engine` | `/listen/...` | `track.schema.json` (already stubbed) | `visurena-engine-music` |
-| 4b Short video | `visurena-film-engine` (shorts) | `/watch/shorts/...` | `film.schema.json` (already stubbed) | `visurena-engine-film` |
-| 4c Long film | `visurena-film-engine` (extended) | `/watch/...` | (extends `film.schema.json`) | (existing) |
-| 4d VR | `visurena-vr-engine` | New `apps/vr/` surface | new `vr-experience.schema.json` | `visurena-engine-vr` |
-
-### 7.2 Surface scale-out
-
-By 4d, the platform has:
-- `apps/web` (Next.js)
-- `apps/ios` (React Native or Swift, decided at Phase 3)
-- `apps/android` (matching)
-- `apps/tv` (Apple TV / Android TV)
-- `apps/vr` (Meta Quest / Vision Pro — for 4d)
-
-All consume the same manifest from `content.visurena.com`. Web rebuilds on content update; mobile/TV/VR fetch at runtime with HTTP caching.
-
-### 7.3 Storage scale considerations
-
-Once content volume passes ~10K items:
-- Manifest size becomes a concern (~100 KB+ per fetch)
-- Migrate to per-type sub-manifests: `manifest-blog.json`, `manifest-story.json`, etc., with a top-level `manifest-index.json`
-- Surfaces fetch only the sub-manifests they need
-
-This is deferred until measured pain. Don't pre-optimize.
-
----
-
-## 8. Phase 5 architecture — Membership & Monetization
-
-### 8.1 What's added
-
-- **Stripe integration** — Stripe Customer Portal for self-service subscription management
-- **`visurena-billing` Lambda** — webhook receiver for Stripe events; updates account tier in DynamoDB
-- **Tier-aware surfaces** — content gating logic (free tier reads 1 chapter behind front, etc.)
-- **Revenue analytics** — added to analytics repo's outputs
-
-### 8.2 Tier enforcement architecture
-
-```
-User requests /read/novel-x/chapter-5
-       │
-       ▼
-Surface checks user's tier from /api/me (Lambda + Cognito + DynamoDB)
-       │
-       ▼
-Surface checks chapter's required-tier from manifest.json metadata
-       │
-       ▼
-If user tier ≥ chapter required-tier:
-   → Render chapter
-Else:
-   → Render paywall component with upgrade CTA
-```
-
-Critical: **content is still publicly accessible at the S3 layer.** The paywall is enforced at the surface only. This is acceptable for our membership model (we're not protecting "premium content" — we're rewarding paying members with early access to content that becomes free later). Trying to enforce paywalls at the storage layer adds complexity without value at our scale.
-
-### 8.3 What's deferred
-
-- App-store in-app purchases — deferred indefinitely; web-purchased subscription works on mobile via login
-- Family / team plans — revisit if data shows demand
-
----
-
-## 9. Cross-cutting concerns
-
-### 9.1 Schema versioning & migration
-
-**Backward-compatible changes** (new optional fields): bump minor version. Engines can adopt at will.
-
-**Breaking changes** (renames, type changes, new required fields): bump major version. Migration protocol:
-
-1. Platform PR introduces new schema as `{type}.v2.schema.json` alongside `{type}.v1.schema.json`.
-2. Surfaces support both versions during the migration window (typically 4 weeks).
-3. Each engine PRs its switch to v2 + bumps its pinned schema commit.
-4. After all engines on v2: platform PR removes v1 support.
-
-**Manifest itself is versioned.** The `version` field in `manifest.json` matches the manifest schema version. Surfaces check version compatibility before parsing.
-
-### 9.2 Authentication & authorization
-
-| Phase | Surface auth | Service auth | Engine→S3 auth |
+| Step | Name | Backend? | Ships |
 |---|---|---|---|
-| 0 | None | None | N/A |
-| 1 | None | API key (collect Lambda checks request signature) | OIDC federation: GitHub Actions assumes `visurena-engine-{type}` role |
-| 2 | Cognito email magic-link | Same | Same |
-| 3+ | Same | Same | Same |
-| 5 | Same + tier-gated | Same | Same |
+| **0** | Foundation | No | Monorepo (pnpm+Turborepo); `visurena-next`→`apps/web`; `design-tokens / ui / core / config` packages; CDK skeleton |
+| **1** | Redesign + nebula | No | "The Studio" look, nebula bg, per-item immersion, all pages — reading a **local JSON content layer**; deploy to existing S3/CloudFront |
+| **2** | Content infrastructure | Yes | S3 content bucket, `Content`+`Relations` tables, `content-sync`, EventBridge scheduler, scheduled publishing live |
+| **3** | Accounts & login | Yes | Cognito + custom jewel login + `Users` profiles |
+| **4** | Engagement + analytics | Yes | Likes, progress, comments/ratings, follows + SES notify; `Events` log → S3/Athena; consent notice |
+| **5** | Search | Maybe | Fuse.js index (Algolia/OpenSearch later) |
+| **6** | Later | — | Expo mobile app (reuses `design-tokens`+`core`); analytics dashboards; optional WebGL nebula |
 
-**OIDC federation rationale:** no long-lived AWS access keys in any GitHub repo. Each engine's GitHub Actions assumes a scoped IAM role at job start; credentials expire when the job ends. Setup is one-time per repo.
-
-### 9.3 Observability
-
-**Phase 0:** CloudFront access logs to `s3://visurena-cloudfront-logs/`. That's it.
-
-**Phase 1+:** All Lambdas log structured JSON to CloudWatch with:
-- `traceId` (UUID per request)
-- `phase` (service name)
-- `level` (`debug` / `info` / `warn` / `error`)
-- `event` (machine-readable event name, e.g., `taste-input.received`)
-- domain-specific fields
-
-CloudWatch metric filters extract counts (errors per minute, validation failures per hour). Alarms via SNS to email.
-
-**Phase 2+:** add **Sentry** (free tier) for surface-side errors. Tracing across surface → API → Lambda via the `traceId` header.
-
-**Phase 3+:** add a tiny custom dashboard — internal-only Athena queries over CloudWatch logs and analytics outputs. No QuickSight unless we hit a real visualization wall.
-
-### 9.4 Cost attribution
-
-All AWS resources MUST have these tags:
-- `Project=visurena`
-- `Component=platform|engine-{type}|orchestration|analytics`
-- `Phase=0|1|2|3|4|5`
-
-Cost Explorer with `--group-by TAG:Component` gives clean per-component spend. Catches runaway sub-systems early.
-
-### 9.5 Secrets management
-
-- **GitHub Actions secrets** for repository-scoped secrets (e.g., `VISURENA_PLATFORM_DISPATCH_TOKEN`).
-- **AWS Secrets Manager** for runtime secrets accessed by Lambdas (Stripe keys, third-party API keys).
-- **Never** in code. Never in `.env` committed to git. Never in CloudFormation parameters as plaintext.
+Maps to the owner's original 5 phases, plus a small Foundation step so the redesign lands on clean rails. Each step is independently shippable.
 
 ---
 
-## 10. Component deep-dives
-
-### 10.1 manifest-rebuild Lambda
-
-**Trigger:** S3 PutObject events on `s3://visurena-content/` (excluding `manifest.json` itself to avoid recursion)
-
-**Behavior:**
-1. List all `s3://visurena-content/**/*.json` (excluding `manifest.json`, `release-schedule.json`)
-2. Read `release-schedule.json` (if present); build a set of `{contentId → goLiveAt}`
-3. For each content file:
-   - Read its JSON, extract `id`, `type`, `publishedAt`, `title`, `tags`
-   - Determine `effectivePublishAt = max(publishedAt, goLiveAt)`
-   - If `effectivePublishAt > now`: SKIP (not yet released)
-   - Else: include in manifest
-4. Write the consolidated `manifest.json`
-5. Set Cache-Control: `max-age=60` so surfaces pick up updates within ~1 min
-
-**Idempotency:** complete rebuild every time. Concurrent invocations are safe (last-writer-wins; both produce the same content).
-
-**Cost:** ~$0.01/month at expected content volume.
-
-**Failure modes:**
-- Lambda timeout if content count > 100K → migrate to per-type sub-manifests (Phase 4)
-- Race condition if release-schedule.json is updated mid-rebuild → next S3 event triggers another rebuild; eventual consistency
-
-### 10.2 Content engine integration patterns
-
-Every engine MUST implement the **5-step contract:**
+## 4. System architecture (Architecture A — All-AWS serverless)
 
 ```
-1. SCHEMA       Vendor or submodule schemas at pinned commit
-2. GENERATE     Engine-specific logic; produces JSON output
-3. VALIDATE     ajv-cli (or python-jsonschema) against the schema
-4. UPLOAD       aws s3 cp to designated path (per IAM role's prefix)
-5. NOTIFY       gh api dispatch to platform repo
+                        ┌─────────────────────────────────────────────┐
+                        │                  USERS                       │
+                        │        (web today · mobile later)            │
+                        └───────────────┬─────────────────────────────┘
+                                        │ HTTPS
+                        ┌───────────────▼───────────────┐
+                        │      CloudFront (CDN/edge)     │
+                        └───┬───────────────────────┬────┘
+            static pages    │                       │   dynamic calls (JWT)
+        ┌───────────────────▼──────┐      ┌─────────▼───────────────────┐
+        │   S3 — WEB (Next.js SSG) │      │   API Gateway (HTTP API)    │
+        │   homepage, sections,    │      │            +                │
+        │   content pages          │      │   Lambda (likes, progress,  │
+        └──────────┬───────────────┘      │   comments, follows, me)    │
+                   │ reads index           └───┬───────────────┬─────────┘
+                   │                           │               │
+        ┌──────────▼───────────┐   ┌───────────▼────┐   ┌──────▼──────────────┐
+        │  S3 — CONTENT bucket │   │   DynamoDB      │   │   Cognito User Pool │
+        │  section/YYYY/MM/DD/  │   │  Content        │   │  Google · Apple ·   │
+        │  slug/ (item.json +  │   │  Relations      │   │  Facebook · email   │
+        │  body/images/audio/  │   │  Users · Likes  │   │  (AWS stores creds, │
+        │  video/extras)       │   │  Progress …     │   │   never us)         │
+        └──────────▲───────────┘   └───────▲────────┘   └─────────────────────┘
+                   │                        │
+        ┌──────────┴───────────┐   ┌────────┴─────────────┐
+        │  content-sync        │   │  EventBridge (cron)  │
+        │  (S3 ↔ Content/Rel)  │   │  → Lambda: flip       │
+        └──────────────────────┘   │  works + chapters     │
+                                    │  live on publishAt    │
+                                    └──────────────────────┘
+
+   Events: interactions → Kinesis Firehose → S3 → Athena (analytics, recs, history)
+   Search: index JSON in S3 + client Fuse.js → OpenSearch/Algolia later
+   Notify: chapter/work goes live → Lambda → SES email to followers (Monday newsletter)
+   CI/CD: GitHub Actions → build web → deploy S3 → invalidate CloudFront
+   IaC:   AWS CDK (TypeScript) in /infra → synthesizes CloudFormation
 ```
 
-**Example workflow** (`generate-and-publish.yaml` template):
+**Flow:** Public pages are static, cached at the edge, and read the `Content` index (built
+at deploy + a JSON snapshot in S3) to know what's live. Content bodies are JSON in the
+content S3 bucket, rendered into themed components. Personal actions happen after login —
+the browser calls the Lambda API with a Cognito JWT. EventBridge flips works *and
+individual chapters* live on their dates and triggers follower emails. Every interaction
+is logged to the Events stream for analytics.
 
-```yaml
-name: Generate and publish
-on:
-  workflow_dispatch:
-    inputs:
-      params: { type: string, required: true }
+---
 
-permissions:
-  id-token: write   # for OIDC
-  contents: read
+## 5. Repository structure (monorepo: pnpm + Turborepo)
 
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with: { submodules: true }
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::597088058256:role/visurena-engine-blog
-          aws-region: us-east-1
-      - run: python generate.py --params='${{ inputs.params }}' --out=./out/
-      - run: ajv validate -s vendor/visurena-schemas/blog-post.schema.json -d ./out/*.json
-      - run: aws s3 cp ./out/ s3://visurena-content/blog/$(date +%Y)/ --recursive
-      - run: |
-          gh api repos/visurena/visurena-platform/dispatches \
-            -f event_type="content-published" \
-            -f client_payload='{"type":"blog","triggered_by":"${{ github.run_id }}"}'
-        env:
-          GH_TOKEN: ${{ secrets.VISURENA_PLATFORM_DISPATCH_TOKEN }}
+```
+visurena/                      ← monorepo root
+├─ apps/
+│  ├─ web/                     ← Next.js site, rebuilt to the new design (was visurena-next)
+│  └─ mobile/                  ← React Native / Expo app (Phase 6; stub initially)
+├─ packages/
+│  ├─ design-tokens/           ← jewel palette, type scale, spacing, motion  (web + mobile)
+│  ├─ ui/                      ← shared React components
+│  ├─ core/                    ← content types, API client, hooks (framework-agnostic)
+│  └─ config/                  ← shared tsconfig / eslint / tailwind preset
+├─ services/
+│  ├─ api/                     ← Lambda handlers (likes, comments, progress, follows)
+│  ├─ content-sync/            ← S3 content ⇄ Content/Relations index
+│  └─ scheduler/               ← EventBridge publish-flip (works + chapters) + notify
+├─ infra/                      ← AWS CDK (S3, CloudFront, Cognito, DynamoDB, API GW, EventBridge, Firehose)
+└─ content-local/              ← local-only test mirror (real source of truth = S3)
 ```
 
-### 10.3 Orchestration release-gate
+Cross-platform hinge: `packages/design-tokens` + `packages/core` are imported by **both**
+`apps/web` and `apps/mobile`. Only tokens + logic are shared; UI is re-implemented natively
+in React Native.
 
-**Components:**
-- `release-schedule.json` in `s3://visurena-content/` — single file; orchestration owns
-- `release-trigger` Lambda — runs hourly; checks if any items are due to go live; if yes, re-triggers manifest rebuild and platform dispatch
+---
 
-**Schedule format** (`release-schedule.json`):
+## 6. Content infrastructure
+
+### 6.1 Folder layout (one self-contained, append-only folder per work)
+
+```
+s3://visurena-content/
+└─ stories/2026/03/19/the-lantern-mile/        ← section / creation-date / slug  (id: sto_LM)
+   ├─ item.json          ← the manifest: ALL metadata, schedule, accent, chapters, related[]
+   ├─ body/   01.json 02.json …   ← chapter text as block arrays
+   ├─ images/  cover.jpg  social.jpg  inline-01.jpg
+   ├─ audio/
+   │  ├─ audiobook/01.mp3 …   music/theme.mp3
+   ├─ video/   clip.mp4
+   └─ extras/
+```
+
+- Folder sharded by **creation date** (immutable home); a year/month/day tree keeps any
+  prefix small. S3 itself has no folder limits — this is for tidiness + listing.
+- Related works made later are **their own dated entries**, linked via `Relations` (never
+  nested, old folders never reorganized).
+
+### 6.2 `item.json` manifest (single source of truth, robot-readable)
+
 ```json
 {
-  "version": "1.0",
-  "schedule": [
-    {
-      "contentId": "novel-x-chapter-05",
-      "contentPath": "story/novel-x/chapters/05.json",
-      "goLiveAt": "2026-05-15T18:00:00Z",
-      "channels": ["web", "mobile"]
-    }
-  ]
+  "id": "sto_LM",
+  "section": "stories",
+  "slug": "the-lantern-mile",
+  "status": "scheduled",                       // draft | scheduled | live
+  "createdAt": "2026-03-19",
+  "publishAt": "2026-03-19T08:00:00Z",
+  "genre": "Horror",
+  "accent": { "primary": "#7c8fa8" },          // immersion color (or auto from cover.jpg)
+  "cover": "images/cover.jpg",
+  "tags": ["horror", "road"],
+  "credits": { "author": "…", "narrator": "…", "composer": "…" },
+
+  "title": "The Lantern Mile",
+  "summary": "…",
+
+  "chapters": [
+    { "n": 1, "title": "…", "body": "body/01.json",
+      "audiobook": "audio/audiobook/01.mp3", "publishAt": "2026-03-19T08:00:00Z" },
+    { "n": 6, "publishAt": "2026-05-25T08:00:00Z" },     // upcoming (Monday)
+    { "n": 7, "status": "writing" }                       // not scheduled
+  ],
+
+  "related": [ { "toId": "mus_LT", "type": "soundtrack" } ]
 }
 ```
 
-**Why a separate file (not embedded in content JSON):**
-- Editorial decisions (release timing) are decoupled from content (the chapter itself doesn't know when it's released)
-- Orchestration can shift release dates without re-uploading content
-- Content can exist privately in S3 ahead of release; only orchestration's update reveals it
-
-### 10.4 Analytics processing pipeline
-
-**Inputs:** all of `s3://visurena-data/`.
-
-**Daily processing job** (`analytics-daily` Lambda, EventBridge cron `cron(0 4 * * ? *)`):
-1. Query `s3://visurena-data/taste-inputs/` for the last 24h via Athena
-2. Cluster taste-inputs by theme tags + reason-text TF-IDF (hand-rolled at first; replace with embeddings + k-means at scale)
-3. Identify top N clusters; for each cluster compute size, growth rate, suggested generation prompt
-4. Write `s3://visurena-analytics/demand-clusters/{YYYY-MM-DD}.json`
-5. Compute aggregated stats; write `s3://visurena-analytics/public/crowd-dashboard.json`
-
-**Per-content feedback rollup** (separate job, runs after each chapter release):
-1. Query `s3://visurena-data/feedback/{content-id}/` for all feedback on the new content
-2. Aggregate reaction tags, identify top themes, write summary to `s3://visurena-analytics/feedback-summaries/{content-id}.json`
-3. This summary becomes input to the NEXT chapter's commission
-
-**Privacy:** all analytics outputs are aggregated. No outputs contain individual `accountId` or `anonId`. Athena queries that touch raw user data run with a separate, more privileged role; their outputs are scrubbed before writing to `visurena-analytics`.
-
----
-
-## 11. Sequence diagrams reference
-
-### 11.1 Content publish (engine → live)
+### 6.3 Automation (hands-off)
 
 ```
-Engine         S3-content      Lambda        Engine      Platform GHA   S3-static  CloudFront  User
-  │               │               │             │             │             │           │        │
-  │ PutObject     │               │             │             │             │           │        │
-  ├──────────────▶│               │             │             │             │           │        │
-  │               │ event         │             │             │             │           │        │
-  │               ├──────────────▶│             │             │             │           │        │
-  │               │               │ rebuild     │             │             │           │        │
-  │               │               │ manifest    │             │             │           │        │
-  │               │◀──────────────┤             │             │             │           │        │
-  │ dispatch      │               │             │             │             │           │        │
-  ├──────────────────────────────────────────────────────────▶│             │           │        │
-  │               │               │             │             │ build       │           │        │
-  │               │               │             │             │ + sync      │           │        │
-  │               │               │             │             ├────────────▶│           │        │
-  │               │               │             │             │ invalidate  │           │        │
-  │               │               │             │             ├────────────────────────▶│        │
-  │               │               │             │             │             │           │ GET /  │
-  │               │               │             │             │             │           │◀───────┤
-  │               │               │             │             │             │           │ html   │
-  │               │               │             │             │             │           ├───────▶│
+Drop folder in S3 ──▶ content-sync (S3 event → Lambda)
+                        • reads item.json
+                        • upserts Content index (incl. chapter availability)
+                        • writes Relations edges (both directions) from related[]
+                        • refreshes the public index JSON snapshot
+
+EventBridge cron ──▶ scheduler (Lambda)
+                        • flips works & chapters live when publishAt ≤ now
+                        • triggers SES emails to followers (Monday newsletter)
+                        • refreshes index snapshot / CloudFront invalidation
 ```
 
-### 11.2 Taste input submission
+### 6.4 Render pipeline
+- **Listing pages** (homepage rows, sections, shelves): Next.js reads the `Content` index at
+  build → themed cards. Scheduled flips refresh the snapshot.
+- **Detail pages**: app provides the themed shell (chrome, chapter nav, like button); the
+  JSON body renders into themed components with the item's accent immersion.
+- **Local mode**: dev reads from `content-local/` — write & preview with zero AWS.
+
+### 6.5 Generation output → site contract (the normalizer)
+
+The story-engine **drops a richer, engine-shaped folder** than the target §6.1 layout. Observed
+drop (`website_data/stories/2026/05/25/20260525141829_short/`):
 
 ```
-User           Surface         API GW          collect Lambda     S3-data     DynamoDB
-  │               │               │                  │               │           │
-  │ submit form   │               │                  │               │           │
-  ├──────────────▶│               │                  │               │           │
-  │               │ POST          │                  │               │           │
-  │               ├──────────────▶│                  │               │           │
-  │               │               │ invoke           │               │           │
-  │               │               ├─────────────────▶│               │           │
-  │               │               │                  │ validate vs   │           │
-  │               │               │                  │ taste-input   │           │
-  │               │               │                  │ .schema.json  │           │
-  │               │               │                  │ PutObject     │           │
-  │               │               │                  ├──────────────▶│           │
-  │               │               │                  │ PutItem (idx) │           │
-  │               │               │                  ├──────────────────────────▶│
-  │               │               │ 200 + id         │               │           │
-  │               │◀──────────────┤◀─────────────────┤               │           │
-  │ confirmation  │               │                  │               │           │
-  │◀──────────────┤               │                  │               │           │
+20260525141829_short/                 ← folder name = <UTCstamp>_<kind>
+├─ slack-water.json    ← rich generation record: content + heavy craft metadata
+├─ slack-water.md      ← rendered prose (title + genre line + prompt blockquote + prose)
+├─ timing.jsonl        ← per-event generation telemetry
+└─ timing.txt          ← human-readable timing summary
 ```
 
-### 11.3 Release-gated content (orchestration in play)
+- The `<slug>.json` / `<slug>.md` **filename is the slug** ("Slack Water" → `slack-water`).
+- `slack-water.json` is a **superset** — alongside the content it carries deck-engine, MICE,
+  craft, frame, characters, locations, causality, etc. The **site consumes a thin projection**;
+  the rest is reserved for the Research/field-notes surface (the transparency angle, BRD §data-ethics).
 
-```
-Engine        S3-content      Lambda(rebuild)   release-schedule.json    Orchestration EventBridge   Platform GHA
-  │               │                  │                    │                       │                       │
-  │ PutObject     │                  │                    │                       │                       │
-  ├──────────────▶│                  │                    │                       │                       │
-  │               │ event            │                    │                       │                       │
-  │               ├─────────────────▶│ read               │                       │                       │
-  │               │                  ├───────────────────▶│                       │                       │
-  │               │                  │ contentId not yet  │                       │                       │
-  │               │                  │ released → SKIP    │                       │                       │
-  │               │                  │ from manifest      │                       │                       │
-  │               │                  │                    │                       │                       │
-  │     ...time passes until goLiveAt...                  │                       │                       │
-  │                                                       │ cron fires ──────────▶│                       │
-  │                                                       │                       │ re-trigger manifest   │
-  │               │                  │◀──────────────────────────────────────────│                       │
-  │               │                  │ rebuild (now includes the content)        │                       │
-  │               │                  │ + dispatch ──────────────────────────────────────────────────────▶│
-  │                                                                                                       │ build & deploy
-```
+**Projection (generation JSON → `item.json` / `ContentItem`):**
 
----
+| Site field | From generation | Notes |
+|---|---|---|
+| `id` | `id` | e.g. `20260525141829_short-mystery-slack-water` (prefix `sto_` optional) |
+| `slug` | `<slug>.json` filename / `title` | |
+| `kind` | folder suffix `_short` / `tier.id` | `short \| novel \| series` — see 6.6 |
+| `section` | constant `stories` | |
+| `title`, `genre` | `title`, `genre` | |
+| `summary` | `logline` (fallback `promise`) | card/hero blurb |
+| `createdAt`, `publishAt` | `created_at` | ISO |
+| `readMinutes`, `wordCount`, `sceneCount` | `totals.{read_minutes,word_count,scene_count}` | |
+| `tags` | `reedsy_tags` | |
+| **body** | `scenes[]` (`.title`, `.prose`) — fallback top-level `prose` | the reader's source |
+| `accent` | — *(not emitted)* | auto-derived from cover, or sidecar override (6.8) |
+| `cover` / `hero` | — *(not emitted)* | **you provide** (6.8) |
 
-## 12. Cost model & growth projections
+**Two ways to bridge** engine output to the §6.2 `item.json` contract:
+- **(A)** the engine emits a compliant `item.json` + `body/` + `images/` (the §6.1 layout) — preferred end-state.
+- **(B)** the platform runs a **normalizer** at build/ingest that reads the rich JSON and produces
+  the thin projection in memory — used now for local mode (no persisted `item.json` required).
 
-### 12.1 Phase-by-phase cost estimate
+### 6.6 Content kinds (short vs novel / web-series)
 
-| Phase | MAUs | Monthly cost | Dominant components |
+| Kind | Structure | Reader | Release |
 |---|---|---|---|
-| 0 | < 100 | < $1 | Route53 ($0.50), S3 dust |
-| 1 | 100–1K | $5–$15 | + Lambda invocations, DynamoDB on-demand, content bucket data transfer |
-| 2 | 1K–10K | $20–$80 | + Cognito MAUs ($0.0055 ea above 50K free), SES emails, Athena queries |
-| 3 | 10K–100K | $100–$500 | + content storage (per-medium), heavier Lambda invocations |
-| 4 | 100K–1M | $1K–$5K | + multi-surface CDN egress, DynamoDB at scale |
-| 5 | 1M+ | $5K+ | + Stripe fees (2.9% + 30¢), revenue eclipses cost |
+| **short** | one chapter | **one continuous read**; `scenes[]` render as in-page section breaks (✦ / rule), no chapter index | published whole |
+| **novel** / **web-series** | `chapters[]`, each its own body + `publishAt` | chapter-paginated; reuses the `[slug].tsx` chapter index | **chapter-level release (Monday drops) — deferred to a later pass** |
 
-**Free-tier stretches:** Phase 0–1 stays effectively free indefinitely. Phase 2 is mostly free until ~5K MAUs. Phase 3 is when meaningful cost begins.
+`kind` comes from the folder suffix (`_short`) / `tier`; it selects which reader renders. Shorts are
+the only kind wired now; chapter scheduling for novels/series is the next iteration.
 
-### 12.2 Cost guardrails
+### 6.7 Source provider — local ↔ S3 (build-time switch)
 
-- AWS Budgets alerts at 50% / 80% / 100% of monthly target per phase
-- Per-component budgets (split by `Component=` tag)
-- S3 lifecycle rules: raw analytics events → 90-day expiry; cold content → Glacier after 1 year
-- Lambda concurrency limits set per function (prevents runaway invocations)
+The site is **static-export**, so *all* content is resolved during `next build` — the "switch
+between local and S3" is a **build-time env flag**, not a runtime toggle. One provider module
+(`apps/web/lib/content.ts`, extended) exposes `getStories()` / `getStory(slug)` returning the
+normalized projection + body and **hiding the source** so pages are source-agnostic.
+
+```
+VR_CONTENT_SOURCE   = local | s3        # default: local (dev)
+VR_CONTENT_LOCAL_DIR = D:\…\website_data # drop root, read in place (alpha-local)
+VR_CONTENT_S3_BUCKET = visurena-content-alpha   # us-west-2 (prod: visurena-content-prod)
+VR_CONTENT_S3_REGION = us-west-2
+VR_CONTENT_BASE_URL = https://content.visurena.com   # CDN base for asset URLs (s3/prod)
+```
+
+- **local**: walk `<dir>/stories/**/<id>/`, normalize each, and **copy referenced assets** into
+  `apps/web/public/stories/<slug>/…` (**resizing + converting to WebP** so the static `out/` ships
+  optimized files even though the engine drops ~2 MB PNGs); asset `src` = `/stories/<slug>/cover_34.webp`.
+- **s3**: `pnpm content:pull` (`scripts/pull-content.mjs`) runs `aws s3 sync s3://<bucket> → apps/web/.content-cache`
+  (us-west-2, **download-only**), then the **same walker** reads the cache and copies covers into `public/` — so
+  an S3 build needs no AWS SDK and no CloudFront yet. Run it before `next build` for an S3-sourced build.
+  *(Future optimization: serve covers from CloudFront `content.visurena.com` instead of bundling them.)*
+- Provider **caches once per process** (no per-request re-scan). Pick up new content by restarting dev / rebuilding.
+- Both yield identical `ContentItem[]`. The drop folder, `apps/web/.content-cache/`, and `apps/web/public/stories/`
+  are **git-ignored** (staging/cache, not committed) — prod content of record lives in S3.
+
+### 6.8 Asset requirements (what you provide per story) — the covers
+
+Generation emits **no imagery**; covers (and therefore the immersion accent) come from you now, an
+image pipeline later. Per story, drop into the story folder under `images/`:
+
+| File (engine convention) | Aspect | Recommended | Minimum | Used by |
+|---|---|---|---|---|
+| `images/cover_34.{png\|webp\|jpg}` | **3 : 4** portrait | 1200 × 1600 | 900 × 1200 | **primary** — cards, featured poster, trending, related (the thumbnail) |
+| `images/cover_169.{png\|webp\|jpg}` | **16 : 9** landscape | 1920 × 1080 | 1600 × 900 | *optional* — single-story hero bg + any landscape/16:9 surface |
+| `images/social.{png\|webp\|jpg}` | **1.91 : 1** | 1200 × 630 | — | *optional* — OpenGraph / share card |
+
+- **Shape policy:** `cover_34` (3:4) is the one required image and drives every card/poster. If a
+  `cover_169` (16:9) is also supplied the provider **uses both** — 3:4 for portrait surfaces, 16:9
+  for the hero/landscape — otherwise the hero focal-crops the 3:4 cover. (Story cards stay 3:4; no
+  card rework. Video sections like Movies/Music remain 16:9 from YouTube.)
+- **Format:** PNG, JPG, or WebP accepted as input (sRGB). Engine drops raw PNGs (~2 MB) — fine; the
+  **local provider resizes + converts to WebP** when copying into `public/stories/<slug>/`, so the
+  static `out/` ships optimized files regardless of the source format.
+- **Accent** auto-derives from the cover's dominant color. To override, add `"accent": "#RRGGBB"`
+  to a sidecar `meta.json` in the story folder (or have the engine emit it).
+- Filenames are **conventional** (`cover_34` / `cover_169` / `social`) so the provider finds them with no manifest.
+- **Minimum to render a story:** just `images/cover_34.*`. Everything else has a sensible fallback.
+
+### 6.9 Release date & scheduling
+
+**Current behavior — publish on build.** Every story dropped into the source is treated as **live**:
+the normalizer sets `status = live` and `publishAt = created_at`, so it appears the next time the site
+builds. No scheduling input is required, and there's no separate release-date field to fill in yet.
+
+**Deferred (revisit later).** Where the release date lives and how scheduling works is intentionally
+**TBD** — we'll decide the field's home (engine-emitted vs sidecar vs index) when we need it. The
+machinery is already half-there for when we do: `@visurena/core` ships `selectLive(items, now)` (gates on
+`status:live && publishAt ≤ now`), and because the site is static-export, enforcement is **build-time** —
+a future-dated item simply isn't written into `out/` until a (scheduled) rebuild runs, so nothing leaks.
+Per-chapter release for novels/series rides on the same mechanism, deferred with chapter handling.
 
 ---
 
-## 13. Disaster recovery & runbooks
+## 7. Visual design & theming (Phase 1)
 
-### 13.1 Backups
-
-- **Schemas:** in git (platform repo). RTO: instant.
-- **Content (S3):** S3 Versioning ENABLED on `visurena-content/`. Lifecycle: keep all versions for 90 days. RTO: minutes via console.
-- **User data (S3):** S3 Versioning ENABLED on `visurena-data/`. Cross-region replication to `us-west-2` (Phase 2+). RTO: minutes.
-- **DynamoDB:** Point-in-time recovery enabled on all tables. RTO: hours (PITR restore).
-
-### 13.2 Runbooks
-
-#### A. Static site is down
-
-1. Check CloudFront distribution status in console
-2. Check S3 site bucket — does index.html exist?
-3. If both healthy → check DNS (`dig visurena.com`)
-4. If broken: roll back via re-deploying last known good commit (`gh workflow run deploy.yaml -f ref=<sha>`)
-
-#### B. Content engine published but doesn't appear on site
-
-1. Check manifest in `s3://visurena-content/manifest.json` — is the new item there?
-2. If NOT in manifest:
-   - Check `release-schedule.json` — is item gated?
-   - Check manifest-rebuild Lambda CloudWatch logs for errors
-   - Manually invoke manifest-rebuild Lambda
-3. If IN manifest but NOT on site:
-   - Check platform repo Actions tab — did `repository_dispatch` arrive?
-   - If not arrived: manually dispatch (`gh workflow run content-update.yaml`)
-   - If arrived but failed: check build logs
-
-#### C. Mass user-data leak suspected
-
-1. Immediately revoke `visurena-collect` Lambda's IAM role
-2. Disable API Gateway endpoint
-3. Audit S3 access logs for `visurena-data/` for the suspected window
-4. Notify affected users within 72h per privacy commitments
-5. Forensics + root cause before reactivation
-
-#### D. Schema breaking change accidentally deployed
-
-1. Roll back platform repo to prior commit
-2. Engines that already updated to new schema: revert to prior pinned commit
-3. Re-run their last successful generation
-4. Discuss the migration plan and re-attempt with proper coordination
+- **Pages:** Homepage (status bar → header → hero → "New this week" → trending → genre
+  shelves → continue → Monday newsletter → footer); section pages (Stories live;
+  Movies/Music/Games "coming soon"; Research); detail pages (story reader, film/album/game,
+  article).
+- **Components** (`packages/ui`): `NebulaBackground`, `ThemeProvider`, `TopStatusBar`,
+  `Header/Nav`, `Hero`, `ContentCard`, `CardRow`, `TrendingList`, `ShelfCard`,
+  `NewsletterCTA`, `Footer`, `Reader`, `SignInButton` (placeholder in Phase 1).
+- **Design tokens** (`packages/design-tokens`): jewel palette, section→stone map; serif
+  display + JetBrains Mono labels + body face; motion durations/easings.
+- **Nebula background:** one persistent layer; color from `ThemeProvider` (section tone →
+  bleeds toward open item's accent — D16). Slow CSS/SVG gradient drift + grain.
+  Performance-safe (D17).
+- **Responsive:** mobile-first; nav collapses, card rows swipe/stack, nebula lightens.
 
 ---
 
-## Appendix — IaC templates
+## 8. Data model
 
-### A.1 `s3://visurena-content/` bucket (CloudFormation snippet)
+**State layer (DynamoDB — drives the UI, fast):**
 
-```yaml
-ContentBucket:
-  Type: AWS::S3::Bucket
-  Properties:
-    BucketName: visurena-content
-    VersioningConfiguration:
-      Status: Enabled
-    LifecycleConfiguration:
-      Rules:
-        - Id: ExpireOldVersions
-          Status: Enabled
-          NoncurrentVersionExpirationInDays: 90
-    PublicAccessBlockConfiguration:
-      BlockPublicAcls: true
-      BlockPublicPolicy: false   # We use a public read policy via bucket policy
-      IgnorePublicAcls: true
-      RestrictPublicBuckets: false
-    Tags:
-      - { Key: Project,   Value: visurena }
-      - { Key: Component, Value: platform }
-      - { Key: Phase,     Value: '1' }
+| Table | Key fields | Purpose |
+|---|---|---|
+| `Content` | id, section, slug, status, dates, accent, chapter availability, `likeCount` | every work; listings & detail |
+| `Relations` | fromId, toId, type | links: soundtrack, sequel, from-story, in-world |
+| `Users` | id (Cognito sub), name, avatar, prefs | accounts |
+| `Likes` | userId, contentId, createdAt | who liked what (+ counter on Content) |
+| `Progress` | userId, contentId, {chapter, %} | continue reading |
+| `Comments` | contentId, userId, text, rating, ts | comments & ratings |
+| `Follows` | userId, targetId (reverse-indexed) | follows → release emails |
 
-ContentBucketPolicy:
-  Type: AWS::S3::BucketPolicy
-  Properties:
-    Bucket: !Ref ContentBucket
-    PolicyDocument:
-      Statement:
-        - Effect: Allow
-          Principal: '*'
-          Action: s3:GetObject
-          Resource: !Sub 'arn:aws:s3:::${ContentBucket}/*'
-          Condition:
-            StringEquals:
-              # Only via CloudFront
-              'AWS:SourceArn': !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${ContentDistribution}'
-```
+**Events layer (S3 + Athena — analytics, infinite/cheap):**
 
-### A.2 `manifest-rebuild` Lambda (CloudFormation snippet)
+| Stream | Fields | Purpose |
+|---|---|---|
+| `Events` | who(userId/sessionId), ts, type, target, context | append-only interaction log → analytics, recs, history |
 
-```yaml
-ManifestRebuildFunction:
-  Type: AWS::Lambda::Function
-  Properties:
-    FunctionName: visurena-manifest-rebuild
-    Runtime: python3.12
-    Handler: index.handler
-    MemorySize: 512
-    Timeout: 60
-    Role: !GetAtt ManifestRebuildRole.Arn
-    Code:
-      ZipFile: |
-        # see infrastructure/lambdas/manifest-rebuild/
-    Environment:
-      Variables:
-        BUCKET: visurena-content
-
-ManifestRebuildRole:
-  Type: AWS::IAM::Role
-  Properties:
-    AssumeRolePolicyDocument:
-      Statement:
-        - Effect: Allow
-          Principal: { Service: lambda.amazonaws.com }
-          Action: sts:AssumeRole
-    Policies:
-      - PolicyName: ManifestAccess
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action:
-                - s3:ListBucket
-              Resource: arn:aws:s3:::visurena-content
-            - Effect: Allow
-              Action:
-                - s3:GetObject
-              Resource: arn:aws:s3:::visurena-content/*
-            - Effect: Allow
-              Action:
-                - s3:PutObject
-              Resource: arn:aws:s3:::visurena-content/manifest.json
-
-ContentToManifestTrigger:
-  Type: AWS::S3::Bucket  # Notification config attached to ContentBucket
-  Properties:
-    NotificationConfiguration:
-      LambdaConfigurations:
-        - Event: 's3:ObjectCreated:*'
-          Function: !GetAtt ManifestRebuildFunction.Arn
-          Filter:
-            S3Key:
-              Rules:
-                - Name: suffix
-                  Value: '.json'
-```
-
-### A.3 OIDC trust for engine GitHub Actions
-
-```yaml
-EngineBlogRole:
-  Type: AWS::IAM::Role
-  Properties:
-    RoleName: visurena-engine-blog
-    AssumeRolePolicyDocument:
-      Statement:
-        - Effect: Allow
-          Principal:
-            Federated: !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com'
-          Action: sts:AssumeRoleWithWebIdentity
-          Condition:
-            StringEquals:
-              'token.actions.githubusercontent.com:aud': sts.amazonaws.com
-            StringLike:
-              'token.actions.githubusercontent.com:sub': 'repo:visurena/visurena-blog-engine:*'
-    Policies:
-      - PolicyName: BlogContentWrite
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action: s3:PutObject
-              Resource: arn:aws:s3:::visurena-content/blog/*
-```
+State = "what's true now." Events = "what happened, when." Both feed the platform.
 
 ---
 
-*End of ARCHITECTURE.md v1.0.*
+## 9. Authentication (Phase 3)
+
+- **Cognito User Pool**: email/password + federated Google, Apple, Facebook.
+- **Security:** AWS stores/verifies credentials (we never see passwords); email verification,
+  strong password policy, optional MFA, HTTPS-only, JWT-protected APIs, least-privilege IAM,
+  secrets in AWS Secrets Manager.
+- **Token flow:** Cognito JWT → API Gateway Cognito authorizer → Lambda.
+- **Profile:** `Users` row created on first login via a Cognito post-confirmation trigger.
+- **Cost:** free under ~50k monthly active users.
+
+---
+
+## 10. Search (Phase 5)
+
+- **Start:** generate a search-index JSON (titles, summaries, tags, genre, people)
+  from the `Content` index → client-side **Fuse.js** (already a dependency). $0, instant.
+- **Scale:** move to **Algolia** (free tier) or **OpenSearch Serverless** for full-body,
+  ranked, faceted search across thousands of items.
+
+---
+
+## 11. Cost estimate (low traffic, monthly)
+
+| Service | Est. |
+|---|---|
+| S3 + CloudFront (web + content) | ~$1–3 |
+| DynamoDB (on-demand) | ~$0–1 |
+| Lambda + API Gateway | ~$0–1 |
+| Cognito | $0 (<50k users) |
+| EventBridge / SES / Firehose / Athena | ~$0–1 |
+| **Total** | **~$2–6/mo**, scales to near-zero when idle |
+
+Under the $10 ceiling; search starts free; analytics is pennies-per-query.
+
+---
+
+## 12. Risks & mitigations
+
+- **Monorepo migration** (touching the live app) → isolated Foundation step; keep deploy
+  green; verify build before moving on.
+- **Static ↔ scheduled-publish seam** → index-JSON snapshot + targeted CloudFront
+  invalidation instead of full rebuilds where possible.
+- **DynamoDB analytics weakness** → raw events go to S3 + Athena, not DynamoDB.
+- **Auth** → lean entirely on Cognito; never store passwords; rate-limit; least-privilege.
+- **Privacy** (Events tracking) → cookie/consent notice + data minimization from day one.
+- **Cross-platform expectation** → only tokens + core logic shared web↔mobile; UI
+  re-implemented in React Native.
+- **JSON authoring friction** → validated schema + `content-local`; AI generates folders.
+
+---
+
+## 13. Change log
+
+| Date | Change |
+|---|---|
+| 2026-05-23 | Initial draft. Locked D1–D15; Architecture A, system diagram, monorepo. |
+| 2026-05-23 | Revised D10/D11: content is structured **JSON** (+ assets), system renders it. Added D16 (per-item immersive theming). |
+| 2026-05-23 | §C visual. Immersion = noticeable-but-gentle (tunable). Added D17 (nebula = CSS/SVG). |
+| 2026-05-23 | §D. Added D18 (custom Cognito login), D19 (SES notifications), D20 (Fuse.js→hosted search). |
+| 2026-05-23 | §E. Dropped admin panel (full automation). Added D21 (folder ingestion, no panel). |
+| 2026-05-23 | Content model: date-sharded folders (D10); D22 (self-contained, append-only works); D23 (`Relations` table). |
+| 2026-05-23 | Data model: D24 (engagement state tables), D25 (Events log → S3/Athena). |
+| 2026-05-23 | Added D27 (serialized chapters). **Finalized full design document** (sections §1–§12 fleshed out). Status → design complete, pending owner review. |
+| 2026-05-23 | Owner: **deferred multi-language (D26) — out of scope for now**; kept serialized chapters (D27). Stripped per-language fields from folder layout, `item.json`, data model, and search index. |
+| 2026-05-23 | Moved `ARCHITECTURE.md` + `CLAUDE.md` into `visurena/` (the git repo) for version control. Corrected stale CLAUDE.md content (JSON not HTML; status → design approved). |
+| 2026-05-23 | Built Step 0 (monorepo) + Step 1 homepage: design-tokens, core content layer, ui (theme, nebula, chrome, cards), redesigned homepage reading the content layer. 16 tests passing; static export green. |
+| 2026-05-23 | Phase 1b: ported "The Studio" template (`visurenawebtemp`) into the app — full homepage + Stories/Movies/Music/Research section pages. Added 12 studio motion components to `@visurena/ui` (VRRowHeader, VRPoster, VRTilt, VRFade, VRSplitText, VRCounter, VRMarquee, VRShaderBg, VRCursorDot, VRScrollProgress, VRMagnetic, VRStripe). `@visurena/ui` now declares `next` as a peer dependency (it uses `next/link`). Static export of 26 pages green; all tests green. |
+| 2026-05-23 | UI fix (owner feedback): removed the custom cursor dot (`VRCursorDot` unmounted). Made the nebula-gas galaxy (D17) actually visible on every page — richer 4-cloud + starfield nebula tinted by section accent, and page wrappers/section fills made transparent/semi-transparent so the drifting gas shows through (previously hidden behind opaque section backgrounds). |
+| 2026-05-23 | UI polish (owner feedback): home now has its own identity — `NebulaBackground variant="studio"` paints all four jewels at once (vs mono-tint section pages). Added depth pass (Netflix-style): card hover lift+scale+elevation, cursor-parallax on the nebula gas layer, header depth shadow + stronger blur. Sticky-footer fix (`.vr-app`) removes the bottom gap on short pages (research). Removed "Hyderabad, India" from footer + research copy. Motion scoped to fine-pointer + reduced-motion aware. |
+| 2026-05-23 | Fixed broken Stories access: story cards linked to `/stories/[slug]` but that page didn't exist (every story 404'd). Built `stories/[slug].tsx` (hero w/ per-story tint, chapter index, reader's notes, related, newsletter) with `getStaticPaths` over all 12 story slugs; static export now 38 pages. Genre-shelf links repointed to `/stories#<id>` (were 404). |
+| 2026-05-24 | Frontend audit + fixes. **Mobile was fully broken**: the responsive `[style*="grid-template-columns: …"]` overrides never matched because React serializes inline styles with NO space after the colon — corrected all selectors + broadened coverage (poster grids → 2-up on phones; chapter/essay rows compacted). Mobile section nav was `display:none` with no fallback → now a horizontally-scrollable nav row. Accessibility: added keyboard `:focus-visible` rings (none existed), accent text selection, 44px touch targets, and completed reduced-motion coverage. |
+| 2026-05-25 | §6 content contract for **generated stories**: documented the real story-engine drop (`<stamp>_<kind>/<slug>.json`+`.md`+`timing.*`) and its projection → `item.json`/`ContentItem` (6.5); content **kinds** — short = one continuous read, novel/web-series = chapter-released later (6.6); **local↔S3 build-time provider** with `VR_CONTENT_*` env (6.7); **asset/cover spec** the author supplies — `images/cover` 3:4 (required), optional `wide` 16:9 + `social`, provider uses both shapes, accent auto-from-cover (6.8); **release/scheduling** — for now everything publishes on build (`status:live`, `publishAt=created_at`); where the release-date field lives is **deferred/TBD**, `selectLive` + build-time gating ready for when we need it (6.9). Confirmed local↔S3 is a one-env-flag swap behind a stable `getStories()` interface (S3 provider is the only net-new piece). |
+| 2026-05-25 | **Stories wired to real content (end-to-end slice).** `apps/web/lib/content.ts` is now a build-time provider: scans the local drop (`VR_CONTENT_LOCAL_DIR`, default `../website_data`), normalizes the rich generation JSON → `Story`/`StoryFull` (per 6.5), copies `cover_34`/`cover_169` into `public/stories/<slug>/` (git-ignored). Rewrote `/stories` (real masthead/featured/catalogue) and `/stories/[slug]` (continuous reader: hero → scenes as ✦ breaks → about → related) — all hardcoded `VR_STORIES*`/trending/continue/shelves removed. Home story deep-links repointed to `/stories` to avoid 404s (full home de-fake still TODO). Build green: 27 pages (was 38), `/stories/slack-water` renders the prose + covers; 4 tests pass. Orphaned `content-local/stories.json` (old placeholders) now unused — safe to delete. |
+| 2026-05-24 | Visual-craft pass (autoresearch-led, per the award-winning playbook): typographic polish (`text-wrap: balance` headings / `pretty` paragraphs, optical sizing, kerning + ligatures, optimizeLegibility); premium thin accent scrollbar; animated grow-from-left underlines on inline links (`.vr-ulink`, applied in footer w/ muted secondary color); gallery-style `VRPoster` (inset frame ring, richer cinematic scrim, photo zooms on card hover via `.vr-poster-img`). Fixed `<title>` nodes that mixed text + `&mdash;` (hydration warning) → single text nodes. Build green (38 pages). |

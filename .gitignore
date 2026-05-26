@@ -1,6 +1,6 @@
 tutorial-env/
 __pycache__/
-.claude/
+
 
 # Node.js / Next.js
 node_modules/
@@ -42,3 +42,22 @@ yarn-error.log*
 # Temporary files
 *.tmp
 *.temp
+
+# Monorepo (pnpm + Turborepo)
+node_modules/
+.turbo/
+**/.next/
+**/out/
+**/dist/
+*.tsbuildinfo
+
+# Generated story assets copied in from the content drop at build time (not source of record)
+/apps/web/public/stories/
+
+# Local cache of the S3 content bucket for an S3-sourced build (pnpm content:pull)
+/apps/web/.content-cache/
+
+# Local Claude Code settings (machine-specific paths; not shared)
+.claude/settings.json
+.claude/settings.local.json
+.gstack/

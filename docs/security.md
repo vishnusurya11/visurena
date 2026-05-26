@@ -103,7 +103,7 @@ Value: E1234567890 (from infrastructure deployment)
 ### Step 1: Development Testing
 ```bash
 # Navigate to project
-cd apps/web
+cd visurena-next
 
 # Install dependencies (if not done)
 npm install
@@ -266,11 +266,11 @@ git push origin main
 #### Local Development:
 ```bash
 # 1. Edit content
-nano apps/web/content-config.json
+nano visurena-next/content-config.json
 # Add your new video
 
 # 2. Test locally
-cd apps/web
+cd visurena-next
 npm run dev
 # Check http://localhost:3000/movies
 
@@ -299,11 +299,11 @@ git push origin main
 #### Local Development:
 ```bash
 # 1. Create HTML file
-nano apps/web/posts/my-new-post.html
+nano visurena-next/posts/my-new-post.html
 # Add your content
 
 # 2. Add images (if any)
-cp my-image.jpg apps/web/public/images/
+cp my-image.jpg visurena-next/public/images/
 
 # 3. Test locally
 npm run dev

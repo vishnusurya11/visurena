@@ -3,7 +3,7 @@
 ## 📁 File Structure Overview
 
 ```
-apps/web/
+visurena-next/
 ├── posts/                     ← BLOG POSTS (HTML files)
 ├── public/images/             ← IMAGES for blog posts
 ├── content-config.json        ← VIDEOS & MUSIC configuration
@@ -13,7 +13,7 @@ apps/web/
 
 ## 🎬 Adding Movies/Videos
 
-**File**: `apps/web/content-config.json`
+**File**: `visurena-next/content-config.json`
 
 ### Step 1: Get YouTube Video ID
 From `https://www.youtube.com/watch?v=YfsdEYdr7Fs` → ID is `YfsdEYdr7Fs`
@@ -46,7 +46,7 @@ From `https://www.youtube.com/watch?v=YfsdEYdr7Fs` → ID is `YfsdEYdr7Fs`
 
 ## 🎵 Adding Music/Audio
 
-**File**: `apps/web/content-config.json`
+**File**: `visurena-next/content-config.json`
 
 ### Step 1: Get YouTube Video ID
 From your music video URL → Extract the ID
@@ -75,7 +75,7 @@ From your music video URL → Extract the ID
 
 ## 🎮 Adding Games (Coming Soon)
 
-**File**: `apps/web/content-config.json`
+**File**: `visurena-next/content-config.json`
 
 ### When Ready to Add Games:
 ```json
@@ -102,7 +102,7 @@ From your music video URL → Extract the ID
 
 ## 📖 Adding Stories (Coming Soon)
 
-**File**: `apps/web/content-config.json`
+**File**: `visurena-next/content-config.json`
 
 ### When Ready to Add Stories:
 ```json
@@ -128,7 +128,7 @@ From your music video URL → Extract the ID
 
 ## 📝 Adding Blog Posts
 
-**Location**: `apps/web/posts/`
+**Location**: `visurena-next/posts/`
 
 ### Step 1: Create HTML File
 **File**: `posts/my-new-post.html`
@@ -186,7 +186,7 @@ From your music video URL → Extract the ID
 ## 🖼️ Image Management
 
 ### Location
-**All images**: `apps/web/public/images/`
+**All images**: `visurena-next/public/images/`
 
 ### Supported Formats
 - `.jpg`, `.png`, `.gif`, `.webp`

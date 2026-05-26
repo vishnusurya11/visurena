@@ -1,50 +1,62 @@
-name: Deploy Next.js Website
+name: Deploy Website
 
+# WHEN this runs:
 on:
   push:
-    branches:
-      - master
-      - main
+    branches: [master, main]   # every push to master auto-deploys
+  workflow_dispatch: {}         # ...or click "Run workflow" in the Actions tab (use this to rebuild when new stories are added to S3)
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    
+    runs-on: ubuntu-latest      # GitHub spins up a fresh Ubuntu VM
+    env:
+      # Build reads content from the S3 bucket (not the local website_data folder, which doesn't exist on the runner)
+      VR_CONTENT_SOURCE: s3
+      VR_CONTENT_S3_BUCKET: visurena-content-alpha
+      VR_CONTENT_S3_REGION: us-west-2
+
     steps:
-      - name: Checkout Repository
+      # 1. Pull this repo's code onto the runner
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      # 2. Install the toolchain (pnpm + Node)
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4   # version comes from package.json "packageManager": pnpm@9.0.0
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: apps/web/package-lock.json
+          node-version: "20"
+          cache: pnpm
 
-      - name: Install Dependencies
-        run: |
-          cd apps/web
-          npm ci
+      # 3. Install dependencies (the whole monorepo)
+      - name: Install
+        run: pnpm install --frozen-lockfile
 
-      - name: Build Next.js Site
-        run: |
-          cd apps/web
-          npm run build
-
-      - name: Configure AWS Credentials
+      # 4. Give the runner your AWS keys (stored as GitHub repo secrets, never in code)
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: us-west-2
 
+      # 5. content:pull  →  aws s3 sync s3://visurena-content-alpha  →  apps/web/.content-cache
+      - name: Pull content from S3
+        run: pnpm -C apps/web content:pull
+
+      # 6. next build  →  reads .content-cache  →  static files in apps/web/out
+      - name: Build static site
+        run: pnpm build
+
+      # 7. Upload the built site to the SITE bucket (immutable cache for assets, no-cache for HTML)
       - name: Deploy to S3
         run: |
-          cd apps/web
-          aws s3 sync out/ s3://${{ secrets.S3_BUCKET }} --delete --cache-control "public, max-age=31536000, immutable" --exclude "*.html"
-          aws s3 sync out/ s3://${{ secrets.S3_BUCKET }} --delete --cache-control "public, max-age=0, must-revalidate" --include "*.html"
+          aws s3 sync apps/web/out "s3://${{ secrets.S3_BUCKET }}" --delete \
+            --cache-control "public, max-age=31536000, immutable" --exclude "*.html"
+          aws s3 sync apps/web/out "s3://${{ secrets.S3_BUCKET }}" \
+            --cache-control "public, max-age=0, must-revalidate" --exclude "*" --include "*.html"
 
-      - name: Invalidate CloudFront Cache
-        run: |
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
-
+      # 8. Tell CloudFront to drop its cached copies so visitors get the new build
+      - name: Invalidate CloudFront
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"

@@ -13,10 +13,7 @@ export function getAllPosts() {
 
     const fileNames = fs.readdirSync(postsDirectory);
     const allPostsData = fileNames
-      .filter(fileName =>
-        (fileName.endsWith('.html') || fileName.endsWith('.md')) &&
-        !fileName.startsWith('_')
-      )
+      .filter(fileName => fileName.endsWith('.html') || fileName.endsWith('.md'))
       .map(fileName => {
         const slug = fileName.replace(/\.(html|md)$/, '');
         const fullPath = path.join(postsDirectory, fileName);

@@ -7,7 +7,7 @@
 #### Step 1: Start Development Server
 ```bash
 # Navigate to project
-cd D:\Projects\visurena\apps\web
+cd D:\Projects\visurena\visurena-next
 
 # Install dependencies (if needed)
 npm install
