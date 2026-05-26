@@ -52,6 +52,13 @@ mobile app reuses the design language and logic.
 | D25 | Events / interactions log | Append-only stream of every interaction (logged-in + anonymous `sessionId`) → **S3 + Athena** (not DynamoDB). Powers analytics/recs/history. Requires a **cookie/consent notice**. |
 | ~~D26~~ | Multi-language / translations | **Deferred — out of scope for now.** Revisit later as a same-work / language-variant model. Not built initially. |
 | D27 | Serialized chapters | Each chapter has its own `publishAt`/status (live / scheduled / writing). Scheduler flips chapters individually. Content index caches `chaptersLive/Total/nextChapterAt`. "New this week"/Monday newsletter derive from chapters released that week. |
+| D28 | Frontend rendering | **Static export + serverless API (JAMstack), not SSR.** Pages stay static on S3/CloudFront; per-user/interactive data comes from API GW + Lambda + DynamoDB, called client-side. SSR/ISR (SST/OpenNext or Amplify) **deferred/optional** — revisit only if instant-publish-with-SEO becomes a must. (Reinforces D7.) |
+| D29 | State store | **DynamoDB single-table**, access-pattern-first (type-prefixed PK/SK + GSI1, on-demand). Blobs in S3. (§8.1) |
+| D30 | Event pipeline | Client/server → API GW (HTTP API) + Lambda → **Firehose → S3 (Parquet, partitioned) → Glue + Athena**; DynamoDB Streams → Firehose change-capture. Batch first; KDS/Redshift/OpenSearch added only when needed. (§8.2/8.4) |
+| D31 | Recommendations | **DIY** (popularity/co-occurrence → collaborative filtering) on the existing lake + DynamoDB feature vectors. **Amazon Personalize deferred** (≈1-TPS-24/7 cost floor breaks the budget). |
+| D32 | Demand / Request model | First-class **Request** entity — audience requests **and votes** what gets made next (Canny/Featurebase-style board), with a conversion link `request→producedWork` + voter notify. The demand-driven differentiator. (§8.1) |
+| D33 | Engagement gating | Browse/read **anonymous** (events captured); **like/comment/save require login**. **Phase 2 = placeholder login** stub behind the gate; **Phase 3 = real Cognito** swapped in; `anonymousId`→`userId` stitched on first login. |
+| D34 | Event schema | `object_action` past-tense snake_case names (Segment) + self-describing/versioned envelope (Snowplow). Canonical envelope on every event. (§8.2) |
 
 ---
 
@@ -70,6 +77,13 @@ Design is done up front (this doc). **Building** happens in shippable steps:
 | **6** | Later | — | Expo mobile app (reuses `design-tokens`+`core`); analytics dashboards; optional WebGL nebula |
 
 Maps to the owner's original 5 phases, plus a small Foundation step so the redesign lands on clean rails. Each step is independently shippable.
+
+**Status (2026-05-26):** Steps 0–1 **shipped** — monorepo, "The Studio" redesign, live on
+visurena.com. Content is served from the **S3 content bucket** at build time (`content:pull` →
+`next build`), so Step 2's content half is done (static, rebuild-to-publish).
+**Next: Phases 2 + 3 ship together** — the serverless data/engagement layer (DynamoDB single-table,
+event lake, likes/comments) behind a **placeholder login**, then real **Cognito** swapped in
+(D33). Detailed task-level breakdown lives in **[docs/PHASES.md](docs/PHASES.md)**.
 
 ---
 
@@ -356,25 +370,61 @@ Per-chapter release for novels/series rides on the same mechanism, deferred with
 
 ## 8. Data model
 
-**State layer (DynamoDB — drives the UI, fast):**
+Two planes (validated against Netflix/Spotify/Wattpad patterns):
+**State** = "what's true now" (DynamoDB, fast reads) · **Events** = "what happened, when"
+(append-only S3 lake, infinite/cheap). Analytics, recommendations, and demand all **aggregate
+from the event stream**; DynamoDB holds the current rollups.
 
-| Table | Key fields | Purpose |
-|---|---|---|
-| `Content` | id, section, slug, status, dates, accent, chapter availability, `likeCount` | every work; listings & detail |
-| `Relations` | fromId, toId, type | links: soundtrack, sequel, from-story, in-world |
-| `Users` | id (Cognito sub), name, avatar, prefs | accounts |
-| `Likes` | userId, contentId, createdAt | who liked what (+ counter on Content) |
-| `Progress` | userId, contentId, {chapter, %} | continue reading |
-| `Comments` | contentId, userId, text, rating, ts | comments & ratings |
-| `Follows` | userId, targetId (reverse-indexed) | follows → release emails |
+### 8.1 State — DynamoDB single-table (access-pattern-first, on-demand)
 
-**Events layer (S3 + Athena — analytics, infinite/cheap):**
+One table, type-prefixed `PK/SK`, GSIs only where a pattern needs them; blobs stay in S3.
 
-| Stream | Fields | Purpose |
-|---|---|---|
-| `Events` | who(userId/sessionId), ts, type, target, context | append-only interaction log → analytics, recs, history |
+| Entity | PK | SK | Notes / GSI1 |
+|---|---|---|---|
+| Content | `CONTENT#<id>` | `META` | GSI1 `SECTION#<s>` / `PUBLISHED#<ts>`; cached `likeCount`, `chaptersLive/Total` |
+| Relations | `CONTENT#<id>` | `REL#<type>#<toId>` | soundtrack / sequel / from-story / in-world; bidirectional |
+| User | `USER#<sub>` | `PROFILE` | Cognito `sub`; name, avatar, prefs, `consent{}`, taste vector |
+| Like | `USER#<sub>` | `LIKE#<contentId>` | GSI1 `CONTENT#<id>` → who liked X |
+| Save | `USER#<sub>` | `SAVE#<contentId>` | library / "your list" (stronger signal than a like) |
+| Progress | `USER#<sub>` | `PROGRESS#<contentId>` | chapter + %; TTL-able |
+| Comment | `CONTENT#<id>` | `COMMENT#<ts>#<id>` | threaded (`parentId`), moderation `status`; GSI1 `USER#<sub>` |
+| Follow | `USER#<sub>` | `FOLLOW#<targetId>` | GSI1 `TARGET#<id>` → followers of X (release emails) |
+| **Request** 🔑 | `REQUEST#<id>` | `META` | demand: brief, room, tags, `voteCount`, `status`, `producedWorkId`, `mergedInto`; GSI1 `ROOM#<r>` / `VOTES#<n>` |
+| RequestVote | `USER#<sub>` | `VOTE#<requestId>` | one per user; GSI1 `REQUEST#<id>` |
+| Recommendation | `USER#<sub>` | `REC#<ts>#<id>` | served rec: item, surface, rank, score, modelVersion, `reason`, `wasClicked` |
 
-State = "what's true now." Events = "what happened, when." Both feed the platform.
+`Query(PK=USER#<sub>, begins_with(SK,'LIKE#'))` → a user's likes; GSI1 flips to "who liked X".
+
+### 8.2 Events — append-only firehose (S3 + Athena)
+
+Canonical envelope on **every** event (Segment naming + Snowplow versioning):
+`messageId · eventName · schemaVersion · ts · userId? · anonymousId · sessionId · consent{} · context{page,campaign,device,locale} · properties{}`
+
+Taxonomy (`object_action`, past tense, snake_case):
+- **session:** `session_started/ended`
+- **discovery:** `page_viewed`, `search_performed`, `recommendation_impression`, `recommendation_clicked`
+- **consumption:** `content_viewed`, `read_progress` (25/50/75/100 + `active_time_ms`), `read_completed`, `media_played/completed`, derived `qualified_read/play`
+- **signals:** `content_liked/saved/shared`, `comment_posted`, `author_followed`, `series_followed`
+- **demand:** `request_submitted/voted/status_changed/converted`
+- **auth:** `signup`, `login`
+
+### 8.3 Signals → recommendations (the Phase-1 goal)
+Implicit (weighted heavy): completion% ≫ all · dwell/active-time · `qualified_read` · skips/bounces (negative) · rec CTR. Explicit (sparse anchors): **save > like > follow > vote > rating**. Binary thumbs, not 5-star (Netflix dropped stars).
+
+### 8.4 AWS data-layer stack (scale-to-zero, ~$10/mo, grows cleanly)
+- **State:** DynamoDB on-demand (single-table + GSI1) · S3 for blobs
+- **Ingest:** API Gateway (HTTP API) → Lambda → **Firehose → S3 (Parquet, partitioned `event_type/date`)**; plus DynamoDB Streams → Firehose change-capture
+- **Lake/analytics:** S3 + Glue Catalog + Athena (Redshift/OpenSearch only when needed)
+- **Recommendations:** **DIY** (Athena/Glue batch → feature vectors in DynamoDB → Lambda serving). Amazon Personalize deferred (≈1-TPS 24/7 floor blows the budget)
+- **Auth:** Cognito (`sub` = join key; post-confirmation → user row; pre-token → claims)
+- **IaC:** AWS CDK
+
+### 8.5 Engagement gating
+Browse/read **anonymously** (events captured by `anonymousId`); **like / comment / save require login**.
+**Phase 2:** a gated click opens a **placeholder login** (stub modal) — features + data layer built behind it. **Phase 3:** real **Cognito** swaps in; likes/comments bind to `USER#<sub>`; `anonymousId` is stitched to `userId` on first login (merging the anonymous signal).
+
+### 8.6 Data ethics (a brand differentiator — see BRD)
+First-party only (static export already is) · `consent{}` per event · **no PII in the event stream** (pseudonymous ids, truncated IP) · user-facing "see/reset your taste data" + "why recommended" (the Recommendation `reason`) · deletion cascades.
 
 ---
 
@@ -452,3 +502,4 @@ Under the $10 ceiling; search starts free; analytics is pennies-per-query.
 | 2026-05-25 | §6 content contract for **generated stories**: documented the real story-engine drop (`<stamp>_<kind>/<slug>.json`+`.md`+`timing.*`) and its projection → `item.json`/`ContentItem` (6.5); content **kinds** — short = one continuous read, novel/web-series = chapter-released later (6.6); **local↔S3 build-time provider** with `VR_CONTENT_*` env (6.7); **asset/cover spec** the author supplies — `images/cover` 3:4 (required), optional `wide` 16:9 + `social`, provider uses both shapes, accent auto-from-cover (6.8); **release/scheduling** — for now everything publishes on build (`status:live`, `publishAt=created_at`); where the release-date field lives is **deferred/TBD**, `selectLive` + build-time gating ready for when we need it (6.9). Confirmed local↔S3 is a one-env-flag swap behind a stable `getStories()` interface (S3 provider is the only net-new piece). |
 | 2026-05-25 | **Stories wired to real content (end-to-end slice).** `apps/web/lib/content.ts` is now a build-time provider: scans the local drop (`VR_CONTENT_LOCAL_DIR`, default `../website_data`), normalizes the rich generation JSON → `Story`/`StoryFull` (per 6.5), copies `cover_34`/`cover_169` into `public/stories/<slug>/` (git-ignored). Rewrote `/stories` (real masthead/featured/catalogue) and `/stories/[slug]` (continuous reader: hero → scenes as ✦ breaks → about → related) — all hardcoded `VR_STORIES*`/trending/continue/shelves removed. Home story deep-links repointed to `/stories` to avoid 404s (full home de-fake still TODO). Build green: 27 pages (was 38), `/stories/slack-water` renders the prose + covers; 4 tests pass. Orphaned `content-local/stories.json` (old placeholders) now unused — safe to delete. |
 | 2026-05-24 | Visual-craft pass (autoresearch-led, per the award-winning playbook): typographic polish (`text-wrap: balance` headings / `pretty` paragraphs, optical sizing, kerning + ligatures, optimizeLegibility); premium thin accent scrollbar; animated grow-from-left underlines on inline links (`.vr-ulink`, applied in footer w/ muted secondary color); gallery-style `VRPoster` (inset frame ring, richer cinematic scrim, photo zooms on card hover via `.vr-poster-img`). Fixed `<title>` nodes that mixed text + `&mdash;` (hydration warning) → single text nodes. Build green (38 pages). |
+| 2026-05-26 | **Phase 2+3 design locked** (after deep research on event-capture, AWS data architecture, and data models + demand signals + ethics). §8 data model expanded: two-plane (DynamoDB **state** + S3/Athena **events**), **single-table** layout — added **Request**/demand, RequestVote, Save, Recommendation, Session entities; **event taxonomy + canonical envelope**; rec **signals** (implicit ≫ explicit; save>like; binary thumbs); **AWS data-layer stack** (API GW→Lambda→Firehose→S3 Parquet→Glue/Athena; DIY recs, **Personalize deferred**); **engagement gating** (anon read; like/comment need login; **Phase 2 placeholder login → Phase 3 Cognito**); data ethics. New decisions **D28–D34** (static+API not SSR; single-table; event pipeline; DIY recs; demand model; gating; event schema). Roadmap status note added. Detailed task-level plan → **docs/PHASES.md**. |
