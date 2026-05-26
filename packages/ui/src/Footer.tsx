@@ -19,7 +19,7 @@ const FOOTER_COLUMNS: FooterColumn[] = [
   ["Read",        [["Stories", "/stories"], ["Web novels", "/stories"], ["Comics", "/stories"]]],
   ["Watch",       [["Movies", "/movies"], ["Shorts", "/movies"]]],
   ["Hear & play", [["Music", "/music"], ["Games", "/games"]]],
-  ["About",       [["About Visurena", "/research"], ["Field notes", "/research"], ["AI disclosure", "/research"], ["Contact", "/research"]]],
+  ["About",       [["About", "/about"], ["Journal", "/journal"], ["Research", "/research"]]],
 ];
 
 export function Footer() {
@@ -174,7 +174,23 @@ export function Footer() {
         }}
       >
         <span>© Visurena 2026 — All entertainment, one studio.</span>
-        <span>Terms · Privacy · AI Disclosure · Accessibility</span>
+        <span style={{ display: "inline-flex", gap: 18, alignItems: "center" }}>
+          <Link
+            href="/about"
+            className="vr-ulink"
+            style={{
+              color: "rgba(245,239,219,0.74)",
+              textDecoration: "none",
+              fontFamily: MONO_FONT,
+              fontSize: 10,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase" as const,
+            }}
+          >
+            About
+          </Link>
+          <span>Terms · Privacy · AI Disclosure · Accessibility</span>
+        </span>
       </div>
     </footer>
   );

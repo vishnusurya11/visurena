@@ -17,6 +17,12 @@ const F_WEIGHT  = 600;
 const IVORY     = "#f5efdb";
 const ACCENT    = "#00d97e"; // emerald
 
+// TODO(future): the full Movies experience (hero, stats, the slate grid, field notes)
+// is built below and the format is approved — but the entries (e.g. "Aurelia") are
+// placeholders. We show a Coming Soon holding page until real film data exists.
+// Flip COMING_SOON to false to restore the full slate.
+const COMING_SOON: boolean = true;
+
 function slotColor(slot: string): string {
   const map: Record<string, string> = {
     amber: "#f5b831", ruby: "#e91e63", emerald: "#00d97e", violet: "#c084fc", ivory: "#f5efdb",
@@ -417,6 +423,28 @@ function MoviesFieldNotes() {
   );
 }
 
+// ─── Coming soon (holding page) ──────────────────────────────────
+function MoviesComingSoon() {
+  return (
+    <section style={{ position: "relative", minHeight: "78vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "160px clamp(28px, 4vw, 80px) 120px", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse at 50% 42%, ${ACCENT}22 0%, transparent 60%)`, pointerEvents: "none" }} />
+      <VRFade style={{ position: "relative" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 12, fontFamily: F_MONO, fontSize: 10, letterSpacing: "0.24em", color: ACCENT, textTransform: "uppercase", marginBottom: 28 }}>
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT, boxShadow: `0 0 16px ${ACCENT}` }} />
+          The Emerald room &middot; Movies
+        </div>
+        <h1 className="vr-halo" style={{ fontFamily: F_DISPLAY, fontWeight: F_WEIGHT, fontSize: "clamp(72px, 10vw, 160px)", lineHeight: 0.9, margin: 0, color: IVORY, letterSpacing: "-0.03em" }}>Movies</h1>
+        <p style={{ fontFamily: F_BODY, fontStyle: "italic", fontSize: 24, lineHeight: 1.4, color: "#cdc6b6", maxWidth: 620, margin: "26px auto 0" }}>
+          Original films and shorts from the studio. Slow stories, restless cameras.
+        </p>
+        <div style={{ marginTop: 34, fontFamily: F_MONO, fontSize: 12, letterSpacing: "0.3em", color: ACCENT, textTransform: "uppercase" }}>
+          &#9680; Coming soon
+        </div>
+      </VRFade>
+    </section>
+  );
+}
+
 // ─── Page ────────────────────────────────────────────────────────
 export default function Movies() {
   return (
@@ -428,10 +456,16 @@ export default function Movies() {
       <div className="vr-app" style={{ background: "transparent", color: IVORY, fontFamily: F_BODY, fontSize: 16, lineHeight: 1.55 }}>
         <Header />
         <main className="vr-page">
-          <MoviesHero />
-          <MoviesStats />
-          <MoviesSlate />
-          <MoviesFieldNotes />
+          {COMING_SOON ? (
+            <MoviesComingSoon />
+          ) : (
+            <>
+              <MoviesHero />
+              <MoviesStats />
+              <MoviesSlate />
+              <MoviesFieldNotes />
+            </>
+          )}
           <VRNewsletter
             eyebrow="The Monday Post"
             headline={
@@ -441,7 +475,7 @@ export default function Movies() {
               </>
             }
             subtext="Get notified when Aurelia and the rest of the slate are released. No tracking, no ads. Free during open beta."
-            subscriberLine="2,847 readers subscribed &middot; unsubscribe anytime"
+            // TODO(future): restore subscriberLine once we have real signup counts (was a fabricated "2,847 readers subscribed")
           />
         </main>
         <Footer />

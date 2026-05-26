@@ -397,6 +397,7 @@ body::after {
   [style*="grid-template-columns:1.6fr 1fr 1fr 1fr 1fr"] { grid-template-columns: repeat(3, 1fr) !important; }
   [style*="grid-template-columns:1.4fr 1fr"],
   [style*="grid-template-columns:1.5fr 1fr"],
+  [style*="grid-template-columns:1.3fr 1fr"],
   [style*="grid-template-columns:1.2fr 1.6fr"],
   [style*="grid-template-columns:1.4fr 1.6fr"],
   [style*="grid-template-columns:1fr 1.4fr"],

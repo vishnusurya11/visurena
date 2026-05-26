@@ -30,8 +30,10 @@ export default function App({ Component, pageProps }: AppProps) {
       {(() => {
         const section = (pageProps as any).section ?? "stories";
         const isHome = section === "home";
+        // Home is its own "Diamond" hub: section="home" → ivory accent (no jewel
+        // dominates), and the studio nebula shows all four jewel clouds at once.
         return (
-          <ThemeProvider section={isHome ? "stories" : section}>
+          <ThemeProvider section={section}>
             <VRScrollProgress />
             <NebulaBackground variant={isHome ? "studio" : "section"} />
             <Component {...pageProps} />

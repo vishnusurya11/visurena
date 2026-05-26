@@ -24,6 +24,12 @@ const IVORY     = "#f5efdb";
 // ─── Section accent ──────────────────────────────────────────────
 const ACCENT = "#e91e63"; // ruby
 
+// TODO(future): the full Music experience (hero, pillar, the slate grid, field notes)
+// is built below and the format is approved — but the entries (e.g. "Late Cathedrals")
+// are placeholders. We show a Coming Soon holding page until real release data exists.
+// Flip COMING_SOON to false to restore the full slate.
+const COMING_SOON: boolean = true;
+
 function slotColor(slot: string): string {
   const map: Record<string, string> = {
     amber: "#f5b831", ruby: "#e91e63", emerald: "#00d97e", violet: "#c084fc", ivory: "#f5efdb",
@@ -501,6 +507,28 @@ function MusicFieldNotes() {
   );
 }
 
+// ─── Coming soon (holding page) ──────────────────────────────────
+function MusicComingSoon() {
+  return (
+    <section style={{ position: "relative", minHeight: "78vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "160px clamp(28px, 4vw, 80px) 120px", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse at 50% 42%, ${ACCENT}22 0%, transparent 60%)`, pointerEvents: "none" }} />
+      <VRFade style={{ position: "relative" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 12, fontFamily: F_MONO, fontSize: 10, letterSpacing: "0.24em", color: ACCENT, textTransform: "uppercase", marginBottom: 28 }}>
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT, boxShadow: `0 0 16px ${ACCENT}` }} />
+          The Ruby room &middot; Music
+        </div>
+        <h1 className="vr-halo" style={{ fontFamily: F_DISPLAY, fontWeight: F_WEIGHT, fontSize: "clamp(72px, 10vw, 160px)", lineHeight: 0.9, margin: 0, color: IVORY, letterSpacing: "-0.03em" }}>Music</h1>
+        <p style={{ fontFamily: F_BODY, fontStyle: "italic", fontSize: 24, lineHeight: 1.4, color: "#cdc6b6", maxWidth: 620, margin: "26px auto 0" }}>
+          Albums, EPs and original scores. Music as quiet as the rest of the studio.
+        </p>
+        <div style={{ marginTop: 34, fontFamily: F_MONO, fontSize: 12, letterSpacing: "0.3em", color: ACCENT, textTransform: "uppercase" }}>
+          &#9680; Coming soon
+        </div>
+      </VRFade>
+    </section>
+  );
+}
+
 // ─── Page ────────────────────────────────────────────────────────
 export default function MusicPage() {
   return (
@@ -512,10 +540,16 @@ export default function MusicPage() {
       <div className="vr-app" style={{ background: "transparent", color: IVORY, fontFamily: F_BODY, fontSize: 16, lineHeight: 1.55 }}>
         <Header />
         <main className="vr-page">
-          <MusicHero />
-          <MusicPillar />
-          <MusicSlate />
-          <MusicFieldNotes />
+          {COMING_SOON ? (
+            <MusicComingSoon />
+          ) : (
+            <>
+              <MusicHero />
+              <MusicPillar />
+              <MusicSlate />
+              <MusicFieldNotes />
+            </>
+          )}
           <VRNewsletter
             eyebrow="The Ruby Room"
             headline={

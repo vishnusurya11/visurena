@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# Quick deployment script for ViSuReNa website
-# This script builds and deploys directly without preview
+# Quick deployment script for ViSuReNa website (macOS / Linux).
+# Mirrors quick-deploy.ps1: builds the pnpm + turbo monorepo and deploys
+# apps/web/out to S3, then invalidates CloudFront if configured.
+#
+# Requires: pnpm and the AWS CLI on PATH, AWS credentials configured.
 
 set -e  # Exit on error
 
@@ -14,37 +17,39 @@ NC='\033[0m'
 echo -e "${GREEN}ViSuReNa Quick Deploy${NC}"
 echo "====================="
 
+# Always operate from the repo root (this script's directory)
+cd "$(dirname "$0")"
+
 # Check if S3 bucket is set
 if [ -z "$S3_BUCKET" ]; then
     S3_BUCKET="visurena.com"
     echo -e "${YELLOW}Using default S3 bucket: $S3_BUCKET${NC}"
 fi
 
-# Navigate to Next.js directory
-cd visurena-next
-
 # Install dependencies if needed
 if [ ! -d "node_modules" ]; then
-    echo -e "${YELLOW}Installing dependencies...${NC}"
-    npm install
+    echo -e "${YELLOW}Installing dependencies (pnpm install)...${NC}"
+    pnpm install
 fi
 
-# Build the project
-echo -e "${YELLOW}Building production version...${NC}"
-npm run build
+# Build the monorepo (turbo builds packages first, then apps/web -> apps/web/out)
+echo -e "${YELLOW}Building production version (pnpm build)...${NC}"
+pnpm build
 
-# Export static files
-echo -e "${YELLOW}Exporting static files...${NC}"
-npm run export
+OUT="apps/web/out"
+if [ ! -d "$OUT" ]; then
+    echo -e "${RED}Build output not found at $OUT${NC}"
+    exit 1
+fi
 
 # Deploy to S3
 echo -e "${YELLOW}Deploying to S3...${NC}"
-aws s3 sync out/ s3://$S3_BUCKET --delete
+aws s3 sync "$OUT/" "s3://$S3_BUCKET" --delete
 
 # Invalidate CloudFront cache if distribution ID is set
 if [ ! -z "$CLOUDFRONT_DIST_ID" ]; then
     echo -e "${YELLOW}Invalidating CloudFront cache...${NC}"
-    aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths "/*"
+    aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DIST_ID" --paths "/*"
 fi
 
 echo -e "${GREEN}✅ Deployment complete!${NC}"

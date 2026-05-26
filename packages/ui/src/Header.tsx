@@ -34,25 +34,16 @@ function VRTopUtility() {
       <span>
         <span style={{ color: "#cdc6b6" }}>EN</span> ⁄ ES ⁄ हिं ⁄ 한 ⁄ 中
       </span>
-      <span
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 10,
-          color: "#cdc6b6",
-        }}
-      >
-        <span
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: "50%",
-            background: "#3e9275",
-            display: "inline-block",
-          }}
-        />
-        9,841 reading now &nbsp;·&nbsp; new every Monday
-      </span>
+      {/*
+        TODO(future): live "reading now" presence counter.
+        Removed for now — the number was fabricated and we have no way to capture
+        real concurrent-reader data yet. Restore this block once real-time presence
+        analytics exist (and feed the count + cadence from live data, not a literal).
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 10, color: "#cdc6b6" }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#3e9275", display: "inline-block" }} />
+          9,841 reading now &nbsp;·&nbsp; new every Monday
+        </span>
+      */}
       <span>Free during open beta</span>
     </div>
   );
@@ -196,44 +187,28 @@ export function Header() {
             textTransform: "uppercase" as const,
           }}
         >
-          <Link
-            href="/stories"
-            style={{
-              display: "inline-flex",
-              gap: 8,
-              alignItems: "center",
-              textDecoration: "none",
-              color: "#a8a18d",
-            }}
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <circle cx="11" cy="11" r="7" />
-              <path d="m20 20-3.5-3.5" />
-            </svg>
-            Search
-          </Link>
-          <button
-            style={{
-              fontFamily: MONO_FONT,
-              fontSize: 11,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase" as const,
-              color: IVORY,
-              padding: "8px 18px",
-              border: "1px solid rgba(255,255,255,0.22)",
-              background: "transparent",
-              cursor: "pointer",
-            }}
-          >
-            Sign in
-          </button>
+          {/*
+            TODO(future): real Search — HIDDEN until it works. Was a placeholder that just
+            linked to /stories; there is no search index or results UI yet. Restore the
+            <Link> below and wire it to a real search page/overlay once content search exists.
+
+            <Link href="/stories" style={{ display: "inline-flex", gap: 8, alignItems: "center", textDecoration: "none", color: "#a8a18d" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.5-3.5" />
+              </svg>
+              Search
+            </Link>
+          */}
+          {/*
+            TODO(future): real auth — HIDDEN until it works. The Sign in button had no
+            action. Restore the <button> below and wire it to AWS Cognito (Google / Apple /
+            Facebook / email+password) per ARCHITECTURE.md. AWS stores credentials, never us.
+
+            <button style={{ fontFamily: MONO_FONT, fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase" as const, color: IVORY, padding: "8px 18px", border: "1px solid rgba(255,255,255,0.22)", background: "transparent", cursor: "pointer" }}>
+              Sign in
+            </button>
+          */}
         </div>
       </header>
     </div>

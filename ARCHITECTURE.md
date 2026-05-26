@@ -222,6 +222,118 @@ EventBridge cron ──▶ scheduler (Lambda)
   JSON body renders into themed components with the item's accent immersion.
 - **Local mode**: dev reads from `content-local/` — write & preview with zero AWS.
 
+### 6.5 Generation output → site contract (the normalizer)
+
+The story-engine **drops a richer, engine-shaped folder** than the target §6.1 layout. Observed
+drop (`website_data/stories/2026/05/25/20260525141829_short/`):
+
+```
+20260525141829_short/                 ← folder name = <UTCstamp>_<kind>
+├─ slack-water.json    ← rich generation record: content + heavy craft metadata
+├─ slack-water.md      ← rendered prose (title + genre line + prompt blockquote + prose)
+├─ timing.jsonl        ← per-event generation telemetry
+└─ timing.txt          ← human-readable timing summary
+```
+
+- The `<slug>.json` / `<slug>.md` **filename is the slug** ("Slack Water" → `slack-water`).
+- `slack-water.json` is a **superset** — alongside the content it carries deck-engine, MICE,
+  craft, frame, characters, locations, causality, etc. The **site consumes a thin projection**;
+  the rest is reserved for the Research/field-notes surface (the transparency angle, BRD §data-ethics).
+
+**Projection (generation JSON → `item.json` / `ContentItem`):**
+
+| Site field | From generation | Notes |
+|---|---|---|
+| `id` | `id` | e.g. `20260525141829_short-mystery-slack-water` (prefix `sto_` optional) |
+| `slug` | `<slug>.json` filename / `title` | |
+| `kind` | folder suffix `_short` / `tier.id` | `short \| novel \| series` — see 6.6 |
+| `section` | constant `stories` | |
+| `title`, `genre` | `title`, `genre` | |
+| `summary` | `logline` (fallback `promise`) | card/hero blurb |
+| `createdAt`, `publishAt` | `created_at` | ISO |
+| `readMinutes`, `wordCount`, `sceneCount` | `totals.{read_minutes,word_count,scene_count}` | |
+| `tags` | `reedsy_tags` | |
+| **body** | `scenes[]` (`.title`, `.prose`) — fallback top-level `prose` | the reader's source |
+| `accent` | — *(not emitted)* | auto-derived from cover, or sidecar override (6.8) |
+| `cover` / `hero` | — *(not emitted)* | **you provide** (6.8) |
+
+**Two ways to bridge** engine output to the §6.2 `item.json` contract:
+- **(A)** the engine emits a compliant `item.json` + `body/` + `images/` (the §6.1 layout) — preferred end-state.
+- **(B)** the platform runs a **normalizer** at build/ingest that reads the rich JSON and produces
+  the thin projection in memory — used now for local mode (no persisted `item.json` required).
+
+### 6.6 Content kinds (short vs novel / web-series)
+
+| Kind | Structure | Reader | Release |
+|---|---|---|---|
+| **short** | one chapter | **one continuous read**; `scenes[]` render as in-page section breaks (✦ / rule), no chapter index | published whole |
+| **novel** / **web-series** | `chapters[]`, each its own body + `publishAt` | chapter-paginated; reuses the `[slug].tsx` chapter index | **chapter-level release (Monday drops) — deferred to a later pass** |
+
+`kind` comes from the folder suffix (`_short`) / `tier`; it selects which reader renders. Shorts are
+the only kind wired now; chapter scheduling for novels/series is the next iteration.
+
+### 6.7 Source provider — local ↔ S3 (build-time switch)
+
+The site is **static-export**, so *all* content is resolved during `next build` — the "switch
+between local and S3" is a **build-time env flag**, not a runtime toggle. One provider module
+(`apps/web/lib/content.ts`, extended) exposes `getStories()` / `getStory(slug)` returning the
+normalized projection + body and **hiding the source** so pages are source-agnostic.
+
+```
+VR_CONTENT_SOURCE   = local | s3        # default: local (dev)
+VR_CONTENT_LOCAL_DIR = D:\…\website_data # drop root, read in place (alpha-local)
+VR_CONTENT_S3_BUCKET = visurena-content-alpha   # us-west-2 (prod: visurena-content-prod)
+VR_CONTENT_S3_REGION = us-west-2
+VR_CONTENT_BASE_URL = https://content.visurena.com   # CDN base for asset URLs (s3/prod)
+```
+
+- **local**: walk `<dir>/stories/**/<id>/`, normalize each, and **copy referenced assets** into
+  `apps/web/public/stories/<slug>/…` (**resizing + converting to WebP** so the static `out/` ships
+  optimized files even though the engine drops ~2 MB PNGs); asset `src` = `/stories/<slug>/cover_34.webp`.
+- **s3**: `pnpm content:pull` (`scripts/pull-content.mjs`) runs `aws s3 sync s3://<bucket> → apps/web/.content-cache`
+  (us-west-2, **download-only**), then the **same walker** reads the cache and copies covers into `public/` — so
+  an S3 build needs no AWS SDK and no CloudFront yet. Run it before `next build` for an S3-sourced build.
+  *(Future optimization: serve covers from CloudFront `content.visurena.com` instead of bundling them.)*
+- Provider **caches once per process** (no per-request re-scan). Pick up new content by restarting dev / rebuilding.
+- Both yield identical `ContentItem[]`. The drop folder, `apps/web/.content-cache/`, and `apps/web/public/stories/`
+  are **git-ignored** (staging/cache, not committed) — prod content of record lives in S3.
+
+### 6.8 Asset requirements (what you provide per story) — the covers
+
+Generation emits **no imagery**; covers (and therefore the immersion accent) come from you now, an
+image pipeline later. Per story, drop into the story folder under `images/`:
+
+| File (engine convention) | Aspect | Recommended | Minimum | Used by |
+|---|---|---|---|---|
+| `images/cover_34.{png\|webp\|jpg}` | **3 : 4** portrait | 1200 × 1600 | 900 × 1200 | **primary** — cards, featured poster, trending, related (the thumbnail) |
+| `images/cover_169.{png\|webp\|jpg}` | **16 : 9** landscape | 1920 × 1080 | 1600 × 900 | *optional* — single-story hero bg + any landscape/16:9 surface |
+| `images/social.{png\|webp\|jpg}` | **1.91 : 1** | 1200 × 630 | — | *optional* — OpenGraph / share card |
+
+- **Shape policy:** `cover_34` (3:4) is the one required image and drives every card/poster. If a
+  `cover_169` (16:9) is also supplied the provider **uses both** — 3:4 for portrait surfaces, 16:9
+  for the hero/landscape — otherwise the hero focal-crops the 3:4 cover. (Story cards stay 3:4; no
+  card rework. Video sections like Movies/Music remain 16:9 from YouTube.)
+- **Format:** PNG, JPG, or WebP accepted as input (sRGB). Engine drops raw PNGs (~2 MB) — fine; the
+  **local provider resizes + converts to WebP** when copying into `public/stories/<slug>/`, so the
+  static `out/` ships optimized files regardless of the source format.
+- **Accent** auto-derives from the cover's dominant color. To override, add `"accent": "#RRGGBB"`
+  to a sidecar `meta.json` in the story folder (or have the engine emit it).
+- Filenames are **conventional** (`cover_34` / `cover_169` / `social`) so the provider finds them with no manifest.
+- **Minimum to render a story:** just `images/cover_34.*`. Everything else has a sensible fallback.
+
+### 6.9 Release date & scheduling
+
+**Current behavior — publish on build.** Every story dropped into the source is treated as **live**:
+the normalizer sets `status = live` and `publishAt = created_at`, so it appears the next time the site
+builds. No scheduling input is required, and there's no separate release-date field to fill in yet.
+
+**Deferred (revisit later).** Where the release date lives and how scheduling works is intentionally
+**TBD** — we'll decide the field's home (engine-emitted vs sidecar vs index) when we need it. The
+machinery is already half-there for when we do: `@visurena/core` ships `selectLive(items, now)` (gates on
+`status:live && publishAt ≤ now`), and because the site is static-export, enforcement is **build-time** —
+a future-dated item simply isn't written into `out/` until a (scheduled) rebuild runs, so nothing leaks.
+Per-chapter release for novels/series rides on the same mechanism, deferred with chapter handling.
+
 ---
 
 ## 7. Visual design & theming (Phase 1)
@@ -337,4 +449,6 @@ Under the $10 ceiling; search starts free; analytics is pennies-per-query.
 | 2026-05-23 | UI polish (owner feedback): home now has its own identity — `NebulaBackground variant="studio"` paints all four jewels at once (vs mono-tint section pages). Added depth pass (Netflix-style): card hover lift+scale+elevation, cursor-parallax on the nebula gas layer, header depth shadow + stronger blur. Sticky-footer fix (`.vr-app`) removes the bottom gap on short pages (research). Removed "Hyderabad, India" from footer + research copy. Motion scoped to fine-pointer + reduced-motion aware. |
 | 2026-05-23 | Fixed broken Stories access: story cards linked to `/stories/[slug]` but that page didn't exist (every story 404'd). Built `stories/[slug].tsx` (hero w/ per-story tint, chapter index, reader's notes, related, newsletter) with `getStaticPaths` over all 12 story slugs; static export now 38 pages. Genre-shelf links repointed to `/stories#<id>` (were 404). |
 | 2026-05-24 | Frontend audit + fixes. **Mobile was fully broken**: the responsive `[style*="grid-template-columns: …"]` overrides never matched because React serializes inline styles with NO space after the colon — corrected all selectors + broadened coverage (poster grids → 2-up on phones; chapter/essay rows compacted). Mobile section nav was `display:none` with no fallback → now a horizontally-scrollable nav row. Accessibility: added keyboard `:focus-visible` rings (none existed), accent text selection, 44px touch targets, and completed reduced-motion coverage. |
+| 2026-05-25 | §6 content contract for **generated stories**: documented the real story-engine drop (`<stamp>_<kind>/<slug>.json`+`.md`+`timing.*`) and its projection → `item.json`/`ContentItem` (6.5); content **kinds** — short = one continuous read, novel/web-series = chapter-released later (6.6); **local↔S3 build-time provider** with `VR_CONTENT_*` env (6.7); **asset/cover spec** the author supplies — `images/cover` 3:4 (required), optional `wide` 16:9 + `social`, provider uses both shapes, accent auto-from-cover (6.8); **release/scheduling** — for now everything publishes on build (`status:live`, `publishAt=created_at`); where the release-date field lives is **deferred/TBD**, `selectLive` + build-time gating ready for when we need it (6.9). Confirmed local↔S3 is a one-env-flag swap behind a stable `getStories()` interface (S3 provider is the only net-new piece). |
+| 2026-05-25 | **Stories wired to real content (end-to-end slice).** `apps/web/lib/content.ts` is now a build-time provider: scans the local drop (`VR_CONTENT_LOCAL_DIR`, default `../website_data`), normalizes the rich generation JSON → `Story`/`StoryFull` (per 6.5), copies `cover_34`/`cover_169` into `public/stories/<slug>/` (git-ignored). Rewrote `/stories` (real masthead/featured/catalogue) and `/stories/[slug]` (continuous reader: hero → scenes as ✦ breaks → about → related) — all hardcoded `VR_STORIES*`/trending/continue/shelves removed. Home story deep-links repointed to `/stories` to avoid 404s (full home de-fake still TODO). Build green: 27 pages (was 38), `/stories/slack-water` renders the prose + covers; 4 tests pass. Orphaned `content-local/stories.json` (old placeholders) now unused — safe to delete. |
 | 2026-05-24 | Visual-craft pass (autoresearch-led, per the award-winning playbook): typographic polish (`text-wrap: balance` headings / `pretty` paragraphs, optical sizing, kerning + ligatures, optimizeLegibility); premium thin accent scrollbar; animated grow-from-left underlines on inline links (`.vr-ulink`, applied in footer w/ muted secondary color); gallery-style `VRPoster` (inset frame ring, richer cinematic scrim, photo zooms on card hover via `.vr-poster-img`). Fixed `<title>` nodes that mixed text + `&mdash;` (hydration warning) → single text nodes. Build green (38 pages). |
