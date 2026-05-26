@@ -6,6 +6,19 @@ architecture.** Whenever an architecture decision is made, changed, or removed, 
 ARCHITECTURE.md in the *same* change — the decisions table (§2), the diagram (§4), and the
 change log (§13). Never let it drift from reality. This is important to the owner.
 
+## Working rules (owner — important)
+- **Commit & push only when asked.** Never run `git commit` or `git push` unless the owner
+  explicitly requests it ("commit", "push", "ship"). Make changes in the working tree, run
+  tests, report — and stop. The owner decides when things enter history / deploy (a push to
+  `master` triggers the prod deploy). This is a hard rule the owner called "really important".
+- **Test every function.** For any function you add or change, write test cases (Vitest) and
+  **run the tests** (`pnpm -C apps/web test`, or the relevant package) before calling the work
+  done — confirm nothing broke. Don't ship untested functions.
+- **Environments: alpha → prod.** Two envs are planned: **alpha** (current; the only one set
+  up today) and **prod** (future, not yet created). As it scales: **test in alpha, then
+  promote to prod.** Keep changes env-aware (buckets/secrets/config parameterized by env) so
+  the alpha→prod promotion stays clean.
+
 ## What this project is
 Visurena — a cinematic creative studio platform (Stories, Movies, Music, Games) being
 rebuilt from a static site into a real platform with automated content infrastructure,
