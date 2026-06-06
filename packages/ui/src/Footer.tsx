@@ -143,7 +143,7 @@ export function Footer() {
                 href={href}
                 className="vr-ulink"
                 style={{
-                  display: "inline-block",
+                  display: "block",
                   fontFamily: BODY_FONT,
                   fontSize: 16,
                   color: "rgba(245,239,219,0.74)",

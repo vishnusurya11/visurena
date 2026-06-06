@@ -1,44 +1,61 @@
 ---
 name: skill-creator
-description: Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, edit, or optimize an existing skill, run evals to test a skill, benchmark skill performance with variance analysis, or optimize a skill's description for better triggering accuracy.
+description: >
+  Use when the user wants to create, edit, benchmark, or optimize a Claude skill —
+  phrases like "make a skill for X", "improve this skill", "the skill isn't triggering",
+  "run evals on the skill", "tune the description", "package the skill". Also use when
+  research/work in another skill surfaces that a skill itself needs to change. Do NOT
+  use this skill for general project planning, feature implementation, or content work
+  — it is about the *skill artifact* itself (SKILL.md, references, scripts, evals).
+  Project bias: this repo is a React/Next.js cinematic media platform (Visurena);
+  most skills created here will be UI / frontend / web / design-focused, so default
+  to the lightweight iteration path unless the user asks for the full benchmark loop.
 ---
 
 # Skill Creator
 
-A skill for creating new skills and iteratively improving them.
+Create new skills and iteratively improve them. There are two paths through this — pick the right one upfront.
 
-At a high level, the process of creating a skill goes like this:
+## Two paths
 
-- Decide what you want the skill to do and roughly how it should do it
-- Write a draft of the skill
-- Create a few test prompts and run claude-with-access-to-the-skill on them
-- Help the user evaluate the results both qualitatively and quantitatively
-  - While the runs happen in the background, draft some quantitative evals if there aren't any (if there are some, you can either use as is or modify if you feel something needs to change about them). Then explain them to the user (or if they already existed, explain the ones that already exist)
-  - Use the `eval-viewer/generate_review.py` script to show the user the results for them to look at, and also let them look at the quantitative metrics
-- Rewrite the skill based on feedback from the user's evaluation of the results (and also if there are any glaring flaws that become apparent from the quantitative benchmarks)
-- Repeat until you're satisfied
-- Expand the test set and try again at larger scale
+- **Path A — Quick iteration** (the default for UI, design, and one-off skills). Draft → 2-3 manual test runs → qualitative review with the user → revise → repeat. No assertions, no benchmark JSON, no eval viewer. Most UI/design skills land here because their outputs are subjective.
+- **Path B — Full benchmark loop** (use when correctness is objectively verifiable and the skill is production-critical). Draft → spawn with-skill + baseline subagents in parallel → quantitative assertions + qualitative review in the viewer → revise → re-benchmark. Heavier but produces hard evidence the skill actually helps.
 
-Your job when using this skill is to figure out where the user is in this process and then jump in and help them progress through these stages. So for instance, maybe they're like "I want to make a skill for X". You can help narrow down what they mean, write a draft, write the test cases, figure out how they want to evaluate, run all the prompts, and repeat.
+**How to pick:**
 
-On the other hand, maybe they already have a draft of the skill. In this case you can go straight to the eval/iterate part of the loop.
+| Signal | Path |
+|---|---|
+| UI/design/styling/writing skill (subjective outputs) | **A** |
+| Skill that produces deterministic artifacts (a CSV, a transformed file, parsed JSON, a passing test) | **B** |
+| Skill that's been broken in production / regressing | **B** |
+| One-shot project skill the user wants in an hour | **A** |
+| Skill that 100+ teammates will hit | **B** |
 
-Of course, you should always be flexible and if the user is like "I don't need to run a bunch of evaluations, just vibe with me", you can do that instead.
+When in doubt: start in A; promote to B if the skill matters and you're not converging.
 
-Then after the skill is done (but again, the order is flexible), you can also run the skill description improver, which we have a whole separate script for, to optimize the triggering of the skill.
+## Where the user is in the loop
 
-Cool? Cool.
+Your job is to figure out where the user is and jump in:
+
+- *"I want a skill for X"* → start at "Capture intent" and walk forward.
+- *"Here's a draft, make it better"* → go straight to test runs (A) or eval loop (B).
+- *"Just vibe with me"* → strict Path A; skip the eval-viewer machinery; iterate by reading and editing.
+- *"The skill isn't triggering"* → jump to "Description optimization."
+- *"Package this so I can share it"* → jump to "Package and Present."
 
 ## Communicating with the user
 
-The skill creator is liable to be used by people across a wide range of familiarity with coding jargon. If you haven't heard (and how could you, it's only very recently that it started), there's a trend now where the power of Claude is inspiring plumbers to open up their terminals, parents and grandparents to google "how to install npm". On the other hand, the bulk of users are probably fairly computer-literate.
+Skill creator gets used by people across a wide range of technical familiarity. Read the user's vocabulary in their first few messages — "evaluation" and "benchmark" are borderline; "JSON" and "assertion" need confirmation the user is fluent before you use them unexplained. When in doubt, briefly define a term inline.
 
-So please pay attention to context cues to understand how to phrase your communication! In the default case, just to give you some idea:
+---
 
-- "evaluation" and "benchmark" are borderline, but OK
-- for "JSON" and "assertion" you want to see serious cues from the user that they know what those things are before using them without explaining them
+## Project context (Visurena)
 
-It's OK to briefly explain terms if you're in doubt, and feel free to clarify terms with a short definition if you're unsure if the user will get it.
+This skill creator lives in a React/Next.js cinematic media platform repo. Most skills authored here will be **UI / frontend / web / design** focused. Before drafting a new skill:
+
+1. **Check whether an existing skill already covers it.** The repo has overlapping skills in design (`frontend-design`, `modern-web-design`, `ui-styling`, `ui-ux-pro-max`), animation (`motion-framer`, `gsap-scrolltrigger`, `aceternity-ui`, `animation-orchestration`), 3D (`threejs-webgl`, `react-three-fiber`), perf (`web-performance-audit`, `media-catalog-performance`), a11y (`web-accessibility-audit`, `design-auditor`), tokens (`design-system`, `tailwind-theme-builder`, `dark-mode-mastery`), media (`media-playback`, `realtime-live-ui`, `entertainment-platform-ui`). If one of these already triggers on the user's request, **defer to it** rather than building a competing skill. New skills should fill *gaps*, not compete.
+2. **Default to Path A (quick iteration)** for UI/design skills. Their outputs are subjective; the formal benchmark loop is mostly overhead.
+3. **For research grounding**, use the `autoresearch` skill first when the user wants the new skill to encode current best practice ("research how X works, then turn it into a skill"). Don't try to encode best practice from memory.
 
 ---
 
@@ -46,27 +63,36 @@ It's OK to briefly explain terms if you're in doubt, and feel free to clarify te
 
 ### Capture Intent
 
-Start by understanding the user's intent. The current conversation might already contain a workflow the user wants to capture (e.g., they say "turn this into a skill"). If so, extract answers from the conversation history first — the tools used, the sequence of steps, corrections the user made, input/output formats observed. The user may need to fill the gaps, and should confirm before proceeding to the next step.
+Start by understanding the user's intent. The conversation may already contain a workflow the user wants to capture (e.g., "turn this into a skill"). Extract from history first — tools used, sequence of steps, corrections, input/output formats observed. Fill gaps with the user; confirm before moving on.
 
 1. What should this skill enable Claude to do?
-2. When should this skill trigger? (what user phrases/contexts)
+2. When should this skill trigger? (what user phrases / contexts / near-misses)
 3. What's the expected output format?
-4. Should we set up test cases to verify the skill works? Skills with objectively verifiable outputs (file transforms, data extraction, code generation, fixed workflow steps) benefit from test cases. Skills with subjective outputs (writing style, art) often don't need them. Suggest the appropriate default based on the skill type, but let the user decide.
+4. Path A or Path B? Skills with objectively verifiable outputs (file transforms, parsed JSON, passing tests, deterministic code) benefit from Path B. Subjective skills (writing style, UI/design quality, art) almost always belong in Path A. Suggest the default; let the user override.
 
 ### Interview and Research
 
-Proactively ask questions about edge cases, input/output formats, example files, success criteria, and dependencies. Wait to write test prompts until you've got this part ironed out.
+Proactively ask about edge cases, input/output formats, example files, success criteria, and dependencies. Wait to write test prompts until this is ironed out.
 
-Check available MCPs - if useful for research (searching docs, finding similar skills, looking up best practices), research in parallel via subagents if available, otherwise inline. Come prepared with context to reduce burden on the user.
+If the skill encodes domain best practices — current UI patterns, modern lib behavior, perf or a11y rules — **invoke `autoresearch` first** to ground the skill in primary sources rather than guesses. A skill built on stale knowledge is worse than no skill.
+
+Check available MCPs; if useful for research, run in parallel via subagents if available, otherwise inline.
 
 ### Write the SKILL.md
 
-Based on the user interview, fill in these components:
+Based on the user interview, fill in:
 
-- **name**: Skill identifier
-- **description**: When to trigger, what it does. This is the primary triggering mechanism - include both what the skill does AND specific contexts for when to use it. All "when to use" info goes here, not in the body. Note: currently Claude has a tendency to "undertrigger" skills -- to not use them when they'd be useful. To combat this, please make the skill descriptions a little bit "pushy". So for instance, instead of "How to build a simple fast dashboard to display internal Anthropic data.", you might write "How to build a simple fast dashboard to display internal Anthropic data. Make sure to use this skill whenever the user mentions dashboards, data visualization, internal metrics, or wants to display any kind of company data, even if they don't explicitly ask for a 'dashboard.'"
-- **compatibility**: Required tools, dependencies (optional, rarely needed)
-- **the rest of the skill :)**
+- **name**: Skill identifier. kebab-case, names the capability, stable forever.
+- **description**: The single most-important field. It's what Claude reads to decide whether to invoke the skill. Follow the **What → When → Do-not** formula:
+  - **What** — one sentence on the capability.
+  - **When** — concrete user phrases / situations / contexts. Lead with "Use when…". Be a little "pushy" (Claude under-triggers by default) — list the casual phrasings users actually say, not just the formal name of the task.
+  - **Do-not** — one short clause naming the near-miss case where this skill should NOT fire (the adjacent skill that should win instead). This is what prevents over-triggering. Example: a PDF-extract skill should add "Do NOT use for general file I/O or for PDFs that just need to be read inline."
+  - **Project bias** — if the skill is project-specific, name the project context briefly so it doesn't fire on unrelated work.
+  - Keep total description under ~1024 chars (the spec limit).
+- **compatibility** *(optional)*: real environment requirements only — Python version, required tools, headless-vs-display constraints. Don't pad with obvious stuff.
+- **the rest of the skill**: see Skill Writing Guide below.
+
+**Triggering rigor — get this right.** Descriptions either over- or under-trigger. The dangerous failure mode is **near-misses**: queries that share keywords with the skill but actually need a different one. When writing the description, deliberately think about: what would a *neighboring* skill do? what's the *one-word* difference between "this fires" and "this doesn't"? Put that distinction in the description (usually via the Do-not clause). The full optimization loop later validates this; getting it close on the first pass saves iterations.
 
 ### Skill Writing Guide
 
@@ -157,7 +183,33 @@ Output: feat(auth): implement JWT-based authentication
 
 ### Writing Style
 
-Try to explain to the model why things are important in lieu of heavy-handed musty MUSTs. Use theory of mind and try to make the skill general and not super-narrow to specific examples. Start by writing a draft and then look at it with fresh eyes and improve it.
+Explain to the model **why** things matter rather than yelling MUSTs at it. Modern Claude has good theory of mind — given the reason behind a rule, it can apply that rule sensibly in edge cases. Heavy-handed rigid structures break down on new situations; rationale-driven instructions generalize.
+
+Make skills general, not narrowly tied to one example. Write a draft, then look at it with fresh eyes and tighten it.
+
+---
+
+### UI / frontend skill design (special handling)
+
+Most skills created in this repo are UI-focused, and UI skills have failure modes that data-processing skills don't.
+
+**Default to Path A.** UI/design outputs are subjective — pixel diffs are flaky, "looks right" depends on context, and the formal benchmark loop adds overhead without a corresponding quality signal. Qualitative review with the user is usually the right loop.
+
+**Fight distributional convergence with negation.** Without explicit guidance, Claude defaults to AI-slop UI aesthetics: Inter everywhere, purple gradients, generic centered hero, the same shadcn-default everything. The strongest UI skills (Anthropic's `frontend-design`, `web-artifacts-builder`) front-load NEVER lists — "don't use Inter, don't use purple gradients, don't use centered single-column hero, don't default to the rounded-2xl border-card pattern." Naming the cliché kills it. Add a NEVER list to any UI skill that's meant to look distinctive.
+
+**Bundle design tokens as assets, not prose.** If a skill needs a palette, type scale, or radius scale, put it in `assets/tokens.json` (or `assets/tokens.css`) and have the skill reference it. Don't list 50 hex codes inline — they're noise in context and a maintenance trap.
+
+**Compose, don't compete.** Visurena already has strong UI skills. A new UI skill should sit between them, not duplicate them. Examples of valid gaps: a *specific component pattern* not covered by `ui-styling` or `aceternity-ui`; a *project-specific page template* not covered by `entertainment-platform-ui`; a *workflow* (e.g., "convert a Figma frame into a shadcn component") that no existing skill covers end-to-end. If the new skill description overlaps with an existing one, add a Do-not clause naming the existing skill — or skip the new skill entirely.
+
+**Evals when they're worth it.** If you do want quantitative signal on a UI skill, prefer **structural assertions** (DOM/component presence, props passed, files emitted) over pixel/screenshot diffs. Playwright baseline comparison produces sub-pixel false positives that drown the signal. Structural checks are stable.
+
+**Project-specific patterns to reference for UI skills:**
+- Tokens & dark mode → `design-system`, `tailwind-theme-builder`, `dark-mode-mastery`
+- Animation tool selection → `animation-orchestration` (then it routes to `motion-framer` / `gsap-scrolltrigger`)
+- Performance budgets → `web-performance-audit`, `media-catalog-performance`
+- A11y verification → `web-accessibility-audit`, `design-auditor`
+
+---
 
 ### Test Cases
 
@@ -183,9 +235,28 @@ See `references/schemas.md` for the full schema (including the `assertions` fiel
 
 ## Running and evaluating test cases
 
+This is **Path B — full benchmark loop**. For Path A (default for UI/subjective skills), skip to "Path A — quick iteration" below.
+
+### Path A — Quick iteration (default)
+
+For UI, design, writing, and one-off skills:
+
+1. Draft the skill (frontmatter + body).
+2. Pick 2-3 realistic prompts. Show them to the user; let them tweak.
+3. Run each prompt **in a fresh subagent with the skill loaded** (or, if the user prefers, in a new Claude session). Save outputs to `<skill>-workspace/quick/<prompt-slug>/`.
+4. Walk the user through the outputs in chat. Ask: "does this match what you'd want? where does it miss?"
+5. Edit the skill. Repeat.
+6. Stop when the user says it's good — *or* after 2-3 rounds of "no notable change" in their feedback (you've converged).
+
+That's it. No assertions, no benchmark JSON, no viewer. Promote to Path B only if you're not converging or the user asks for harder evidence.
+
+### Path B — Full benchmark loop
+
+Use when correctness is objectively verifiable (file transforms, parsed JSON, code that should pass tests, deterministic workflows) or when the skill is production-critical and you need hard evidence.
+
 This section is one continuous sequence — don't stop partway through. Do NOT use `/skill-test` or any other testing skill.
 
-Put results in `<skill-name>-workspace/` as a sibling to the skill directory. Within the workspace, organize results by iteration (`iteration-1/`, `iteration-2/`, etc.) and within that, each test case gets a directory (`eval-0/`, `eval-1/`, etc.). Don't create all of this upfront — just create directories as you go.
+Put results in `<skill-name>-workspace/` as a sibling to the skill directory. Organize by iteration (`iteration-1/`, `iteration-2/`, etc.) and within that, each test case gets a directory (`eval-0/`, `eval-1/`, etc.). Create directories as you go.
 
 ### Step 1: Spawn all runs (with-skill AND baseline) in the same turn
 
@@ -316,15 +387,19 @@ This is the heart of the loop. You've run the test cases, the user has reviewed 
 
 ### How to think about improvements
 
-1. **Generalize from the feedback.** The big picture thing that's happening here is that we're trying to create skills that can be used a million times (maybe literally, maybe even more who knows) across many different prompts. Here you and the user are iterating on only a few examples over and over again because it helps move faster. The user knows these examples in and out and it's quick for them to assess new outputs. But if the skill you and the user are codeveloping works only for those examples, it's useless. Rather than put in fiddly overfitty changes, or oppressively constrictive MUSTs, if there's some stubborn issue, you might try branching out and using different metaphors, or recommending different patterns of working. It's relatively cheap to try and maybe you'll land on something great.
+1. **Generalize from the feedback.** Skills get invoked thousands of times across prompts you'll never see. You and the user are iterating on a handful of examples because that's the fastest signal — but a skill that only works on those examples is useless. When you hit a stubborn issue, don't add a fiddly special-case rule; branch out, try a different metaphor or a different work pattern. It's cheap to try and you may land on something that generalizes.
 
-2. **Keep the prompt lean.** Remove things that aren't pulling their weight. Make sure to read the transcripts, not just the final outputs — if it looks like the skill is making the model waste a bunch of time doing things that are unproductive, you can try getting rid of the parts of the skill that are making it do that and seeing what happens.
+2. **Keep the prompt lean.** Remove anything not pulling its weight. **Read the transcripts**, not just the final outputs — if the skill is making the model waste time on unproductive detours, cut the parts that caused it and re-run.
 
-3. **Explain the why.** Try hard to explain the **why** behind everything you're asking the model to do. Today's LLMs are *smart*. They have good theory of mind and when given a good harness can go beyond rote instructions and really make things happen. Even if the feedback from the user is terse or frustrated, try to actually understand the task and why the user is writing what they wrote, and what they actually wrote, and then transmit this understanding into the instructions. If you find yourself writing ALWAYS or NEVER in all caps, or using super rigid structures, that's a yellow flag — if possible, reframe and explain the reasoning so that the model understands why the thing you're asking for is important. That's a more humane, powerful, and effective approach.
+3. **Explain the why.** Modern Claude has good theory of mind. Given the reason behind a rule, it applies that rule sensibly in cases the rule didn't anticipate. ALWAYS/NEVER in all caps is a yellow flag — if you can, reframe as "we do X because Y, otherwise Z" and the model handles edge cases on its own.
 
-4. **Look for repeated work across test cases.** Read the transcripts from the test runs and notice if the subagents all independently wrote similar helper scripts or took the same multi-step approach to something. If all 3 test cases resulted in the subagent writing a `create_docx.py` or a `build_chart.py`, that's a strong signal the skill should bundle that script. Write it once, put it in `scripts/`, and tell the skill to use it. This saves every future invocation from reinventing the wheel.
+4. **Look for repeated work across test cases.** If all 3 runs independently wrote the same helper (`create_docx.py`, `build_chart.py`), that's the signal to bundle it in `scripts/`. Write it once, point the skill at it; every future invocation skips that overhead.
 
-This task is pretty important (we are trying to create billions a year in economic value here!) and your thinking time is not the blocker; take your time and really mull things over. I'd suggest writing a draft revision and then looking at it anew and making improvements. Really do your best to get into the head of the user and understand what they want and need.
+5. **Take your time on the rewrite.** Draft, then look at the draft cold and tighten it. The user can wait a minute; they can't unread a sloppy revision.
+
+### Baseline rule for improvement runs
+
+When iterating an existing skill, **the baseline is always the version the user came in with (v0), not the previous iteration**. Otherwise iteration 3 can look better than iteration 2 while being worse than v0 — you've drifted, not improved. Snapshot v0 once at the start (`cp -r <skill-path> <workspace>/v0-snapshot/`), and point every baseline run at that snapshot.
 
 ### The iteration loop
 
@@ -414,11 +489,7 @@ While it runs, periodically tail the output to give the user updates on which it
 
 This handles the full optimization loop automatically. It splits the eval set into 60% train and 40% held-out test, evaluates the current description (running each query 3 times to get a reliable trigger rate), then calls Claude to propose improvements based on what failed. It re-evaluates each new description on both train and test, iterating up to 5 times. When it's done, it opens an HTML report in the browser showing the results per iteration and returns JSON with `best_description` — selected by test score rather than train score to avoid overfitting.
 
-### How skill triggering works
-
-Understanding the triggering mechanism helps design better eval queries. Skills appear in Claude's `available_skills` list with their name + description, and Claude decides whether to consult a skill based on that description. The important thing to know is that Claude only consults skills for tasks it can't easily handle on its own — simple, one-step queries like "read this PDF" may not trigger a skill even if the description matches perfectly, because Claude can handle them directly with basic tools. Complex, multi-step, or specialized queries reliably trigger skills when the description matches.
-
-This means your eval queries should be substantive enough that Claude would actually benefit from consulting a skill. Simple queries like "read file X" are poor test cases — they won't trigger skills regardless of description quality.
+**How triggering actually works** (for designing better eval queries): skills appear in Claude's `available_skills` list as name + description. Claude only consults a skill when the task can't be handled trivially — "read this PDF" won't fire even with a perfect description match, because Claude can just read the file. Substantive, multi-step, or specialized queries reliably trigger when the description matches. Keep eval queries substantive; trivial ones won't trigger regardless of description quality.
 
 ### Step 4: Apply the result
 
@@ -459,17 +530,23 @@ The references/ directory has additional documentation:
 
 ---
 
-Repeating one more time the core loop here for emphasis:
+## Composing with other skills
 
-- Figure out what the skill is about
-- Draft or edit the skill
-- Run claude-with-access-to-the-skill on test prompts
-- With the user, evaluate the outputs:
-  - Create benchmark.json and run `eval-viewer/generate_review.py` to help the user review them
-  - Run quantitative evals
-- Repeat until you and the user are satisfied
-- Package the final skill and return it to the user.
+- **Grounding a new skill in current best practice** → invoke `autoresearch` first to triangulate sources; then encode the findings in the skill. Skills built from memory go stale fast.
+- **Writing skill code (scripts in `scripts/`)** → use `superpowers:test-driven-development` for any non-trivial logic. Skills are code; treat them like code.
+- **Multi-part skill work that can be parallelized** (e.g., drafting + grading + analyzing across many evals) → use `superpowers:dispatching-parallel-agents`.
+- **UI-focused skills** → defer to the existing UI skills listed in the "UI / frontend skill design" section above before creating a competitor.
 
-Please add steps to your TodoList, if you have such a thing, to make sure you don't forget. If you're in Cowork, please specifically put "Create evals JSON and run `eval-viewer/generate_review.py` so human can review test cases" in your TodoList to make sure it happens.
+### Track the workflow as todos
 
-Good luck!
+Use `TodoWrite` to track the steps for whichever path you're on. The core loop:
+
+1. Capture intent → draft skill
+2. Run test prompts (Path A) or spawn parallel benchmark runs (Path B)
+3. Review with the user
+4. Edit the skill
+5. Repeat until converged
+6. (Optional) Run description optimization
+7. (Optional) Package and present
+
+If you're in Cowork, explicitly add "create eval JSON and run `eval-viewer/generate_review.py`" so it doesn't get forgotten.

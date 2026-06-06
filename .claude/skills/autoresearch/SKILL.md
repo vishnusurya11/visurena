@@ -1,190 +1,249 @@
 ---
 name: autoresearch
 description: >
-  Autonomously research any topic, question, or skill improvement task — deeply,
-  without stopping, until you have something genuinely useful to show.
-  Use when the user asks you to research how something works, improve an existing
-  skill, explore a domain, answer a hard question through investigation, or says
-  anything like "figure out X", "go research Y", "dig into Z", "improve the
-  [skill] skill", or "learn about X and come back with findings".
-  The goal is depth over speed: keep going, follow threads, synthesize,
-  and produce something the user can actually use — not a quick surface answer.
+  Use when the user wants you to actually go investigate something rather than answer off
+  the top of your head — phrases like "research X", "figure out Y", "dig into Z", "improve
+  the [skill] skill", "learn about W and report back", "find me the best library for…",
+  "how do real teams do this?", "what's the modern way to…", or any question where the
+  honest answer is "I'd need to look it up". Especially apt for project-development and
+  UI/web research (libraries, APIs, design patterns, perf, a11y, animation, frameworks)
+  on this Visurena codebase. The goal is depth and verifiability — go broad first, then
+  deep on what matters, triangulate, and return something the user can actually act on.
+  Do NOT use for tasks you can answer from current context alone or for one-line lookups.
 ---
 
 # Autoresearch
 
-Autonomous deep research on any topic. Research until you have something genuinely useful, then present it.
+Autonomous, deep, verifiable research. Keep going until you have something the user can use; don't stall on clarifying questions; flag your uncertainties; cite what you fetched.
 
 ## When this skill applies
 
-Any time the user hands you a question, topic, or improvement target and wants you to go figure it out — not just answer off the top of your head, but actually investigate:
+- **Conceptual / domain questions** — "How does X work?", "What are the key ideas in Y?"
+- **Project / UI / web investigations** — "Best way to implement view transitions in Next.js?", "Is `react-window` still the right virtualization choice?", "How do top streaming sites handle subtitle rendering?"
+- **Library / framework / API research** — picking a tool, validating a claim from docs, checking version-current behavior
+- **Skill improvement** — "Improve the parse-epub skill", "Make the autoresearch skill sharper"
+- **Domain exploration** — "Map out the design system tokens landscape"
 
-- **Conceptual questions** — "How does money work?", "How do neural networks learn?"
-- **Craft / process questions** — "How do you create a compelling character?", "How does good dialogue work?"
-- **Technical investigations** — "How should we parse EPUB files?", "What's the best way to handle auth in this stack?"
-- **Skill improvement** — "Improve the parse-epub skill", "Make the autoresearch skill better"
-- **Domain exploration** — "What are the key ideas in behavioral economics?"
+Don't use this for things you can answer from open files or a single grep — that's just being slow.
 
-## Research process
+---
 
-### Step 1: Understand the goal
+## Process
 
-Before diving in, be clear on what a good outcome looks like:
-- What does the user actually need? (quick orientation? deep expertise? a working improvement?)
-- What form should the output take? (a summary, an updated skill, a how-to, a list of key ideas, code?)
-- Are there existing resources to build on? (existing skills, project files, prior context in the conversation?)
+### Step 1 — Frame the goal
 
-If it's ambiguous, make a reasonable assumption and state it — don't stall asking clarifying questions when you can just start.
+Be explicit (to yourself) about:
+- What does "good enough" look like? (orientation, decision-ready recommendation, working improvement?)
+- What's the **shape of the output**? (short answer, structured report, edited skill, code patch?)
+- What context already exists in the conversation, the codebase, or prior skills?
 
-### Step 2: Plan research approach
+If something is genuinely ambiguous, make the reasonable call and **state your assumption** rather than asking. Auto-mode default: keep going.
 
-Sketch a brief plan before starting. For most topics this means:
-1. What sources will you consult? (web search, docs, code, books, the codebase itself)
-2. What are the key sub-questions to answer?
-3. What's the dependency order — what do you need to understand first before the harder parts make sense?
+### Step 2 — Decompose into sub-questions
 
-### Step 3: Investigate deeply
+Generic "plan your research" is too loose. Use this template:
 
-Go broad first, then go deep on what matters. Research tactics by type:
+1. **List the sub-questions.** Five or fewer is usually right; more = scope is too broad.
+2. **Order them by dependency** — you can't reason about #3 if #1 is unsettled.
+3. **Sketch the expected source per sub-question** (spec? official docs? library README? perf case study?). If two sub-questions need the same source, batch them.
+4. **Size each sub-question:**
+   - *Quick lookup* — 1-3 tool calls, do inline.
+   - *Investigation* — 5-10 tool calls, do inline if just one; **parallel-dispatch** if multiple are independent (see §"Parallel dispatch" below).
+   - *Multi-source synthesis* — 10+ calls; almost always parallel-dispatch.
 
-**Conceptual / domain topics** (money, character creation, etc.)
-- Search for authoritative sources, not just the first result
-- Find multiple perspectives — beginner explanations AND expert nuance
-- Look for frameworks, mental models, and principles — not just facts
-- Follow threads: if something is mentioned as important, go understand it
+Vague delegation is the #1 failure mode of multi-step research — subagents duplicate each other's searches when scope isn't bounded. Anthropic's multi-agent research write-up (anthropic.com/engineering/multi-agent-research-system) found that explicit scope + expected-output format per sub-task is what makes parallelization actually work.
 
-**Technical topics** (how to parse EPUB, how auth works, etc.)
-- Look at the spec / standard if one exists
-- Find real implementations — libraries, open source code
-- Look at edge cases and failure modes, not just the happy path
-- Check for existing tools before building from scratch
+### Step 3 — Scratchpad your plan and interim findings
 
-**Skill improvement** (improve parse-epub, make X skill better)
-- Read the existing skill carefully first
-- Research what the skill is trying to do — is the approach right?
-- Find better techniques, libraries, edge case handling
-- Look at what's missing: what would a user realistically run into that the skill doesn't handle?
+If research will span more than ~5 tool calls, write your plan and key findings down as you go — in a scratchpad block, a TodoWrite, or your working output. Context truncates under load; a plan that exists only in-context can vanish silently.
 
-### Step 4: Synthesize
+Anthropic's LeadResearcher explicitly persists plans to memory because "if the context window exceeds 200,000 tokens it will be truncated." Same principle here.
 
-Don't just collect information — form a view. After gathering:
-- What are the 2-3 most important things to understand about this topic?
-- What surprised you? What was wrong in your initial assumptions?
-- What are the practical implications for the user's specific situation?
-- What trade-offs or debates exist that the user should know about?
+### Step 4 — Gather, with source-tier discipline
 
-### Step 5: Produce output
+Go broad first, then deep on what's load-bearing. Triangulate anything the user will act on.
 
-Match the output format to the goal:
+**The source quality ladder** (top wins ties):
 
-| Goal | Output |
-|---|---|
-| Understand a concept | Structured explanation with key ideas, examples, and "the thing most people miss" |
-| Improve a skill | Updated SKILL.md (and scripts/references if needed) — with a summary of what changed and why |
-| Answer a technical question | Concrete answer + the reasoning, not just the conclusion |
-| Explore a domain | Mental model / framework + key resources to go deeper |
+1. **Authoritative** — the spec (W3C, WHATWG, ECMA, RFC), official docs at the canonical URL, the project's own GitHub README/changelog, primary research, the source code itself.
+2. **Institutional secondary** — MDN, caniuse, web.dev / Chrome Developers, framework-team blogs, academic PDFs, central-bank/government explainers.
+3. **Curated community** — Smashing Magazine, Hacker News top-comment discussion, well-known engineer blogs you can name, conference talks. *Signal, not ground truth.*
+4. **SEO content** — listicles, AI-summary blogs, marketing posts. *Treat as leads, not facts.*
 
-**For skill improvements specifically:** edit the skill files directly, explain what you changed and why, and flag anything you're uncertain about.
+When two sources conflict, **prefer the higher tier — do not average them**. If both are tier 1, flag the conflict and report both positions. Without explicit tiering, agents will happily prefer SEO-optimized blogs over the actual spec (Anthropic's team documented this exact failure).
 
-### Step 6: Flag what you don't know
+### Step 5 — Audit claims before synthesizing
 
-Good research surfaces uncertainty, not just confidence. If there are things you couldn't verify, debates that are unresolved, or areas where the user should do their own verification — say so explicitly.
+Before you start drafting the answer, sort what you've gathered:
 
-## Depth heuristic
+- **Verified** — the claim has at least one tier-1 source you actually fetched (not just a URL you remember).
+- **Likely** — multiple independent tier-2/3 sources agree, no tier-1 confirms or contradicts.
+- **Unverified** — single source, or you couldn't confirm despite trying.
 
-Ask yourself: "If the user asked a smart friend who actually knew this domain, would this answer satisfy them?" If the answer feels shallow or obvious, keep going. The bar is genuinely useful, not technically correct.
+This is the most-missed step. Hallucinations *compound*: an unconfirmed claim carried into synthesis becomes a confident-sounding finding ("propagation hallucinations" in the research literature). Tag the third tier in your output rather than smuggling it in.
 
-A few rounds of research on a rich topic beats one fast pass.
+### Step 6 — Synthesize: form a view, don't dump notes
 
-## Output structure (default)
+- What are the 2-3 things that actually matter on this topic?
+- What's the thing most explanations get wrong or skip?
+- What are the practical implications for the user's specific situation (this React/Next.js project, this skill, this design call)?
+- What trade-offs or live debates does the user need to know about?
 
-Unless the goal calls for something different:
+Lead with the answer / mental model, then layer nuance. Don't make the reader assemble it.
+
+### Step 7 — Verify URLs and produce output
+
+**Before citing any URL, confirm you actually fetched it and got a real response.** Don't reproduce URLs from memory. Citation studies (arxiv: 2604.03173) find 3-13% of URLs in LLM research outputs are fabricated even with search enabled — the rate rises with citation volume.
+
+For skill improvements, edit the skill files in place and summarize what changed and why — no need for the report template below.
+
+---
+
+## Stop conditions
+
+Stop a **thread** when:
+- Another round of search returns no new claims (just repeats what you have).
+- You've spent 10+ tool calls on one sub-question with no payoff — drop it and flag as unresolved rather than chasing a source that may not exist.
+
+Stop the **whole task** when:
+- Another round wouldn't change your answer *or* your confidence.
+- You've answered the user's actual goal at sufficient depth (not at maximum depth — re-anchor periodically).
+
+> "Would another search change your conclusion?" If no, you're done.
+
+Perplexity's deep research caps at 3-5 sequential searches per subtopic for the same reason. Anthropic's team flagged "scouring endlessly for nonexistent sources" as a real production failure.
+
+---
+
+## Parallel dispatch (for multi-part research)
+
+When sub-questions are independent — different libraries, different sub-systems, different facts — spawn them as parallel sub-researchers rather than serializing. Anthropic measured ~90% performance lift over single-agent on multi-part research by parallelizing.
+
+Each dispatched task must include:
+
+1. **Specific objective** — the one question this sub-agent is answering.
+2. **Expected output format** — bullet list of findings? a table? a recommendation?
+3. **Tool guidance** — "WebSearch + WebFetch", "read these files", etc.
+4. **Scope boundaries** — what *not* to research (prevents two agents both researching the same thing).
+5. **Word/length cap** so the merged synthesis fits your context.
+
+Then run a final synthesis pass on the merged results. **REQUIRED:** Use `superpowers:dispatching-parallel-agents` for the actual dispatch pattern.
+
+Don't parallelize when sub-questions depend on each other or share state — that's how you get conflicting concurrent edits.
+
+---
+
+## UI / web research playbook
+
+For project-development and UI/web tasks (the dominant use case in this repo), follow these source hierarchies — they cut research time in half because you skip the SEO sludge.
+
+| You're researching | Reach first | Then | For sentiment only |
+|---|---|---|---|
+| **Web API / browser behavior** | MDN (the actual page, not a summary) | `caniuse.com` for support matrix; WHATWG/W3C spec for edge cases | — |
+| **Animation library (Framer Motion, GSAP, etc.)** | Official docs + repo README | GitHub changelog (recent-version behavior); GitHub Issues for known limitations | Reddit / HN |
+| **"Is this the modern UI pattern?"** | At least 2 of: web.dev, Smashing, the framework's own docs | Real production examples (Vercel, Linear, etc. open-sourced repos) | Twitter / Dribbble |
+| **Performance** | web.dev / Core Web Vitals docs; Chrome DevTools docs | A real case study from an engineering blog (web.dev case studies, engineering.googleblog, framework team) | — |
+| **Accessibility** | WCAG quick reference; APG (ARIA Authoring Practices) | axe-core docs; WebAIM | — |
+| **React / Next.js / Tailwind / shadcn** | The project's own docs at the canonical URL, current major version | GitHub Discussions / Issues; release notes | YouTube tutorials |
+| **A specific component pattern** | shadcn registry / Radix primitives | A handful of OSS apps that use it (sample 2-3, not 1) | Component galleries |
+
+**Rules of thumb:**
+- One blog saying "X is the modern approach" is not a finding. Triangulate.
+- Browser-support claims are settled by `caniuse` + MDN compatibility tables, never by a blog.
+- Version-current matters. If a library has shipped majors recently, check the changelog before quoting a doc page.
+- For "best library" debates: read 2-3 actual repositories, look at maintenance signal (recent commits, open-issue ratio, release cadence), then look at sentiment.
+
+---
+
+## Output (default template)
+
+Use this unless the goal calls for something different (e.g., skill edit, code patch).
 
 ```
 ## What I found: [topic]
 
-**The core idea**: [1-2 sentence essence]
+**Bottom line**: [1-2 sentence answer or mental model]
 
-**Key points**:
+**Verified claims** (tier-1 source, fetched):
+- [claim] — [source URL]
 - ...
+
+**Likely** (corroborated across multiple secondary sources):
+- [claim] — [sources]
 - ...
+
+**Uncertain / disputed**:
+- [claim] — [why uncertain, or what the disagreement is]
 
 **The thing most people miss**: [insight or nuance]
 
-**Practical takeaway**: [what the user should actually do or know]
+**For your situation**: [what to do, given the project/context]
 
-**Where to go deeper**: [1-3 sources worth reading]
+**Methodology**: [N searches / M sources fetched; main paths followed; threads dropped]
 
-**What I'm uncertain about**: [honest gaps]
+**Go deeper**: [1-3 sources worth reading]
 ```
 
-For skill improvements, skip this template — just edit the skill and write a short summary of the changes.
+The methodology footnote isn't ceremony — it lets the user calibrate how much to trust the output. Production research products (Gemini, Perplexity) front-load this for the same reason.
+
+For **skill improvements**: skip the template. Edit the skill files directly, then give a short changelog of what changed, why, and what's still uncertain.
 
 ---
 
-## Worked examples (prompt → research → output)
+## Worked examples
 
-These show the *shape* of the work at three depths. Adapt; don't copy.
+Three depths. Adapt the *shape*, not the literal steps.
 
 ### Short — "Improve the parse-epub skill"
 
-**Prompt:** "Improve the parse-epub skill."
+1. Read existing `SKILL.md` and `scripts/parse_epub.py` fully — locate gaps (e.g., EPUB 2-only path, no real example output).
+2. WebSearch for current EPUB spec version; confirm via canonical URL (W3C). Verify `ebooklib` is still the canonical lib and check its latest release.
+3. WebFetch the lib docs to confirm the real API (don't quote from memory).
+4. Diff: skill claims vs. actual current state. Concrete gap list.
+5. Edit the skill in place; add references file for spec + lib links.
+6. Hand off to **skill-creator** if changes are big enough to need re-evaluation; otherwise summarize the changelog.
 
-**Research steps:**
-1. Read the existing `SKILL.md` and `scripts/parse_epub.py` fully — understand what it does and where it breaks (it targets EPUB 2 / Gutenberg, misses EPUB 3).
-2. Web-search the current standard: confirm EPUB 3.3 is the live W3C Recommendation; find the canonical lib (`ebooklib`) and its current version.
-3. WebFetch the library docs to verify the real API (`epub.read_epub`, `get_items_of_type(ITEM_DOCUMENT)`).
-4. Diff: what does the skill claim vs. what's actually current? List concrete gaps (no EPUB 3 path, no real example output, thin references).
-5. Edit the skill in place; add a references file for the spec/lib links.
+### Medium — "What's the most reliable way to detect chapter boundaries in an arbitrary EPUB?"
 
-**Output:** Edited `SKILL.md` + new `references/` file, plus a 4-bullet changelog: what changed, why, and what's still uncertain (e.g., "DRM-protected EPUBs still out of scope — flagged").
+1. Sub-questions: How is reading order defined? How are chapters marked in EPUB 2 vs 3? What's the authoritative structural source?
+2. WebFetch W3C EPUB 3.3 spec for `nav.xhtml` / `epub:type`; check the EPUB 2 leftover (`toc.ncx`).
+3. Sample 2-3 real implementations (ebooklib source, Calibre's logic). Note divergences.
+4. Trade-off table: HTML-class heuristics (brittle) vs. spine + TOC (authoritative).
+5. Output uses default template with confidence-tagged claims.
 
-### Medium — A technical question: "What's the most reliable way to detect chapter boundaries in an arbitrary EPUB?"
+### Long — "How does money actually work?"
 
-**Research steps:**
-1. Frame the sub-questions: How is reading order defined? How are chapters marked across EPUB 2 vs 3? What's the most *authoritative* source of structure?
-2. Read the spec (W3C EPUB 3.3) for `nav.xhtml` / `epub:type`; read the EPUB 2 leftover (`toc.ncx`).
-3. Find 2–3 real implementations (ebooklib, Calibre's logic) and note how each resolves boundaries.
-4. Compare approaches: HTML-class heuristics (brittle) vs. spine order + TOC (authoritative).
-5. Synthesize a recommendation with the trade-off stated.
-
-**Output (uses the default template):** core idea ("drive extraction from the spine + TOC, not from HTML class names"), key points, the thing most people miss (TOC entries can deep-link into the *middle* of a content file), practical takeaway, sources, and uncertainties.
-
-### Long — A conceptual deep dive: "How does money actually work?"
-
-**Research steps:**
-1. Map the territory first: what are the distinct sub-questions? (what money *is*, how it's *created*, why it has *value*, what *inflation* is). Establish dependency order — you can't explain inflation before money creation.
-2. Go broad: gather a beginner framing AND an expert one for each sub-question. Look for *frameworks* (e.g., money as a social ledger; the credit theory vs. commodity theory of money), not just facts.
-3. Find primary/authoritative sources for contested points (central-bank explainers on money creation, e.g. Bank of England's "Money creation in the modern economy").
-4. Notice and name the live debates (e.g., commodity vs. credit theory; how much banks vs. central banks "create" money).
-5. Synthesize a mental model that a smart non-expert could actually hold in their head, then layer nuance on top.
-
-**Output:** A structured explanation organized by the dependency order, leading with the mental model, surfacing the key debate explicitly rather than papering over it, ending with "where to go deeper" and honest uncertainties.
-
----
-
-## Research methods & sources
-
-A quick map of which tool/source to reach for, and how to use it well. For the longer playbook (query crafting, source triangulation, when to stop), read `references/research-methods.md`.
-
-| Source type | Reach for it when | Tool | Watch out for |
-|---|---|---|---|
-| **Web search** | Orienting on a topic, finding current state/versions, discovering primary sources | `WebSearch` | First result ≠ best; SEO content farms; stale dates |
-| **Official docs / specs** | The authoritative "how it actually works" | `WebFetch` on the canonical URL | Versioned pages drift; confirm you're on the current version |
-| **Primary sources** | Contested or high-stakes claims (research papers, standards bodies, original announcements) | `WebFetch` | Secondary summaries distort; go to the source for anything load-bearing |
-| **The codebase itself** | Technical questions about *this* project | `Read`, `Grep`, `Glob` | The code is ground truth; comments/docs may lie |
-| **Existing skills/files** | Skill-improvement and "how do we already do X" | `Read` | Read it *fully* before judging it |
-| **Repo exploration (OSS)** | "How do real implementations handle this?" | `gh`, WebFetch on raw GitHub URLs | One repo's choice isn't the consensus — check 2–3 |
-
-**Core discipline:** triangulate. A claim from one source is a lead; a claim confirmed by an independent second source is a finding. For anything the user will act on, get it from the authoritative source, not a blog summarizing it.
+1. Dependency map of sub-questions: *what money is → how it's created → why it has value → what inflation is*. Can't explain (4) without (1-3).
+2. **Parallel-dispatch** four sub-researchers, one per sub-question, with scope boundaries (each researches one tier of the question and returns 3-5 verified claims + 1-2 disputes).
+3. Find primary sources for contested points (Bank of England's "Money creation in the modern economy" PDF for the credit-vs-commodity debate).
+4. Synthesize a mental model that holds in one head, then layer nuance.
+5. Surface the live debate explicitly rather than picking a side silently.
 
 ---
 
 ## Failure modes (and what to do)
 
-- **Sources contradict each other.** Don't average them. Identify *why* they disagree — different versions? different definitions? one is outdated? a genuine dispute? Prefer the more authoritative/recent source, and if the conflict is real, *report both positions* rather than silently picking one.
-- **Unresolved debates.** Some questions have no settled answer (money's nature, "best" architecture for X). The right output is to *frame the debate clearly* — the camps, what each gets right, what's actually at stake — not to fake a verdict.
-- **Can't verify a key claim.** Say so explicitly and downgrade your confidence. A flagged unknown is worth more than a confident guess.
-- **Rabbit-holing.** Depth is the goal, but a thread that stops paying off should be dropped. Re-check against the user's actual goal: is this still serving it?
-- **Stale / hallucinated URLs.** Never cite a doc URL you haven't fetched or that you're inventing from memory. If unsure of a deep link, cite the docs root and flag it.
-- **Premature synthesis.** Forming a view before you've gathered enough is the most common way to be confidently wrong. Go broad before you commit to a take.
+| Mode | What to do |
+|---|---|
+| **Sources contradict** | Don't average. Identify *why* — version drift? different definitions? a genuine dispute? Prefer higher tier; if both tier-1, report both positions and the conflict explicitly. For browser/API conflicts, spec + caniuse resolve it — blog posts citing each other do not. |
+| **Unresolved debate** | Frame the debate (the camps, what each gets right, what's at stake). Don't fake a verdict. |
+| **Can't verify a key claim** | Say so explicitly and downgrade your confidence. A flagged unknown beats a confident guess. |
+| **Rabbit-holing** | A thread that stops paying off is dropped, not pushed. Re-anchor: is this still serving the user's goal? |
+| **Stale / hallucinated URL** | Don't cite a URL you haven't fetched. If unsure of a deep link, cite the docs root and flag it. URL fabrication rate rises with citation count — keep refs lean and verified. |
+| **Premature synthesis** | Forming a view before you've gathered enough is how you're confidently wrong. Go broad before you commit. |
+| **Subagents duplicating work** | Your sub-task scopes weren't tight enough — add explicit "do not research X, that's the other agent's job" boundaries when redispatching. |
+
+---
+
+## Methods playbook
+
+For the deeper version of the methods summarized here — query craft, source triangulation, the parallel-dispatch template, when to stop — see `references/research-methods.md`. Load it on demand for multi-day or unfamiliar research; the body above is enough for routine work.
+
+---
+
+## Composing with other skills
+
+- **Skill improvement** that requires changes you can't test inline → hand off to `skill-creator` (eval loop, benchmark, description optimization).
+- **Code change** that needs to be test-driven → hand off to `superpowers:test-driven-development` after the research is done.
+- **UI/design exploration** that turns into "what should we build" → after research, route to `frontend-design`, `modern-web-design`, `entertainment-platform-ui`, or `ui-ux-pro-max` for design execution.
+- **Parallel sub-researcher dispatch** → use `superpowers:dispatching-parallel-agents` for the actual pattern.
