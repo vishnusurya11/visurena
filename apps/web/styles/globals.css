@@ -2,391 +2,145 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Cinema Lobby (2026-09-25 redesign) ────────────────────────────────────
+   Black room, warm-white type, one accent per vertical as a MARK (never a fill).
+   Everything is visible at first paint: no opacity-0 reveals, no continuous
+   animation, no backdrop blur, no blend modes, no text shadows. */
 :root {
+  --vr-bg0: #0B0C10; --vr-bg1: #141518; --vr-bg2: #1C1D21; --vr-bg3: #26272B;
+  --vr-hair: rgba(255,255,255,0.08); --vr-hair-2: rgba(255,255,255,0.16);
+  --vr-t1: #F2F1EC; --vr-t2: #A9A8A3; --vr-t3: #7A7975;
+  --vr-amber: #E8B04B; --vr-emerald: #3DD68C; --vr-ruby: #F0537A; --vr-amethyst: #B48CF7; --vr-sapphire: #6C9BFF;
+  --vr-accent: #F2F1EC;           /* LobbyShell overrides per vertical */
+  --vr-gutter: 16px;
+  --vr-fast: 150ms; --vr-normal: 220ms; --vr-slow: 400ms; --vr-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* legacy font vars, still read by the untouched detail pages */
   --font-display: "Fraunces";
   --font-body: "Spectral";
   --font-mono: "JetBrains Mono";
 }
-html { background: #050508; }
-body { background: transparent; color: #f5efdb; }
-body { font-family: var(--font-body), system-ui, sans-serif; }
+@media (min-width: 768px) { :root { --vr-gutter: 32px; } }
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    @apply antialiased;
-  }
+html {
+  background: #0B0C10;
+  color: #F2F1EC;
+  font-family: "Geist", system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
 }
-
-@layer components {
-  /* Hide scrollbar but keep functionality */
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Line clamp utilities */
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+body {
+  background: #0B0C10;
+  color: #F2F1EC;
+  font-family: "Geist", system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
 }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
 
-@layer utilities {
-  /* Aspect ratio utilities */
-  .aspect-w-16 {
-    position: relative;
-    padding-bottom: calc(9 / 16 * 100%);
-  }
+/* Keyboard focus: 2px sapphire (the system colour), never a vertical accent. */
+:focus-visible { outline: 2px solid #6C9BFF; outline-offset: 2px; }
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible) { outline: none; }
+::selection { background: rgba(255,255,255,0.18); color: #fff; }
 
-  .aspect-w-16 > * {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
+/* Neutral thin scrollbar. */
+* { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.18) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.16); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.28); background-clip: padding-box; }
+
+/* Card hover: scale(1.04) + bg-2 under it, only where hover is real (mouse/trackpad). */
+@media (hover: hover) and (pointer: fine) {
+  .lobby-card { transition: transform var(--vr-normal) var(--vr-ease), background-color var(--vr-fast); }
+  .lobby-card:hover { transform: scale(1.04); background-color: #1C1D21; }
 }
 
-/* Real galaxy photo (NASA "Space Butterfly" / PIA23121, public domain) as the base,
-   slow Ken-Burns drift + cursor parallax for life, animated twinkle stars on top, and a
-   readability scrim. Re-tinted per section via hue-rotate (Music keeps the source pink). */
-.vr-nebula {
-  position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
-  background: radial-gradient(130% 130% at 50% 40%, #0a0810 0%, #050409 62%, #010104 100%);
-}
-.vr-galaxy {
-  position: absolute; inset: -8%;
-  background: url("/nebula/galaxy.jpg") center 32% / cover no-repeat;
-  opacity: 0.92;
-  filter: hue-rotate(var(--vr-galaxy-hue, 0deg)) saturate(1.18) brightness(0.95) contrast(1.06);
-  transition: filter 1200ms cubic-bezier(0.22,1,0.36,1);
-  will-change: transform, filter;
-  animation: vr-galaxy-drift 70s ease-in-out infinite;
-}
-@keyframes vr-galaxy-drift {
-  0%,100% { transform: scale(1.06) translate(0,0); }
-  50%     { transform: scale(1.13) translate(-1.6%, -1.1%); }
-}
-/* Readability scrim — darkens header/footer bands and edges, keeps the nebula core bright. */
-.vr-galaxy-scrim {
-  position: absolute; inset: 0;
-  background:
-    linear-gradient(180deg, rgba(2,2,7,0.42) 0%, transparent 20%, transparent 58%, rgba(2,2,7,0.6) 100%),
-    radial-gradient(125% 95% at 50% 42%, transparent 38%, rgba(2,2,7,0.5) 100%),
-    /* faint section-accent wash so the theme color still reads through the photo */
-    radial-gradient(90% 80% at 28% 30%, color-mix(in srgb, var(--vr-accent) 14%, transparent) 0%, transparent 60%);
-}
-/* Animated twinkle stars layered over the photo for motion (the photo's own stars are static). */
-.vr-stars { position: absolute; inset: -10%; background-repeat: repeat; pointer-events: none; }
-.vr-stars-mid {
-  opacity: 0.55; background-size: 340px 340px;
-  background-image:
-    radial-gradient(1.5px 1.5px at 24% 16%, rgba(255,255,255,0.9), transparent),
-    radial-gradient(1.5px 1.5px at 70% 30%, rgba(210,228,255,0.8), transparent),
-    radial-gradient(1.5px 1.5px at 50% 62%, rgba(255,255,255,0.85), transparent),
-    radial-gradient(1.5px 1.5px at 88% 78%, rgba(255,240,220,0.75), transparent),
-    radial-gradient(1.5px 1.5px at 14% 52%, rgba(255,255,255,0.8), transparent),
-    radial-gradient(1.5px 1.5px at 38% 88%, rgba(200,220,255,0.75), transparent);
-  animation: vr-twinkle 8s ease-in-out infinite alternate-reverse;
-}
-/* near layer lives inside the parallax wrapper → drifts most with the cursor (depth) */
-.vr-stars-near {
-  opacity: 0.75; background-size: 480px 480px;
-  background-image:
-    radial-gradient(2px 2px at 30% 26%, rgba(255,255,255,1), transparent),
-    radial-gradient(2.5px 2.5px at 76% 60%, rgba(255,246,232,0.9), transparent),
-    radial-gradient(2px 2px at 56% 80%, rgba(214,232,255,0.9), transparent),
-    radial-gradient(2.5px 2.5px at 90% 20%, rgba(255,255,255,1), transparent);
-  animation: vr-twinkle 5s ease-in-out infinite alternate;
-}
-@keyframes vr-twinkle { from { opacity: 0.35; } to { opacity: 0.8; } }
-/* Filmic grain — a fine fractal-noise texture so the photo reads filmic, not flat. */
-.vr-grain {
-  position: absolute; inset: 0; opacity: 0.05; mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
-}
-.vr-nebula[data-static="true"] .vr-galaxy,
-.vr-nebula[data-static="true"] .vr-stars { animation: none !important; }
+/* Native mode: the app shell renders the same DOM with `html.native`; web-only garnish (the
+   blurred glow art, etc.) is dropped so the native build stays flat and cheap. */
+html.native .web-garnish { display: none; }
+
+/* Scroll rails: hide the bar, keep the scroll. */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* Anchor targets clear the sticky nav. */
+:target, section[id] { scroll-margin-top: 76px; }
+
+h1, h2, h3 { text-wrap: balance; font-kerning: normal; font-feature-settings: "kern" 1, "liga" 1, "calt" 1; }
+p { text-wrap: pretty; }
+
 @media (prefers-reduced-motion: reduce) {
-  .vr-galaxy, .vr-stars { animation: none !important; }
+  html { scroll-behavior: auto !important; }
+  .lobby-card, .lobby-card:hover { transition: none; transform: none; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 
-/* ─── VR Animation + Depth System ─────────────────────────── */
+/* ─── Legacy (untouched detail pages: stories/[slug], games/*, blog, about, journal, research) ─
+   Kept so those pages still build and read; scoped away from the Lobby shell where they would
+   collide. Neutralised: .vr-fade / .vr-page no longer hide content before a reveal. */
+@layer components {
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+}
+@layer utilities {
+  .aspect-w-16 { position: relative; padding-bottom: calc(9 / 16 * 100%); }
+  .aspect-w-16 > * { position: absolute; height: 100%; width: 100%; top: 0; right: 0; bottom: 0; left: 0; }
+}
 
-/* fade-up entrance */
-.vr-fade { opacity: 0; transform: translateY(18px); transition: opacity 720ms cubic-bezier(.2,.7,.2,1), transform 720ms cubic-bezier(.2,.7,.2,1); }
+/* content is visible at rest — the IntersectionObserver reveal is a no-op now */
+.vr-fade { opacity: 1; transform: none; transition: none; }
 .vr-fade.vr-in { opacity: 1; transform: none; }
+.vr-page { animation: none; opacity: 1; transform: none; }
 
-/* page route transition */
-.vr-page { animation: vr-page-in 540ms cubic-bezier(.2,.7,.2,1) both; }
-@keyframes vr-page-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: none; }
-}
-
-/* DEPTH — multi-layer shadows */
 .vr-elevated {
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.06) inset,
-    0 0 0 1px rgba(255,255,255,0.04),
-    0 2px 6px rgba(0,0,0,0.45),
-    0 18px 40px -12px rgba(0,0,0,0.7),
-    0 36px 80px -30px rgba(0,0,0,0.7);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 0 0 1px rgba(255,255,255,0.04), 0 2px 6px rgba(0,0,0,0.45), 0 18px 40px -12px rgba(0,0,0,0.7);
 }
 .vr-elevated-soft {
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.05) inset,
-    0 0 0 1px rgba(255,255,255,0.04),
-    0 14px 28px -8px rgba(0,0,0,0.55),
-    0 28px 60px -24px rgba(0,0,0,0.55);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 0 0 1px rgba(255,255,255,0.04), 0 14px 28px -8px rgba(0,0,0,0.55);
 }
-
-/* frosted glass panel */
-.vr-glass {
-  background: linear-gradient(180deg, rgba(20,18,16,0.78), rgba(12,10,8,0.62));
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.06) inset,
-    0 30px 60px -24px rgba(0,0,0,0.6);
-}
-
-/* spotlight */
+.vr-glass { background: #141518; border: 1px solid rgba(255,255,255,0.08); }
 .vr-spotlight { position: relative; isolation: isolate; }
-.vr-spotlight::before {
-  content: ""; position: absolute; inset: -10% -20% auto -10%; height: 70%;
-  background: radial-gradient(ellipse at 80% 0%, rgba(255,255,255,0.04), transparent 60%);
-  pointer-events: none; z-index: 0;
-}
 
-/* body grain */
-body { position: relative; }
-body::after {
-  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.06 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
-  mix-blend-mode: overlay; opacity: 0.55;
-}
-
-/* 3D card tilt */
-.vr-tilt {
-  transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translate3d(0, var(--ty, 0px), 0);
-  transition: transform 420ms cubic-bezier(.2,.7,.2,1), box-shadow 420ms ease;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-.vr-tilt:hover { transition-duration: 60ms; }
-
-/* sheen — moving highlight on tilted cards */
+.vr-tilt { transform: none; transform-style: flat; }
 .vr-sheen { position: relative; overflow: hidden; }
-.vr-sheen::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.10), transparent 35%);
-  opacity: 0; transition: opacity 240ms ease;
-  mix-blend-mode: screen;
-}
-.vr-sheen:hover::after { opacity: 1; }
 
-/* card hover — Netflix-style lift, scale + elevation (desktop pointers only) */
-.vr-card {
-  position: relative;
-  transition: transform 360ms cubic-bezier(.2,.7,.2,1), box-shadow 360ms ease, opacity 200ms ease;
-  will-change: transform; transform-origin: center bottom;
-}
+.vr-card { position: relative; transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease; transform-origin: center bottom; }
 @media (hover: hover) and (pointer: fine) {
-  .vr-card:hover {
-    transform: translateY(-10px) scale(1.03);
-    z-index: 10;
-    box-shadow:
-      0 1px 0 rgba(255,255,255,0.08) inset,
-      0 0 0 1px rgba(255,255,255,0.07),
-      0 24px 48px -16px rgba(0,0,0,0.72),
-      0 48px 90px -44px rgba(0,0,0,0.85);
-  }
+  .vr-card:hover { transform: translateY(-4px) scale(1.02); z-index: 10; box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 24px 48px -16px rgba(0,0,0,0.72); }
 }
 .vr-card:hover .vr-card-overlay { opacity: 1; }
-.vr-card-overlay { opacity: 0; transition: opacity 240ms ease; }
-@media (prefers-reduced-motion: reduce) {
-  .vr-card { transition: box-shadow 240ms ease, opacity 200ms ease; }
-  .vr-card:hover { transform: none; }
-}
+.vr-card-overlay { opacity: 0; transition: opacity 220ms ease; }
 
-/* sticky footer — keep the footer pinned to the viewport bottom on short pages */
 .vr-app { display: flex; flex-direction: column; min-height: 100vh; }
 .vr-app > main { flex: 1 0 auto; }
 
-/* nebula parallax layer — translated by cursor for spatial depth (set via JS) */
-.vr-nebula-parallax {
-  position: absolute; inset: 0;
-  transition: transform 600ms cubic-bezier(.2,.7,.2,1);
-  will-change: transform;
-}
-
-/* legibility — lift display text off the brighter nebula gas (no layout impact).
-   Opt-in: add to headings/hero text that sit over the densest part of the galaxy. */
-.vr-glow-text {
-  text-shadow:
-    0 1px 2px rgba(0,0,0,0.5),
-    0 0 22px color-mix(in srgb, var(--vr-accent, #f5efdb) 28%, transparent);
-}
-
-/* links/buttons */
 .vr-link { color: inherit; text-decoration: none; cursor: pointer; }
-.vr-cta { transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease; }
-.vr-cta:hover { transform: translateY(-1px); }
-.vr-cta-solid:hover { box-shadow: 0 12px 32px -8px rgba(232,227,214,0.4); }
+.vr-cta { transition: background 160ms ease, color 160ms ease, border-color 160ms ease; }
 
-/* nav active underline */
 .vr-nav-item { position: relative; }
-.vr-nav-item::after { content: ""; position: absolute; left: 14px; right: 0; bottom: -22px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left center; transition: transform 360ms cubic-bezier(.2,.7,.2,1); }
+.vr-nav-item::after { content: ""; position: absolute; left: 14px; right: 0; bottom: -22px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left center; transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1); }
 .vr-nav-item.is-active::after { transform: scaleX(1); }
-.vr-nav-item:hover::after { transform: scaleX(0.6); }
 
-/* shelf tile hover */
-.vr-shelf-tile { transition: transform 480ms cubic-bezier(.2,.7,.2,1); }
-.vr-shelf-tile:hover { transform: scale(1.012); }
-
-/* title halo */
-.vr-halo { text-shadow: 0 2px 24px rgba(0,0,0,0.6); }
-
-/* ambient drift on hero posters */
-@keyframes vr-drift {
-  0%   { transform: translate3d(0, var(--scroll-y, 0px), 0) scale(1.04); }
-  50%  { transform: translate3d(-8px, calc(var(--scroll-y, 0px) - 8px), 0) scale(1.06); }
-  100% { transform: translate3d(0, var(--scroll-y, 0px), 0) scale(1.04); }
-}
-.vr-drift { animation: vr-drift 22s ease-in-out infinite; }
-
-/* accent halo throb */
-@keyframes vr-pulse {
-  0%, 100% { opacity: 0.85; transform: scale(1); }
-  50%      { opacity: 1;    transform: scale(1.06); }
-}
-.vr-pulse { animation: vr-pulse 3.6s ease-in-out infinite; }
-
-/* scroll-parallax helper */
-.vr-scroll-parallax { transform: translate3d(0, var(--scroll-y, 0px), 0); will-change: transform; }
-
-/* scroll progress bar */
-.vr-scroll-progress {
-  position: fixed; left: 0; top: 0; height: 2px; z-index: 80;
-  background: linear-gradient(90deg, #f5b831, #e91e63, #00d97e, #c084fc);
-  transform-origin: left center;
-  transform: scaleX(0);
-  pointer-events: none;
-  mix-blend-mode: screen;
-  width: 100%;
-}
-
-/* split-text letter reveal */
-.vr-split-letter {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(0.7em) rotateX(-30deg);
-  filter: blur(8px);
-  transition: opacity 720ms cubic-bezier(.2,.7,.2,1), transform 920ms cubic-bezier(.2,.7,.2,1), filter 720ms ease;
-  transform-origin: 50% 100%;
-  will-change: opacity, transform, filter;
-}
-.vr-split-letter.is-in {
-  opacity: 1; transform: none; filter: blur(0);
-}
+.vr-shelf-tile { transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+.vr-split-letter { display: inline-block; opacity: 1; transform: none; filter: none; }
 .vr-split-word { display: inline-block; white-space: nowrap; }
+.vr-magnetic { transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+.vr-cursor { display: none; }
+.vr-ulink { text-decoration: none; background-image: linear-gradient(currentColor, currentColor); background-size: 0% 1px; background-position: 0 100%; background-repeat: no-repeat; transition: background-size 220ms cubic-bezier(0.22, 1, 0.36, 1); padding-bottom: 1px; }
+.vr-ulink:hover, .vr-ulink:focus-visible { background-size: 100% 1px; }
+.vr-poster-img { transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+@media (hover: hover) and (pointer: fine) { .vr-card:hover .vr-poster-img { transform: scale(1.03); } }
 
-/* magnetic button */
-.vr-magnetic { transition: transform 320ms cubic-bezier(.2,.7,.2,1); will-change: transform; }
-
-/* custom cursor follower */
-.vr-cursor {
-  position: fixed; left: 0; top: 0; z-index: 90;
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 1px solid rgba(245,239,219,0.55);
-  pointer-events: none;
-  transform: translate(-50%, -50%) scale(1);
-  transition: width 280ms cubic-bezier(.2,.7,.2,1), height 280ms cubic-bezier(.2,.7,.2,1),
-              background 240ms ease, border-color 240ms ease, opacity 240ms ease;
-  backdrop-filter: invert(0.4) hue-rotate(180deg);
-  mix-blend-mode: difference;
-}
-.vr-cursor.is-link { width: 60px; height: 60px; border-color: rgba(245,239,219,0.85); }
-.vr-cursor.is-cta  { width: 80px; height: 80px; }
-@media (pointer: coarse) { .vr-cursor { display: none; } }
-
-/* marquee ticker */
-@keyframes vr-marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-.vr-marquee {
-  overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-.vr-marquee-track {
-  display: inline-flex;
-  gap: 64px;
-  animation: vr-marquee-scroll 32s linear infinite;
-  white-space: nowrap;
-  will-change: transform;
-}
-.vr-marquee:hover .vr-marquee-track { animation-play-state: paused; }
-
-/* hero scroll-zoom */
-.vr-scroll-zoom { transform-origin: center 30%; will-change: transform, opacity; }
-
-/* animated gradient border on featured cards */
-@keyframes vr-border-trace {
-  0%, 100% { background-position: 0% 50%; }
-  50%      { background-position: 100% 50%; }
-}
-.vr-border-light {
-  position: relative;
-}
-.vr-border-light::before {
-  content: ""; position: absolute; inset: -1px; border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(120deg, transparent 30%, rgba(245,184,49,0.7) 45%, rgba(0,217,126,0.7) 55%, transparent 70%);
-  background-size: 220% 220%;
-  animation: vr-border-trace 6s ease-in-out infinite;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* bobbing CTA */
-@keyframes vr-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-.vr-bob { animation: vr-bob 3.6s ease-in-out infinite; }
-
-/* slow hero zoom (Ken Burns) */
-@keyframes vr-hero-zoom {
-  0%   { transform: scale(1.0) translate3d(0, 0, 0); }
-  50%  { transform: scale(1.08) translate3d(-1%, -2%, 0); }
-  100% { transform: scale(1.0) translate3d(0, 0, 0); }
-}
-.vr-hero-zoom { animation: vr-hero-zoom 28s ease-in-out infinite; will-change: transform; }
-
-/* responsive grid collapses
-   NOTE: React serializes inline styles with NO space after the colon
-   (e.g. style="grid-template-columns:repeat(6, 1fr)") — selectors must match
-   that exact form or they silently fail to override the inline value. */
+/* Legacy responsive collapses for inline-styled grids on the untouched pages. React serialises
+   inline styles with NO space after the colon, so these selectors match that exact form. */
 @media (max-width: 1100px) {
   [style*="grid-template-columns:repeat(6"],
   [style*="grid-template-columns:repeat(5"] { grid-template-columns: repeat(3, 1fr) !important; }
@@ -399,7 +153,7 @@ body::after {
   [style*="grid-template-columns:1.4fr 1.6fr"],
   [style*="grid-template-columns:1fr 1.4fr"],
   [style*="grid-template-columns:1fr 1.1fr"] { grid-template-columns: 1fr !important; }
-  header nav { gap: 16px !important; font-size: 10px !important; }
+  header:not([data-lobby-nav]) nav { gap: 16px !important; font-size: 10px !important; }
 }
 @media (max-width: 700px) {
   [style*="grid-template-columns:repeat(6"],
@@ -409,100 +163,48 @@ body::after {
   [style*="grid-template-columns:1.6fr 1fr 1fr 1fr 1fr"],
   [style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
 
-  /* chapter index rows → dot · title · arrow (hide # + status) */
   [style*="grid-template-columns:auto 60px 1fr auto 24px"] { grid-template-columns: auto 1fr auto !important; gap: 14px !important; }
   [style*="grid-template-columns:auto 60px 1fr auto 24px"] > *:nth-child(2),
   [style*="grid-template-columns:auto 60px 1fr auto 24px"] > *:nth-child(4) { display: none !important; }
 
-  /* essay rows → title · date · arrow (hide # + sub) */
   [style*="grid-template-columns:60px 1.4fr 0.8fr 0.6fr 24px"] { grid-template-columns: 1fr auto auto !important; gap: 10px !important; }
   [style*="grid-template-columns:60px 1.4fr 0.8fr 0.6fr 24px"] > *:nth-child(1),
   [style*="grid-template-columns:60px 1.4fr 0.8fr 0.6fr 24px"] > *:nth-child(3) { display: none !important; }
 
   [data-vr-top-utility] { display: none !important; }
-  h1 { font-size: clamp(44px, 13vw, 92px) !important; }
+  h1:not([data-vertical] h1) { font-size: clamp(44px, 13vw, 92px) !important; }
   [data-vr-hero] { height: 76vh !important; min-height: 480px !important; }
 
-  /* keep section nav reachable on phones — a horizontally scrollable row
-     under the wordmark instead of hiding it entirely */
-  header { flex-wrap: wrap !important; row-gap: 12px !important; padding-top: 14px !important; padding-bottom: 14px !important; }
-  header nav { order: 5 !important; width: 100% !important; gap: 20px !important; font-size: 11px !important;
+  header:not([data-lobby-nav]) { flex-wrap: wrap !important; row-gap: 12px !important; padding-top: 14px !important; padding-bottom: 14px !important; }
+  header:not([data-lobby-nav]) nav { order: 5 !important; width: 100% !important; gap: 20px !important; font-size: 11px !important;
     overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; scrollbar-width: none; padding-bottom: 2px; }
-  header nav::-webkit-scrollbar { display: none !important; }
+  header:not([data-lobby-nav]) nav::-webkit-scrollbar { display: none !important; }
 }
-
-/* ─── Accessibility & finishing touches ─────────────────── */
-
-/* Visible keyboard focus (none existed before). Mouse clicks don't show it. */
-:focus-visible {
-  outline: 2px solid #f5b831;
-  outline-offset: 3px;
-  border-radius: 2px;
-}
-a:focus:not(:focus-visible),
-button:focus:not(:focus-visible),
-input:focus:not(:focus-visible) { outline: none; }
-
-/* Accent-tinted text selection — small premium touch. */
-::selection { background: rgba(245, 184, 49, 0.32); color: #fff; }
-
-/* Anchor targets clear the sticky header. */
-:target, section[id] { scroll-margin-top: 100px; }
-
-/* Comfortable tap targets on touch devices. */
 @media (pointer: coarse) {
-  .vr-cta, header nav a, header button { min-height: 44px; display: inline-flex; align-items: center; }
+  .vr-cta, header:not([data-lobby-nav]) nav a, header:not([data-lobby-nav]) button { min-height: 44px; display: inline-flex; align-items: center; }
 }
 
-/* Honor reduced-motion across the rest of the motion system. */
-@media (prefers-reduced-motion: reduce) {
-  .vr-page, .vr-hero-zoom, .vr-drift, .vr-bob, .vr-pulse, .vr-marquee-track { animation: none !important; }
-  .vr-fade { opacity: 1 !important; transform: none !important; transition: none !important; }
-  html { scroll-behavior: auto !important; }
-}
-
-/* ─── Visual craft: typography, scrollbar, links, posters ─── */
-
-/* Typographic polish — balanced headings, tidy paragraphs, real kerning + ligatures */
-html { text-rendering: optimizeLegibility; }
-h1, h2, h3 {
-  text-wrap: balance;
-  font-optical-sizing: auto;
-  font-kerning: normal;
-  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
-}
-p { text-wrap: pretty; }
-
-/* Premium thin scrollbar (accent thumb on a transparent track) */
-* { scrollbar-width: thin; scrollbar-color: rgba(245,184,49,0.35) transparent; }
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: rgba(245,184,49,0.32);
-  border-radius: 999px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-::-webkit-scrollbar-thumb:hover { background: rgba(245,184,49,0.55); background-clip: padding-box; }
-
-/* Animated underline for inline text links (grows from the left on hover/focus) */
-.vr-ulink {
-  text-decoration: none;
-  background-image: linear-gradient(currentColor, currentColor);
-  background-size: 0% 1px;
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size 320ms cubic-bezier(.2,.7,.2,1), color 200ms ease;
-  padding-bottom: 1px;
-}
-.vr-ulink:hover, .vr-ulink:focus-visible { background-size: 100% 1px; }
-
-/* Poster artwork — gallery "emerge from darkness" zoom on card hover */
-.vr-poster-img { transition: transform 640ms cubic-bezier(.2,.7,.2,1); will-change: transform; }
-@media (hover: hover) and (pointer: fine) {
-  .vr-card:hover .vr-poster-img { transform: scale(1.06); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .vr-poster-img { transition: none !important; }
-  .vr-card:hover .vr-poster-img { transform: none !important; }
-}
+/* ─── Research article body (rendered article.md) ─────────────────────────────
+   Lobby voice: Geist on #0B0C10, warm-white headings, t2 body, mono numbers, sapphire links.
+   Tables scroll inside their own box so a wide results table never scrolls the page. */
+.vr-prose { color: #A9A8A3; font-size: 16px; line-height: 1.65; }
+.vr-prose > * + * { margin-top: 1.05em; }
+.vr-prose h2 { color: #F2F1EC; font-size: 24px; font-weight: 500; line-height: 1.25; margin-top: 2.2em; text-wrap: balance; }
+.vr-prose h3 { color: #F2F1EC; font-size: 19px; font-weight: 500; line-height: 1.3; margin-top: 1.8em; }
+.vr-prose p, .vr-prose li { text-wrap: pretty; }
+.vr-prose strong { color: #F2F1EC; font-weight: 500; }
+.vr-prose a { color: #6C9BFF; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.vr-prose ul, .vr-prose ol { padding-left: 1.3em; }
+.vr-prose ul { list-style: disc; }
+.vr-prose ol { list-style: decimal; }
+.vr-prose li + li { margin-top: 0.35em; }
+.vr-prose code { font-family: "Geist Mono", ui-monospace, monospace; font-size: 0.9em; color: #F2F1EC; background: #1C1D21; border-radius: 4px; padding: 0.1em 0.35em; }
+.vr-prose pre { background: #141518; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 14px 16px; overflow-x: auto; }
+.vr-prose pre code { background: none; padding: 0; font-size: 13px; line-height: 1.55; }
+.vr-prose blockquote { border-left: 2px solid #6C9BFF; padding-left: 14px; color: #F2F1EC; }
+.vr-prose table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.vr-prose th { color: #7A7975; font-family: "Geist Mono", ui-monospace, monospace; font-size: 12px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; text-align: left; padding: 6px 12px 6px 0; border-bottom: 1px solid rgba(255,255,255,0.16); white-space: nowrap; }
+.vr-prose td { padding: 8px 12px 8px 0; border-bottom: 1px solid rgba(255,255,255,0.08); vertical-align: top; }
+.vr-prose td:first-child { color: #F2F1EC; }
+.vr-prose hr { border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 2em 0; }
+.vr-prose img { max-width: 100%; height: auto; border-radius: 8px; }

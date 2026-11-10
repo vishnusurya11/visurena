@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <text x="400" y="225" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="#ffff00">
+    PAC-RUNNER
+  </text>
+  <circle cx="400" cy="300" r="30" fill="#ffff00"/>
+  <path d="M 400 300 L 430 285 L 430 315 Z" fill="#1a1a2e"/>
+</svg>

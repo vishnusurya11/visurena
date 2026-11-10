@@ -73,7 +73,7 @@ module.exports = {
       fontFamily: {
         'spectral': ['Spectral', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
         'serif': ['Spectral', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
-        'sans': ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        // 'sans' comes from the design-tokens preset (Geist). Do not override here.
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

@@ -5,7 +5,7 @@
 > whenever an architecture decision is made or changed. See `CLAUDE.md` for the rule.
 
 - **Status:** 🟢 Design complete — pending owner review, then implementation planning.
-- **Last updated:** 2026-05-23
+- **Last updated:** 2026-10-22
 - **Owner:** Vishnu (vishnusurya11@gmail.com)
 
 ---
@@ -26,22 +26,22 @@ mobile app reuses the design language and logic.
 | # | Decision | Value |
 |---|---|---|
 | D1 | Build approach | Rebuild **in-place** on the existing Next.js app (becomes `apps/web`) |
-| D2 | Homepage direction | **The Studio** (from `visurenawebtemp`) |
-| D3 | Palette | **Jewel** (amber=Stories, emerald=Movies, ruby=Music, amethyst=Games) on black |
-| D4 | Background | **Drifting nebula gas**, section-tinted, subtle, honors reduced-motion |
+| D2 | Homepage direction | **Cinema Lobby** (2026-09-25; supersedes "The Studio"). Dim the room, light the poster: flat charcoal, one sans (Geist) + Geist Mono for numbers, artwork is the only saturated thing. Home = 4-slot hero (one per vertical) → New this week (mixed) → Stories · Movies · Music · Games rails → On the slate. Spec: `docs/superpowers/specs/2026-09-25-redesign-proposal/`. |
+| D3 | Palette | **Jewel, desaturated** (2026-09-25): amber #E8B04B=Stories, emerald #3DD68C=Movies, ruby #F0537A=Music, amethyst #B48CF7=Games, sapphire #6C9BFF=system only. Surfaces #0B0C10/#141518/#1C1D21/#26272B, text #F2F1EC. Accent is a *mark* (state chip, progress, nav underline, vote digits), never a fill. Tokens: `packages/design-tokens/src/lobby.ts`. |
+| D4 | Background | **Artwork glow** (2026-09-25; supersedes nebula): flat #0B0C10 ground; hero/series/player lit by a blurred copy of the item's own art (`AmbientGlow`, web garnish) over a two-stop gradient from its accent (RN-portable). No starfield, no drift, no continuous animation, nothing hidden at first paint. |
 | D5 | Phase 1 scope | Homepage + all section/detail pages |
 | D6 | Mobile | **Invest now** — monorepo + shared design tokens/logic for future React Native/Expo app |
 | D7 | Overall architecture | **A · All-AWS serverless** (S3+CloudFront, API GW+Lambda, DynamoDB, Cognito, EventBridge) |
 | D8 | Auth | **AWS Cognito** — Google, Apple, Facebook, email+password. AWS stores credentials, never us. |
 | D9 | Engagement features | Likes, progress/continue, comments & ratings, follow + notify; interaction analytics |
 | D10 | Content storage | Content in **S3** (NOT git). Path `section/YYYY/MM/DD/slug/` by **creation date** (immutable home). Each work self-contained: `item.json` + `body/` + `images/` + `audio/` + `video/` + `extras/` |
-| D11 | Content format | Structured **JSON** documents (+ image/audio/video assets); system renders them into themed components. No HTML/Markdown. Story bodies = block arrays. Renders web **and** mobile. |
+| D11 | Content format | Structured **JSON** documents (+ image/audio/video assets); system renders them into themed components. No HTML/Markdown. Story bodies = block arrays. Renders web **and** mobile. One scoped exception: research articles (D37). |
 | D12 | Publishing | **Scheduled auto-publish** — `publishAt` flips items (and individual chapters) "coming soon" → live |
 | D13 | Content index | **DynamoDB `Content`** table indexes all items (status, dates, accent, section, chapter availability) and drives listings |
 | D14 | IaC | **AWS CDK** (TypeScript) → synthesizes CloudFormation; existing CFN migrated in |
 | D15 | Budget | Lowest-cost / scale-to-zero first; ~$10/mo ceiling now; non-AWS OK if cheaper & capable |
 | D16 | Per-item immersive theming | Persistent nebula bg never resets; each item's `accent` (authored or auto-extracted from cover) gently bleeds into bg + accents on its page. Overall look unchanged. Intensity: **noticeable but gentle**, tunable. |
-| D17 | Nebula rendering | **Real NASA nebula photo** (public-domain "Space Butterfly"/PIA23121, `public/nebula/galaxy.jpg`) as the base, re-tinted per section via CSS `hue-rotate`, with a slow Ken-Burns drift, cursor parallax, animated twinkle-star layers, and a readability scrim/grain. GPU-friendly; honors `prefers-reduced-motion`. (Superseded the earlier CSS/SVG radial-gradient gas — owner wanted a photographic galaxy.) WebGL upgrade later still possible. |
+| D17 | ~~Nebula rendering~~ | **Retired 2026-09-25** with D4. NebulaBackground is no longer mounted; component kept only until the legacy pages are migrated. |
 | D18 | Login UI | **Custom jewel-themed** sign-in/up screens on Cognito (via Amplify Auth) |
 | D19 | Notifications | Follow → release alerts via **SES email** first (push later). Doubles as the Monday newsletter engine. |
 | D20 | Search | **Client-side Fuse.js** over a generated index JSON first; **Algolia / OpenSearch Serverless** later |
@@ -59,6 +59,10 @@ mobile app reuses the design language and logic.
 | D32 | Demand / Request model | First-class **Request** entity — audience requests **and votes** what gets made next (Canny/Featurebase-style board), with a conversion link `request→producedWork` + voter notify. The demand-driven differentiator. (§8.1) |
 | D33 | Engagement gating | Browse/read **anonymous** (events captured); **like/comment/save require login**. **Phase 2 = placeholder login** stub behind the gate; **Phase 3 = real Cognito** swapped in; `anonymousId`→`userId` stitched on first login. |
 | D34 | Event schema | `object_action` past-tense snake_case names (Segment) + self-describing/versioned envelope (Snowplow). Canonical envelope on every event. (§8.2) |
+| D35 | Movies room: series from the studio | `visurena_studio` ledgers (`SERIES_PROGRESS.json` + `uploads.jsonl`) → `pnpm -C apps/web content:ingest-studio` → `content-local/series.json` + stills/poster/cast under `public/movies/<slug>/`. Series state `airing · complete · in-production`; per-episode `aspect` (9:16 · 1:1 · 16:9) drives the player stage. Playback = click-to-load youtube-nocookie embed + "Watch on YouTube" link until self-hosted HLS is worth it. Routes `/movies`, `/movies/[series]`, `/movies/[series]/[episode]`. **Amended 2026-10-22:** a book with no `SERIES_PROGRESS.json` (every book after Scarlet) is read from `uploads.jsonl` alone. File order is the truth, not the mixed clocks. Deleted ids never count, privacy is the last value, the newest public upload wins and duplicates are reported. Each series also carries `playlistId` (ledger row, else a youtube.json link, else editorial) and `compilation` (the whole book as one regular video). Masters are hashed once and cached by path, size and mtime. Square or landscape title cards become posters fitted over a blur, not cropped. Tests read a pinned `__tests__/fixtures/series.json`, never the live file. |
+| D36 | Research surface | **A studio page, not a fifth vertical** (2026-10-22). `/research` + `/research/[slug]`, sapphire (the system colour, so no palette conflict), `LobbyShell studio="research"` puts it after Requests in the nav. Articles are works like any other: `research/YYYY/MM/DD/<slug>/item.json` in the content drop/S3 (D10/D22), read at build by `apps/web/lib/research.ts`, gated by `publishAt`. Every page carries canonical URL, OG, Google Scholar `citation_*` tags, schema.org `ScholarlyArticle` JSON-LD, a BibTeX block, data downloads, limitations and a changelog; `/research/feed.xml` is RSS. Canonical base from `NEXT_PUBLIC_SITE_URL` (env-aware, default `https://visurena.com`). Spec: `docs/superpowers/specs/2026-10-22-research-and-shorts-publishing/`. |
+| D37 | Research bodies may be Markdown or HTML | **Scoped exception to D11, research only** (2026-10-22). `kind: note` = `article.md` (gray-matter + marked, rendered into `.vr-prose`); `kind: report` = a self-contained `report.html` copied beside the page and embedded in `<iframe sandbox="allow-scripts allow-popups">` (no same-origin, so a report cannot touch the site). Stories stay JSON blocks. |
+| D38 | Publishing pipeline + fan-out | **Proposed, not built** (2026-10-22). A studio `publish` department exports `series` and `research` folders to `s3://visurena-content-<env>/`; GitHub Actions (nightly + dispatch) runs `content:pull` → build → deploy alpha, prod by manual promotion. Fan-out per article in tiers: (1) own page + Scholar meta + feed, (2) public repo release → Zenodo DOI written back into `item.json.doi`, (3) arXiv/workshop when n > 1 and novel. Publish checklist: `docs/superpowers/specs/2026-10-22-research-and-shorts-publishing/template/CHECKLIST.md`. |
 
 ---
 
@@ -102,7 +106,8 @@ event lake, likes/comments) behind a **placeholder login**, then real **Cognito*
         ┌───────────────────▼──────┐      ┌─────────▼───────────────────┐
         │   S3 — WEB (Next.js SSG) │      │   API Gateway (HTTP API)    │
         │   homepage, sections,    │      │            +                │
-        │   content pages          │      │   Lambda (likes, progress,  │
+        │   content pages,         │      │                             │
+        │   /research (+feed.xml)  │      │   Lambda (likes, progress,  │
         └──────────┬───────────────┘      │   comments, follows, me)    │
                    │ reads index           └───┬───────────────┬─────────┘
                    │                           │               │
@@ -124,6 +129,9 @@ event lake, likes/comments) behind a **placeholder login**, then real **Cognito*
    Events: interactions → Kinesis Firehose → S3 → Athena (analytics, recs, history)
    Search: index JSON in S3 + client Fuse.js → OpenSearch/Algolia later
    Notify: chapter/work goes live → Lambda → SES email to followers (Monday newsletter)
+   Studio: visurena_studio ledgers (uploads.jsonl) → content:ingest-studio → series.json (D35);
+           episodes publish to YouTube (The Keeper's Lantern) as Shorts; the site embeds them
+   Research: research/YYYY/MM/DD/<slug>/ (item.json + article.md | report.html + data/) → /research (D36/D37)
    CI/CD: GitHub Actions → build web → deploy S3 → invalidate CloudFront
    IaC:   AWS CDK (TypeScript) in /infra → synthesizes CloudFormation
 ```
@@ -504,3 +512,5 @@ Under the $10 ceiling; search starts free; analytics is pennies-per-query.
 | 2026-05-25 | **Stories wired to real content (end-to-end slice).** `apps/web/lib/content.ts` is now a build-time provider: scans the local drop (`VR_CONTENT_LOCAL_DIR`, default `../website_data`), normalizes the rich generation JSON → `Story`/`StoryFull` (per 6.5), copies `cover_34`/`cover_169` into `public/stories/<slug>/` (git-ignored). Rewrote `/stories` (real masthead/featured/catalogue) and `/stories/[slug]` (continuous reader: hero → scenes as ✦ breaks → about → related) — all hardcoded `VR_STORIES*`/trending/continue/shelves removed. Home story deep-links repointed to `/stories` to avoid 404s (full home de-fake still TODO). Build green: 27 pages (was 38), `/stories/slack-water` renders the prose + covers; 4 tests pass. Orphaned `content-local/stories.json` (old placeholders) now unused — safe to delete. |
 | 2026-05-24 | Visual-craft pass (autoresearch-led, per the award-winning playbook): typographic polish (`text-wrap: balance` headings / `pretty` paragraphs, optical sizing, kerning + ligatures, optimizeLegibility); premium thin accent scrollbar; animated grow-from-left underlines on inline links (`.vr-ulink`, applied in footer w/ muted secondary color); gallery-style `VRPoster` (inset frame ring, richer cinematic scrim, photo zooms on card hover via `.vr-poster-img`). Fixed `<title>` nodes that mixed text + `&mdash;` (hydration warning) → single text nodes. Build green (38 pages). |
 | 2026-05-26 | **Phase 2+3 design locked** (after deep research on event-capture, AWS data architecture, and data models + demand signals + ethics). §8 data model expanded: two-plane (DynamoDB **state** + S3/Athena **events**), **single-table** layout — added **Request**/demand, RequestVote, Save, Recommendation, Session entities; **event taxonomy + canonical envelope**; rec **signals** (implicit ≫ explicit; save>like; binary thumbs); **AWS data-layer stack** (API GW→Lambda→Firehose→S3 Parquet→Glue/Athena; DIY recs, **Personalize deferred**); **engagement gating** (anon read; like/comment need login; **Phase 2 placeholder login → Phase 3 Cognito**); data ethics. New decisions **D28–D34** (static+API not SSR; single-table; event pipeline; DIY recs; demand model; gating; event schema). Roadmap status note added. Detailed task-level plan → **docs/PHASES.md**. |
+| 2026-09-25 | **Cinema Lobby redesign implemented locally** (five-expert research + three mockups; owner picked Lobby). D2/D3/D4 revised, D17 retired, D35 added. New `packages/ui/src/lobby/*` (LobbyShell, BottomTabs, MediaCard, Shelf, StatusLine, VoteCard, EpisodeRow, AmbientGlow), `lobby.ts` tokens, Geist fonts. Rebuilt Home, Stories/Music/Games lists, new Movies hub + series + episode pages, `/requests` board (local votes). Studio ingest script + real stills for 14 episodes; generated Frankenstein key art. Audiobook lives on the series page, not Music. Removed "Free during open beta". 244 web + 76 ui tests green; static build compiles 57 pages. Not committed. |
+| 2026-10-22 | **Shorts from every book + Research surface (D35 amended, D36, D37 added; D38 proposed).** Ingest now reads books with no `SERIES_PROGRESS.json` from `uploads.jsonl` (War of the Worlds 27/27 and Jekyll & Hyde 1/10 join Scarlet; WotW ep16's three public uploads reported), adds `playlistId` + `compilation`, caches master hashes, keeps the last measured runtime/aspect when a probe fails, and fits square title cards into posters. New pure `lib/youtube.ts` (channel constants, URL builders). Home gains a "Latest shorts" shelf with a Subscribe line; series pages link "Watch in order" and the whole-book video. `/research` + `/research/[slug]` rebuilt on the Lobby shell (`LobbyShell studio=…`, Requests now marked current too) from `lib/research.ts`, with Scholar meta, JSON-LD, BibTeX, RSS. Three articles in the local drop. Tests pinned to a series fixture. Web 315, ui 78, ingest 94 tests green; typecheck clean; static export 90 pages. Not committed. |

@@ -1,0 +1,8 @@
+# Visurena — open to all good-faith crawlers.
+
+User-agent: *
+Allow: /
+Disallow: /mockups-dark/
+
+# Note: malicious scanners ignore robots.txt; we don't list private paths here.
+# Sitemap will be added when one is generated.

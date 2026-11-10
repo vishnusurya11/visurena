@@ -44,7 +44,6 @@ function VRTopUtility() {
           9,841 reading now &nbsp;·&nbsp; new every Monday
         </span>
       */}
-      <span>Free during open beta</span>
     </div>
   );
 }

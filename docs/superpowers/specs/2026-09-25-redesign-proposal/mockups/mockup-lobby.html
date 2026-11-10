@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visurena · Cinema Lobby</title>
+<meta name="description" content="Visurena redesign mockup: Cinema Lobby + Board. Home, Movies hub, series, episode and mobile views.">
+<script>document.documentElement.classList.add('js');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-0:#0B0C10;--bg-1:#141518;--bg-2:#1C1D21;--bg-3:#26272B;
+  --hair:rgba(255,255,255,.08);--hair-2:rgba(255,255,255,.16);
+  --t1:#F2F1EC;--t2:#A9A8A3;--t3:#7A7975;
+  --amber:#E8B04B;--emerald:#3DD68C;--ruby:#F0537A;--amethyst:#B48CF7;--sapphire:#6C9BFF;
+  --accent:var(--emerald);
+  --fast:150ms;--normal:220ms;--slow:400ms;--ease:cubic-bezier(.22,1,.36,1);
+  --r:8px;--gutter:32px;--max:1376px;--dev:32px;--nav:60px;
+  --font:'Geist',system-ui,-apple-system,sans-serif;--mono:'Geist Mono',ui-monospace,SFMono-Regular,monospace;
+  --mix:#17151A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg-0);color:var(--t1);font:400 16px/1.55 var(--font);-webkit-font-smoothing:antialiased;overflow-x:clip}
+body{background:var(--bg-0);padding-top:var(--dev);min-height:100vh}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--sapphire);outline-offset:2px}
+[hidden]{display:none!important}
+.mono{font-family:var(--mono);font-size:13px;font-weight:400;letter-spacing:.04em;font-variant-numeric:tabular-nums;color:var(--t2);line-height:1.4}
+h1{font-weight:500;font-size:64px;line-height:1.02;letter-spacing:-.025em;color:var(--t1)}
+h2{font-weight:500;font-size:22px;line-height:1.2;letter-spacing:-.01em}
+h3{font-weight:500;font-size:17px;line-height:1.25;letter-spacing:-.01em}
+h4{font-weight:500;font-size:14px;color:var(--t1)}
+.wrap{max-width:calc(var(--max) + 2*var(--gutter));margin:0 auto;padding:0 var(--gutter)}
+
+/* dev strip (not part of the design) */
+.dev{position:fixed;top:0;left:0;right:0;height:var(--dev);z-index:100;display:flex;align-items:center;gap:6px;padding:0 8px;background:#000;border-bottom:1px dashed #3a3a40;font:500 12px var(--mono);color:#9a9aa0}
+.dev .lbl{margin-right:6px;color:#5e5e66}
+.dev a,.dev button{white-space:nowrap;padding:3px 9px;border:1px dashed #4a4a52;border-radius:4px;color:#b9b9c0;letter-spacing:.02em}
+.dev a.is-on{background:#2b2b31;color:#fff;border-style:solid}
+.dev .sp{flex:1}
+.dev button[aria-pressed="true"]{background:#2b2b31;color:#fff;border-style:solid}
+
+/* views */
+.view{display:none;scroll-margin-top:var(--dev)}
+.view.is-on{display:block}
+html:not(.js) .view{display:block}
+
+/* nav */
+.nav{position:sticky;top:var(--dev);z-index:50;height:var(--nav);background:rgba(11,12,16,.92);border-bottom:1px solid var(--hair)}
+.nav-in{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:var(--nav)}
+.wordmark{font-weight:500;font-size:15px;letter-spacing:.06em;color:var(--t1)}
+.nav-c{display:flex;gap:28px;justify-self:center}
+.nav-c a{position:relative;font-size:15px;font-weight:500;color:var(--t2);height:var(--nav);display:flex;align-items:center;gap:6px;transition:color var(--fast)}
+.nav-c a:hover{color:var(--t1)}
+.nav-c a.is-active{color:var(--t1)}
+.nav-c a.is-active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--emerald)}
+.nav-c a[data-accent="stories"].is-active::after{background:var(--amber)}
+.nav-c a[data-accent="music"].is-active::after{background:var(--ruby)}
+.nav-c a[data-accent="games"].is-active::after{background:var(--amethyst)}
+.nav-c a[data-accent="req"].is-active::after{background:var(--sapphire)}
+.nav-r{display:flex;align-items:center;gap:8px;justify-self:end}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;color:var(--t2);transition:background var(--fast),color var(--fast)}
+.icon-btn:hover{background:var(--bg-2);color:var(--t1)}
+.icon-btn svg{stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.pill{height:36px;display:inline-flex;align-items:center;gap:8px;padding:0 14px 0 12px;border:1px solid var(--hair-2);border-radius:18px;background:var(--bg-1);transition:background var(--fast)}
+.pill:hover{background:var(--bg-2)}
+.pill svg{fill:var(--t1)}
+.pill .mono{color:var(--t1)}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--bg-3);display:inline-flex;align-items:center;justify-content:center;font-weight:500;font-size:14px;color:var(--t1);border:1px solid var(--hair)}
+
+/* buttons */
+.btn{height:44px;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:0 20px;border-radius:var(--r);font-weight:500;font-size:15px;line-height:1;white-space:nowrap;transition:background var(--fast),border-color var(--fast),transform 100ms}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--t1);color:var(--bg-0)}
+.btn.primary:hover{background:#fff}
+.btn.primary svg{fill:var(--bg-0)}
+.btn.ghost{background:transparent;color:var(--t1);border:1px solid var(--hair-2)}
+.btn.ghost:hover{background:var(--bg-2);border-color:rgba(255,255,255,.22)}
+.btn.sm{height:36px;padding:0 14px;font-size:14px}
+.btn.full{width:100%;height:48px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--t1);background:var(--bg-3);padding:4px 8px;border-radius:4px;line-height:1.2;width:max-content}
+.ring{width:16px;height:16px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p)*1%),var(--bg-3) 0);position:relative}
+.ring::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--t1)}
+
+/* glow ground */
+.glow{position:relative}
+.glow-bg{position:absolute;left:0;right:0;top:0;height:100%;max-height:60vh;overflow:hidden;z-index:0;background:linear-gradient(180deg,var(--mix) 0%,var(--bg-0) 100%)}
+.glow-bg img.web-garnish{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(40px);opacity:.45;transform:scale(1.1)}
+.glow-bg img.web-garnish.wide{transform:scale(1.9)}
+.glow-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,var(--bg-0) 100%)}
+.glow>.wrap{position:relative;z-index:1}
+html.native .web-garnish{display:none}
+
+/* rotator accent follows the active slot */
+[data-rotator][data-slot="1"]{--accent:var(--amber)}
+[data-rotator][data-slot="2"]{--accent:var(--emerald)}
+[data-rotator][data-slot="3"]{--accent:var(--ruby)}
+[data-rotator][data-slot="4"]{--accent:var(--amethyst)}
+
+/* hero */
+.hero{--hero-h:max(420px,min(55vh,460px));height:var(--hero-h);display:flex;flex-direction:column}
+.hero>.wrap{width:100%}
+.hero-in{display:grid;grid-template-columns:1fr auto;align-items:center;height:calc(var(--hero-h) - 40px);gap:64px;flex:0 0 auto}
+.hero-slot{display:none;max-width:640px}
+.hero-slot.is-on{display:block}
+.eyebrow{margin-bottom:14px}
+.kicker{font-size:15px;color:var(--t2);font-weight:500;margin-bottom:6px}
+.logline{font-size:17px;color:var(--t2);max-width:520px;margin:18px 0 26px}
+.ctas{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.follow{display:inline-flex;flex-direction:column;gap:4px}
+.sub{font-size:12px;color:var(--t3);letter-spacing:.02em}
+.hero-art{position:relative;height:calc(var(--hero-h) - 80px);display:flex;flex-direction:column;align-items:flex-end;justify-content:center}
+.hero-art .poster{height:calc(var(--hero-h) - 84px);width:auto;flex:0 0 auto}
+.hero-art .poster.r169{height:auto;width:520px}
+.hero-art .poster img{width:100%;height:100%}
+.hero-floor{width:100%}
+.gamecard{background:var(--bg-2)}
+.strip{display:flex;gap:28px;height:40px;border-top:1px solid var(--hair);align-items:stretch}
+.strip button{position:relative;font-size:14px;font-weight:500;color:var(--t3);padding:0 2px;transition:color var(--fast)}
+.strip button:hover{color:var(--t1)}
+.strip button.is-on{color:var(--a)}
+.strip button.is-on::after{content:"";position:absolute;left:0;right:0;top:-1px;height:2px;background:var(--a)}
+
+/* section headers: the vertical's accent as a 3px rule under the title */
+.section{padding:24px 0 14px}
+.sec-h{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:6px}
+.sec-h.tight{margin-bottom:8px;align-items:baseline}
+.sec-t{display:flex;flex-direction:column;gap:6px}
+.roomed::after{content:"";display:block;width:28px;height:3px;background:var(--accent);margin-top:8px;border-radius:2px}
+.plain::after{content:"";display:block;width:28px;height:3px;background:var(--bg-3);margin-top:8px;border-radius:2px}
+.subline{font-size:12px;color:var(--t3)}
+.more{color:var(--t3)}
+a.more:hover{color:var(--t1)}
+
+/* posters, floor line, cards */
+.poster{position:relative;display:block;overflow:hidden;border-radius:var(--r);border:1px solid var(--hair);background:var(--bg-2)}
+.poster img{width:100%;height:100%;object-fit:cover}
+.r23{aspect-ratio:2/3}.r34{aspect-ratio:3/4}.r169{aspect-ratio:16/9}.r916{aspect-ratio:9/16}.r11{aspect-ratio:1/1}
+.lit{border-color:rgba(255,255,255,.14)}
+.still img{transform:scale(1.2)}
+.r916.still img,.pthumb.still img{transform:scale(1.04)}
+.still.player img{transform:none}
+.epchip{position:absolute;left:8px;bottom:8px;font-size:12px;padding:3px 6px;border-radius:4px;background:rgba(11,12,16,.8);color:var(--t1);letter-spacing:.06em;line-height:1.2}
+.kind{position:absolute;left:8px;top:8px;font-size:12px;padding:3px 6px;border-radius:4px;background:rgba(11,12,16,.8);color:var(--k);letter-spacing:.06em;line-height:1.2}
+.playmini{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:var(--t1);display:flex;align-items:center;justify-content:center}
+.playmini svg{fill:var(--bg-0);margin-left:2px}
+.floor{display:block;height:2px;background:var(--hair);position:relative;margin-top:2px;border-radius:1px;overflow:hidden}
+.floor .fill{display:block;height:100%;background:var(--accent)}
+.floor .fill.is-done{background:var(--t3)}
+.card{display:block;border-radius:var(--r);position:relative}
+.card .cap{display:flex;flex-direction:column;gap:2px;padding:10px 2px 6px}
+.card .cap b{font-weight:500;font-size:14px;line-height:1.3;color:var(--t1);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .cap .mono{font-size:12px;color:var(--t3)}
+.tick{color:var(--t2)}
+.cont{color:var(--accent);letter-spacing:.06em}
+.face .ini{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-weight:500;font-size:28px;letter-spacing:-.02em;color:var(--t2);background:var(--bg-2)}
+@media (hover:hover) and (pointer:fine){
+  .card{transition:transform var(--normal) var(--ease),background var(--fast)}
+  .card:hover{transform:scale(1.04);background:var(--bg-2)}
+}
+@media (prefers-reduced-motion:reduce){
+  .card,.btn{transition:none}
+  .card:hover,.btn:active{transform:none}
+}
+
+/* rails */
+.rail{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:12px var(--gutter) 12px;margin:0 calc(-1*var(--gutter));scroll-padding-inline:var(--gutter);scrollbar-width:none;overscroll-behavior-x:contain}
+.rail::-webkit-scrollbar{display:none}
+.rail>*{flex:0 0 var(--w);scroll-snap-align:start}
+.mixrail{align-items:flex-start}
+.mix .poster{width:100%}
+
+/* slate (typeset covers) */
+.slate .cover{display:flex;flex-direction:column;aspect-ratio:2/3;border:1px solid var(--hair);border-radius:var(--r);background:var(--bg-2);padding:14px 14px 12px;gap:6px;position:relative}
+.slate .fmt{font-size:12px;color:var(--t3);letter-spacing:.06em}
+.slate .ttl{font-weight:500;font-size:20px;line-height:1.15;letter-spacing:-.015em;color:var(--t1);margin-top:2px}
+.slate .who{font-size:12px;color:var(--t2)}
+.slate .state{font-size:12px;color:var(--t2);margin-top:6px;line-height:1.5}
+.slate .votes{margin-top:auto;display:flex;flex-direction:column;gap:2px}
+.slate .num,.m-slate .num{font-family:var(--mono);font-size:32px;font-weight:500;line-height:1;letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:var(--sapphire)}
+.slate .lbl{font-size:12px;color:var(--t3)}
+.slate .btn{width:100%;margin-top:10px}
+.slate.is-live .cover{border-left:2px solid var(--sapphire);padding-left:13px}
+.slate.is-live .num{color:var(--t1)}
+.slate.ask .cover{border-style:dashed;background:transparent;justify-content:center;align-items:flex-start}
+.slate.ask .plus{font-size:40px;line-height:1;font-weight:300;color:var(--t2);margin-bottom:8px}
+.slate.ask .ttl{font-size:18px}
+
+/* continue + music */
+.cont-grid,.music-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:8px 0}
+.card.cont,.card.listen{display:flex;align-items:center;gap:16px;padding:12px;border:1px solid var(--hair);background:var(--bg-1)}
+.card.cont .poster{width:72px;flex:0 0 72px}
+.card.listen .poster{width:88px;flex:0 0 88px}
+.ct{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.ct b{font-weight:500;font-size:15px;line-height:1.3;color:var(--t1)}
+.ct .mono{font-size:12px;color:var(--t3)}
+.bar{display:block;height:2px;background:var(--hair);border-radius:1px;overflow:hidden;margin-top:6px;width:100%}
+.bar i{display:block;height:100%}
+.playbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--hair-2);display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px}
+.playbtn svg{fill:var(--t1)}
+
+/* how + footer */
+.how{padding:8px 0 28px}
+.how-in p{color:var(--t2);max-width:900px;font-size:15px}
+.how-in a{color:var(--t1);border-bottom:1px solid var(--hair-2)}
+.footer{border-top:1px solid var(--hair);padding:40px 0 32px;margin-top:16px}
+.f-grid{display:grid;grid-template-columns:2fr repeat(5,1fr);gap:28px}
+.f-brand p{color:var(--t2);margin-top:14px;font-size:14px;max-width:240px}
+.f-col{display:flex;flex-direction:column;gap:8px}
+.f-col h4{margin-bottom:4px}
+.f-col a{color:var(--t2);font-size:14px}
+.f-col a:hover{color:var(--t1)}
+.f-bottom{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:36px;padding-top:20px;border-top:1px solid var(--hair);flex-wrap:wrap}
+.f-bottom .mono{font-size:12px;color:var(--t3)}
+.lang select{font:inherit;color:var(--t1);background:var(--bg-1);border:1px solid var(--hair-2);border-radius:6px;padding:6px 8px;margin-left:8px}
+
+/* movies hub */
+.hub-head{padding:36px 0 8px}
+.hub-head h1{font-size:56px}
+.hub-head .subline{display:block;margin-top:10px;font-size:13px;color:var(--t2)}
+.series-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:8px 0}
+.card.scard{display:flex;gap:20px;padding:16px;border:1px solid var(--hair);background:var(--bg-1);align-items:flex-start}
+.card.scard .poster{width:180px;flex:0 0 180px}
+.card.scard .ct{gap:8px}
+.card.scard .big{font-size:26px;letter-spacing:-.02em;line-height:1.1}
+.card.scard .kicker{margin:0}
+.syn2{color:var(--t2);font-size:14px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.card.scard .ctas{margin-top:6px}
+
+/* series page */
+.s-head{padding:24px 0 8px}
+.s-grid{display:grid;grid-template-columns:270px 1fr 480px;gap:40px;align-items:start}
+.s-poster .poster{width:270px}
+.s-copy .crumb{margin-bottom:10px}
+.s-copy .crumb a{color:var(--t1)}
+.s-copy .syn{color:var(--t2);margin:16px 0 22px;max-width:520px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.s-copy h1{font-size:56px;margin-bottom:12px}
+.s-copy .sub{display:block;margin-top:14px}
+.erows{display:flex;flex-direction:column}
+.erow{display:grid;grid-template-columns:56px 32px 1fr;gap:14px;align-items:center;padding:8px 8px 8px 10px;border-bottom:1px solid var(--hair);border-left:2px solid transparent;border-radius:0 var(--r) var(--r) 0;transition:background var(--fast)}
+.erow:hover{background:var(--bg-2)}
+.erow.is-now{border-left-color:var(--accent);background:var(--bg-1)}
+.erow .poster{width:56px;height:100px;border-radius:6px}
+.erow .en{color:var(--t3)}
+.erow .et{display:flex;flex-direction:column;gap:4px;min-width:0}
+.erow .et b{font-weight:500;font-size:15px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.erow .et .mono{font-size:12px;color:var(--t3)}
+.erow .bar{max-width:160px;margin-top:2px}
+.rows2{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;padding:8px 0}
+.grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;padding:8px 0}
+.vote3{display:grid;grid-template-columns:repeat(4,172px);gap:16px;padding:8px 0}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--hair);margin-bottom:12px}
+.tabs a{position:relative;padding:12px 14px;font-size:15px;font-weight:500;color:var(--t2);white-space:nowrap}
+.tabs a.is-on{color:var(--t1)}
+.tabs a.is-on::after{content:"";position:absolute;left:14px;right:14px;bottom:-1px;height:2px;background:var(--accent)}
+.tabs.small a{padding:14px 12px;font-size:14px}
+
+/* episode page */
+.stage-sec{padding:16px 0 8px}
+.crumb{margin-bottom:12px}
+.crumb a{color:var(--t1)}
+.stage{display:flex;justify-content:center;gap:32px;align-items:flex-start}
+.player-col{flex:0 0 auto;display:flex;flex-direction:column}
+.player{height:min(calc(100vh - 108px),800px);aspect-ratio:9/16;width:auto;display:block}
+.player img{width:100%;height:100%}
+.playbig{position:absolute;left:50%;top:50%;width:72px;height:72px;margin:-36px 0 0 -36px;border-radius:50%;background:var(--t1);display:flex;align-items:center;justify-content:center}
+.playbig svg{fill:var(--bg-0);margin-left:3px}
+.loadnote{position:absolute;left:0;right:0;bottom:14px;text-align:center;color:var(--t1);font-size:12px;background:linear-gradient(180deg,transparent,rgba(11,12,16,.7));padding:20px 0 0}
+.ytlink{align-self:center;margin-top:10px;color:var(--t1);border-bottom:1px solid var(--hair-2);padding-bottom:1px}
+.panel{width:400px;flex:0 0 400px;background:var(--bg-1);border-left:1px solid var(--hair);height:min(calc(100vh - 108px),800px);display:flex;flex-direction:column;border-radius:0 var(--r) var(--r) 0}
+.panel .tabs{padding:0 8px;margin:0}
+.plist{overflow-y:auto;flex:1;scrollbar-width:thin}
+.prow{display:grid;grid-template-columns:40px 28px 1fr auto;align-items:center;gap:12px;height:72px;padding:0 16px 0 14px;border-bottom:1px solid var(--hair);border-left:2px solid transparent;transition:background var(--fast)}
+.prow:hover{background:var(--bg-2)}
+.prow.is-now{position:sticky;top:0;z-index:1;background:var(--bg-2);border-left-color:var(--accent)}
+.pthumb{width:40px;height:71px;border-radius:4px;overflow:hidden;border:1px solid var(--hair);flex:0 0 40px;position:relative}
+.pthumb img{width:100%;height:100%;object-fit:cover}
+.pn{color:var(--t3)}
+.pt{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pt b{font-weight:500;font-size:14px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pbar{display:block;width:96px;height:2px;background:var(--hair);border-radius:1px;overflow:hidden}
+.pbar b{display:block;height:100%;background:var(--accent)}
+.prt{font-size:12px;color:var(--t3)}
+.ep-meta{max-width:877px;margin:24px auto 0;display:grid;grid-template-columns:1fr 400px;gap:20px 32px;align-items:start}
+.ep-title h1{font-size:40px;margin-bottom:8px}
+.ep-actions{display:flex;align-items:center;gap:8px;grid-column:1}
+.ep-actions .spacer{flex:1}
+.upnext{grid-column:2;grid-row:1/3;display:flex;gap:14px;align-items:center;padding:12px;border:1px solid var(--hair);background:var(--bg-1)}
+.upnext .ct b{font-size:15px}
+.prov{grid-column:1/-1;padding-top:8px;border-top:1px solid var(--hair);font-size:13px}
+.prov a{color:var(--t1)}
+
+/* mobile frames */
+.mob-wrap{display:flex;gap:48px;justify-content:center;padding:40px var(--gutter);flex-wrap:wrap}
+.phone{width:390px;height:844px;flex:0 0 390px;border:1px solid var(--hair-2);border-radius:40px;overflow:hidden;background:var(--bg-0);display:flex;flex-direction:column;position:relative}
+.p-top{height:56px;flex:0 0 56px;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 20px;border-bottom:1px solid var(--hair);background:rgba(11,12,16,.92);position:relative;z-index:2}
+.p-top-r{display:flex;align-items:center;gap:2px}
+.reqchip{height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 10px;border:1px solid var(--hair-2);border-radius:16px;font-size:12px;color:var(--t1);margin-right:4px}
+.reqchip b{font-weight:500;color:var(--sapphire)}
+.p-scroll{flex:1;overflow-y:auto;scrollbar-width:none;position:relative}
+.p-scroll::-webkit-scrollbar{display:none}
+.p-tabs{height:56px;flex:0 0 56px;display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--hair);background:var(--bg-0);padding:0 4px}
+.p-tabs a{width:48px;height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--t3);font-size:12px;font-weight:500;border-radius:8px}
+.p-tabs a svg{stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.p-tabs a.is-on{color:var(--t1)}
+.p-tabs a.is-on svg{stroke:var(--a)}
+.m-hero{padding:16px 16px 4px}
+.m-hero .glow-bg{background:linear-gradient(180deg,#1B1A16 0%,var(--bg-0) 100%);max-height:none;height:470px}
+.m-hero>*:not(.glow-bg){position:relative;z-index:1}
+.m-arts{display:flex;flex-direction:column}
+.m-art{width:358px;height:448px;aspect-ratio:auto}
+.m-art.r11{height:358px}
+.m-art.r169{height:201px}
+.m-art img{width:100%;height:100%}
+.m-hero .floor{width:358px}
+.m-hero .kicker{margin-top:14px;font-size:14px}
+.m-title{font-weight:500;font-size:26px;letter-spacing:-.02em;line-height:1.1}
+.m-title.big{font-size:30px}
+.m-status{font-size:14px;margin:6px 0 14px}
+.m-hero .btn.full{margin-bottom:8px}
+.m-strip{gap:20px;margin-top:6px}
+.m-strip button{font-size:13px}
+.m-sec{padding:12px 16px 4px}
+.m-sec .rail{margin:0 -16px;padding:8px 16px}
+.m-sec .card .cap b{font-size:13px}
+.m-sec .card .cap .mono{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.m-sec .roomed::after{width:22px;margin-top:6px}
+.m-ep .poster{width:111px;height:197px}
+.m-slate{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--hair);border-left:2px solid var(--sapphire);border-radius:var(--r);background:var(--bg-1);margin:4px 0 8px}
+.m-slate .num{font-size:13px}
+.m-slate .btn{flex:0 0 auto}
+.m-key{position:relative;height:520px}
+.m-key img{width:100%;height:100%;object-fit:cover}
+.m-key .scrim{position:absolute;left:0;right:0;bottom:0;height:60%;background:linear-gradient(180deg,transparent 0%,var(--bg-0) 100%)}
+.m-key-copy{position:absolute;left:16px;right:16px;bottom:16px}
+.m-key-copy .crumb{margin-bottom:6px;color:var(--t2)}
+.m-key-copy .m-status{margin-bottom:0}
+.m-pad{padding:12px 16px 4px;display:flex;flex-direction:column;gap:8px}
+.m-two{display:flex;gap:8px}
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;color:var(--t2);font-size:15px;margin-top:4px}
+.m-rows{display:flex;flex-direction:column;margin-bottom:12px}
+.m-row{display:flex;gap:12px;align-items:center;height:144px;border-bottom:1px solid var(--hair)}
+.m-row .poster{width:72px;height:128px;flex:0 0 72px;aspect-ratio:auto}
+.m-row .en{color:var(--t3);flex:0 0 24px}
+.m-row .ct b{font-size:15px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.m-row .bar{margin-top:2px}
+.m-sec.how{padding:16px 16px 24px}
+.m-sec.how p{font-size:13px}
+.m-sec.how a{color:var(--t1)}
+
+/* responsive (real, down to 390) */
+@media (max-width:1200px){
+  .s-grid{grid-template-columns:240px 1fr;gap:32px}
+  .s-rows{grid-column:1/-1}
+  .grid6{grid-template-columns:repeat(3,1fr)}
+  .stage{flex-wrap:wrap}
+  .ep-meta{grid-template-columns:1fr}
+  .upnext{grid-column:1;grid-row:auto}
+  .prov{grid-column:1}
+  .f-grid{grid-template-columns:1fr 1fr 1fr}
+  .series-grid{grid-template-columns:1fr}
+}
+@media (max-width:900px){
+  .panel{width:100%;flex-basis:100%;height:auto;max-height:520px;border-left:0;border-top:1px solid var(--hair);border-radius:var(--r)}
+  .player{height:auto;width:min(100%,360px)}
+  .cont-grid,.music-grid{grid-template-columns:1fr}
+  .vote3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rows2{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  :root{--gutter:16px}
+  .dev .lbl{display:none}
+  .dev{gap:4px;padding:0 6px}
+  .dev a,.dev button{padding:3px 7px;font-size:11px}
+  .nav-c{display:none}
+  .nav-in{grid-template-columns:1fr auto}
+  .pill{display:none}
+  h1{font-size:40px}
+  .hero{height:auto;min-height:0;padding:20px 0 0}
+  .hero-in{grid-template-columns:1fr;gap:20px;height:auto}
+  .hero-art{order:-1;height:auto;align-items:flex-start}
+  .hero-art .poster{height:320px}
+  .hero-art .poster.r169{height:auto;width:100%;max-width:420px}
+  .hero-floor{width:auto;align-self:stretch}
+  .strip{margin-top:20px;gap:20px;overflow-x:auto;scrollbar-width:none}
+  .s-grid{grid-template-columns:1fr}
+  .s-poster .poster{width:200px}
+  .s-copy h1{font-size:40px}
+  .hub-head h1{font-size:40px}
+  .grid6{grid-template-columns:repeat(2,1fr)}
+  .card.scard{flex-direction:column}
+  .card.scard .poster{width:160px}
+  .tabs{overflow-x:auto;scrollbar-width:none}
+  .ep-title h1{font-size:30px}
+  .f-grid{grid-template-columns:1fr 1fr}
+  .f-brand{grid-column:1/-1}
+  .mob-wrap{gap:24px;padding:24px 16px}
+  .phone{width:min(390px,100%);flex-basis:auto}
+  .m-art,.m-hero .floor{width:100%;max-width:358px}
+}
+
+.cover-type{display:flex;flex-direction:column;gap:6px;padding:16px;background:var(--bg-2)}
+.cover-type .ttl{font-weight:500;font-size:24px;line-height:1.1;letter-spacing:-.02em;margin-top:6px}
+.cover-type .who{font-size:12px}
+.cover-type .state{font-size:12px;color:var(--t2);margin-top:auto;line-height:1.5}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 12 12"><path d="M2 1.2v9.6L10.5 6z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M5 14v6h14v-6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+  <symbol id="i-comment" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><circle cx="7" cy="17" r="3"/><circle cx="17" cy="15" r="3"/><path d="M10 17V6l10-2v11"/></symbol>
+  <symbol id="i-game" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="10" rx="4"/><path d="M8 11v4M6 13h4M15.5 12h.01M18 14h.01"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+</svg>
+<div class="dev" role="toolbar" aria-label="Mockup controls">
+  <span class="lbl">mockup · lobby + board</span>
+  <a href="#home" data-view="home">Home</a>
+  <a href="#movies" data-view="movies">Movies</a>
+  <a href="#series" data-view="series">Series</a>
+  <a href="#episode" data-view="episode">Episode</a>
+  <a href="#mobile" data-view="mobile">Mobile</a>
+  <span class="sp"></span>
+  <button id="native" type="button" aria-pressed="false">Native mode</button>
+</div>
+
+<section class="view" id="home" aria-label="Home">
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="wordmark" href="#home" aria-label="Visurena home">VISURENA</a>
+    <nav class="nav-c" aria-label="Primary">
+      <a href="#home" data-accent="stories">Stories</a><a href="#movies" data-accent="movies">Movies</a><a href="#home" data-accent="music">Music</a><a href="#home" data-accent="games">Games</a><a href="#home" data-accent="req">Requests <span class="mono">(312)</span></a>
+    </nav>
+    <div class="nav-r">
+      <a class="icon-btn" href="#home" aria-label="Search"><svg width="20" height="20"><use href="#i-search"/></svg></a>
+      <a class="pill" href="#episode"><svg width="12" height="12"><use href="#i-play"/></svg><span class="mono">Ep 7 · 4 min left</span></a>
+      <a class="avatar" href="#home" aria-label="Your account">V</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero glow" data-rotator data-slot="1">
+  <div class="glow-bg" aria-hidden="true">
+    <img class="web-garnish" data-slot-glow="1" src="assets/story-falls-water-169.jpg" alt="">
+    <img class="web-garnish" data-slot-glow="2" src="assets/title-ep01.jpg" alt="" hidden>
+    <img class="web-garnish" data-slot-glow="3" src="assets/music-last-train.jpg" alt="" hidden>
+    <img class="web-garnish" data-slot-glow="4" src="assets/neon-tetris-thumb.svg" alt="" hidden>
+  </div>
+  <div class="wrap hero-in">
+    <div class="hero-slot is-on" data-slot="1">
+      <p class="mono eyebrow">Short story · New this week · Coming-of-age · 32 min</p>
+      <p class="kicker">Stories</p>
+      <h1>Falls Water</h1>
+      <p class="logline">A survivor whose little brother died on the deadly coming-of-age Descent goes back down the dry waterfall and finds a capped pipe, a tourist puppet, and the last real water.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#home">Read it</a>
+        <a class="btn ghost" href="#home">All stories</a>
+        <span class="follow"><a class="btn ghost" href="#home">+ Follow</a><span class="mono sub">Get the next story first</span></span>
+      </div>
+    </div>
+    <div class="hero-slot" data-slot="2">
+      <p class="mono eyebrow">Series · Complete · 14 episodes · 2 h 20 min · 1887</p>
+      <p class="kicker">Movies · Sherlock Holmes</p>
+      <h1>A Study in Scarlet</h1>
+      <p class="logline">A wounded army doctor takes rooms with a stranger who reads a whole life from a bootlace, and follows him to a murder written in blood.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#episode"><svg width="12" height="12"><use href="#i-play"/></svg>Play Ep 1</a>
+        <a class="btn ghost" href="#series">Trailer</a>
+        <span class="follow"><a class="btn ghost" href="#series">+ Follow</a><span class="mono sub">Get the next series first</span></span>
+      </div>
+    </div>
+    <div class="hero-slot" data-slot="3">
+      <p class="mono eyebrow">Single · Released · 3:42</p>
+      <p class="kicker">Music</p>
+      <h1>Last Train</h1>
+      <p class="logline">A lo-fi night ride out of the city.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#home"><svg width="12" height="12"><use href="#i-play"/></svg>Play</a>
+        <a class="btn ghost" href="#home">All music</a>
+      </div>
+    </div>
+    <div class="hero-slot" data-slot="4">
+      <p class="mono eyebrow">Game · Puzzle · Browser · No install</p>
+      <p class="kicker">Games</p>
+      <h1>Neon Tetris</h1>
+      <p class="logline">Falling blocks, neon rules, one more line. Your best is 48,210.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#home">Play now</a>
+        <a class="btn ghost" href="#home">All games</a>
+      </div>
+    </div>
+    <div class="hero-art">
+      <a class="poster r34 lit" href="#home" data-slot-art="1"><img src="assets/story-falls-water-34.jpg" alt="Falls Water cover" fetchpriority="high"></a>
+      <a class="poster r916 lit" href="#series" data-slot-art="2" hidden><img src="assets/title-ep01.jpg" alt="A Study in Scarlet poster"></a>
+      <a class="poster r11 lit" href="#home" data-slot-art="3" hidden><img src="assets/music-last-train.jpg" alt="Last Train cover"></a>
+      <a class="poster r169 lit gamecard" href="#home" data-slot-art="4" hidden><img src="assets/neon-tetris-thumb.svg" alt="Neon Tetris"></a>
+      <span class="floor hero-floor"><i class="fill" style="width:100%"></i></span>
+    </div>
+  </div>
+  <div class="wrap"><div class="strip " role="tablist" aria-label="Featured by room"><button type="button" role="tab" data-dot="1" aria-selected="true" class="is-on" style="--a:var(--amber)">Stories</button><button type="button" role="tab" data-dot="2" aria-selected="false" style="--a:var(--emerald)">Movies</button><button type="button" role="tab" data-dot="3" aria-selected="false" style="--a:var(--ruby)">Music</button><button type="button" role="tab" data-dot="4" aria-selected="false" style="--a:var(--amethyst)">Games</button></div></div>
+</section>
+
+<section class="section">
+  <div class="wrap sec-h"><div class="sec-t"><h2 class="plain">New this week</h2></div><span class="mono more">Across the studio · 8 releases</span></div>
+  <div class="wrap"><div class="rail mixrail">
+<a class="card mix" href="#home" style="--w:180px">
+  <span class="poster r34"><img src="assets/story-falls-water-34.jpg" alt="Falls Water cover"><span class="kind mono" style="--k:var(--amber)">Story</span></span>
+  <span class="cap"><span class="mono">Short story · Coming-of-age · 32 min</span><b>Falls Water</b></span>
+</a>
+<a class="card mix" href="#episode" style="--w:160px">
+  <span class="poster r23 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 14 still" style="object-position:50% 80%"><span class="epchip mono">Ep 14</span><span class="kind mono" style="--k:var(--emerald)">Episode</span></span>
+  <span class="cap"><span class="mono">Ep 14 · 10:26</span><b>The Conclusion</b></span>
+</a>
+<a class="card mix" href="#home" style="--w:180px">
+  <span class="poster r34"><img src="assets/story-as-promised-34.jpg" alt="As Promised cover"><span class="kind mono" style="--k:var(--amber)">Story</span></span>
+  <span class="cap"><span class="mono">Short story · Drama · 18 min</span><b>As Promised</b></span>
+</a>
+<a class="card mix" href="#home" style="--w:240px">
+  <span class="poster r11"><img src="assets/music-last-train.jpg" alt="Last Train cover"><span class="kind mono" style="--k:var(--ruby)">Single</span></span>
+  <span class="cap"><span class="mono">Single · Released · 3:42</span><b>Last Train</b></span>
+</a>
+<a class="card mix" href="#home" style="--w:427px">
+  <span class="poster r169"><img src="assets/neon-tetris-thumb.svg" alt="Neon Tetris"><span class="kind mono" style="--k:var(--amethyst)">Game</span></span>
+  <span class="cap"><span class="mono">Puzzle · 8 min · Browser</span><b>Neon Tetris</b></span>
+</a>
+<a class="card mix" href="#episode" style="--w:160px">
+  <span class="poster r23 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 13 still" style="object-position:50% 80%"><span class="epchip mono">Ep 13</span><span class="kind mono" style="--k:var(--emerald)">Episode</span></span>
+  <span class="cap"><span class="mono">Ep 13 · 11:15</span><b>A Continuation of the Reminiscences of John Watson</b></span>
+</a>
+<a class="card mix" href="#home" style="--w:180px">
+  <span class="poster r34"><img src="assets/story-glass-and-granite-34.jpg" alt="Glass and Granite cover"><span class="kind mono" style="--k:var(--amber)">Story</span></span>
+  <span class="cap"><span class="mono">Short story · Literary · 24 min</span><b>Glass and Granite</b></span>
+</a>
+<a class="card mix" href="#home" style="--w:427px">
+  <span class="poster r169"><img src="assets/cosmic-defense-thumb.svg" alt="Cosmic Defense"><span class="kind mono" style="--k:var(--amethyst)">Game</span></span>
+  <span class="cap"><span class="mono">Shooter · 5 min · Browser</span><b>Cosmic Defense</b></span>
+</a>
+  </div></div>
+</section>
+
+<section class="section" style="--accent:var(--amber)">
+  <div class="wrap sec-h" style="--accent:var(--amber)"><div class="sec-t"><h2 class="roomed">Stories</h2></div><a class="mono more" href="#home">All stories →</a></div>
+  <div class="wrap"><div class="rail" style="--w:172px">
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-falls-water-34.jpg" alt="Falls Water cover"></span>
+  <span class="cap"><span class="mono">Short story · Coming-of-age · 32 min</span><b>Falls Water</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-as-promised-34.jpg" alt="As Promised cover"></span>
+  <span class="cap"><span class="mono">Short story · Drama · 18 min</span><b>As Promised</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-glass-and-granite-34.jpg" alt="Glass and Granite cover"></span>
+  <span class="cap"><span class="mono">Short story · Literary · 24 min</span><b>Glass and Granite</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-one-mitten-34.jpg" alt="One Mitten cover"></span>
+  <span class="cap"><span class="mono">Short story · Winter tale · 12 min</span><b>One Mitten</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-rich-ground-34.jpg" alt="Rich Ground cover"></span>
+  <span class="cap"><span class="mono">Short story · Rural · 27 min</span><b>Rich Ground</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-slack-water-34.jpg" alt="Slack Water cover"></span>
+  <span class="cap"><span class="mono">Short story · Coastal · 21 min</span><b>Slack Water</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-the-mortar-line-34.jpg" alt="The Mortar Line cover"></span>
+  <span class="cap"><span class="mono">Short story · War · 35 min</span><b>The Mortar Line</b></span>
+</a>
+  </div></div>
+</section>
+
+<section class="section" style="--accent:var(--emerald)">
+  <div class="wrap sec-h" style="--accent:var(--emerald)"><div class="sec-t"><h2 class="roomed">Movies</h2><span class="mono subline">A Study in Scarlet · Series · Complete · 14 episodes · 2 h 20 min</span></div><a class="mono more" href="#movies">All movies →</a></div>
+  <div class="wrap"><div class="rail" style="--w:172px">
+<a class="card ep" href="#series">
+  <span class="poster r23"><img src="assets/title-ep01.jpg" alt="A Study in Scarlet poster" style="object-position:50% 12%"></span><span class="floor"><i class="fill" style="width:100%"></i></span>
+  <span class="cap"><span class="mono">Series · Complete · 14 ep</span><b>A Study in Scarlet</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 14 still" style="object-position:50% 80%"><span class="epchip mono">Ep 14</span></span><span class="floor"></span>
+  <span class="cap"><span class="mono">Ep 14 · 10:26</span><b>The Conclusion</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 13 still" style="object-position:50% 80%"><span class="epchip mono">Ep 13</span></span><span class="floor"></span>
+  <span class="cap"><span class="mono">Ep 13 · 11:15</span><b>A Continuation of the Reminiscences of John Watson</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 12 still" style="object-position:50% 20%"><span class="epchip mono">Ep 12</span></span><span class="floor"></span>
+  <span class="cap"><span class="mono">Ep 12 · 10:19</span><b>The Avenging Angels</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r23 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 2 still" style="object-position:50% 45%"><span class="playmini" aria-hidden="true"><svg width="12" height="12"><use href="#i-play"/></svg></span></span>
+  <span class="cap"><span class="mono">Trailer · 0:60</span><b>A Study in Scarlet</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 1 still" style="object-position:50% 30%"></span>
+  <span class="cap"><span class="mono">Short · 0:58</span><b>The tin box</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 3 still" style="object-position:50% 60%"></span>
+  <span class="cap"><span class="mono">Short · 0:44</span><b>Rache</b></span>
+</a>
+<a class="card slate is-live" href="#movies">
+  <span class="cover">
+    <span class="chip">In production</span>
+    <span class="ttl">Frankenstein</span>
+    <span class="mono who">Mary Shelley · 1818</span>
+    <span class="mono state">Script ✓ · Cast ✓<br>Ep 1 rendering</span>
+    <span class="votes"><span class="num">517</span><span class="mono lbl">votes · chosen</span></span>
+  </span>
+  <span class="btn ghost sm" aria-hidden="true">+ Follow</span>
+</a>
+  </div></div>
+</section>
+
+<section class="section" style="--accent:var(--ruby)">
+  <div class="wrap sec-h" style="--accent:var(--ruby)"><div class="sec-t"><h2 class="roomed">Music</h2></div><a class="mono more" href="#home">All music →</a></div>
+  <div class="wrap music-grid">
+    <a class="card listen" href="#home">
+      <span class="poster r11"><img src="assets/music-last-train.jpg" alt="Last Train cover"></span>
+      <span class="ct"><b>Last Train</b><span class="mono">Single · Released · 1 track · 3:42</span></span>
+      <span class="playbtn" aria-hidden="true"><svg width="14" height="14"><use href="#i-play"/></svg></span>
+    </a>
+    <a class="card listen" href="#home">
+      <span class="poster r11"><img src="assets/music-somebody-knew-my-name.jpg" alt="Somebody Knew My Name cover"></span>
+      <span class="ct"><b>Somebody Knew My Name</b><span class="mono">Single · Released · 1 track · 4:08</span></span>
+      <span class="playbtn" aria-hidden="true"><svg width="14" height="14"><use href="#i-play"/></svg></span>
+    </a>
+    <a class="card listen" href="#series">
+      <span class="poster r11"><img src="assets/title-ep02.jpg" alt="A Study in Scarlet audiobook"></span>
+      <span class="ct"><b>A Study in Scarlet</b><span class="mono">Audiobook · Complete · 14 chapters · 4 h 51 min</span></span>
+      <span class="playbtn" aria-hidden="true"><svg width="14" height="14"><use href="#i-play"/></svg></span>
+    </a>
+  </div>
+</section>
+
+<section class="section" style="--accent:var(--amethyst)">
+  <div class="wrap sec-h" style="--accent:var(--amethyst)"><div class="sec-t"><h2 class="roomed">Games</h2></div><a class="mono more" href="#home">All games →</a></div>
+  <div class="wrap"><div class="rail" style="--w:208px">
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/cosmic-defense-thumb.svg" alt="Cosmic Defense thumbnail"></span>
+  <span class="cap"><span class="mono">Shooter · 5 min · Browser</span><b>Cosmic Defense</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/neon-tetris-thumb.svg" alt="Neon Tetris thumbnail"></span>
+  <span class="cap"><span class="mono">Puzzle · 8 min · Browser</span><b>Neon Tetris</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/snake-evolution-thumb.svg" alt="Snake Evolution thumbnail"></span>
+  <span class="cap"><span class="mono">Arcade · 4 min · Browser</span><b>Snake Evolution</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/brick-breaker-thumb.svg" alt="Brick Breaker Ultra thumbnail"></span>
+  <span class="cap"><span class="mono">Arcade · 6 min · Browser</span><b>Brick Breaker Ultra</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/pong-championship-thumb.svg" alt="Pong Championship thumbnail"></span>
+  <span class="cap"><span class="mono">Sport · 3 min · Browser</span><b>Pong Championship</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/pac-runner-thumb.svg" alt="Pac-Runner thumbnail"></span>
+  <span class="cap"><span class="mono">Maze · 5 min · Browser</span><b>Pac-Runner</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/asteroid-blaster-thumb.svg" alt="Asteroid Blaster thumbnail"></span>
+  <span class="cap"><span class="mono">Shooter · 5 min · Browser</span><b>Asteroid Blaster</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/frogger-crossing-thumb.svg" alt="Frogger Crossing thumbnail"></span>
+  <span class="cap"><span class="mono">Arcade · 4 min · Browser</span><b>Frogger Crossing</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/missile-defense-thumb.svg" alt="Missile Defense thumbnail"></span>
+  <span class="cap"><span class="mono">Strategy · 6 min · Browser</span><b>Missile Defense</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/centipede-garden-thumb.svg" alt="Centipede Garden thumbnail"></span>
+  <span class="cap"><span class="mono">Shooter · 5 min · Browser</span><b>Centipede Garden</b></span>
+</a>
+  </div></div>
+</section>
+
+<section class="section" style="--accent:var(--sapphire)">
+  <div class="wrap sec-h"><div class="sec-t"><h2 class="plain">On the slate</h2></div><span class="mono more">2,850 votes this season</span></div>
+  <div class="wrap"><div class="rail" style="--w:172px">
+<a class="card slate is-live" href="#movies">
+  <span class="cover">
+    <span class="chip">In production</span>
+    <span class="ttl">Frankenstein</span>
+    <span class="mono who">Mary Shelley · 1818</span>
+    <span class="mono state">Script ✓ · Cast ✓<br>Ep 1 rendering</span>
+    <span class="votes"><span class="num">517</span><span class="mono lbl">votes · chosen</span></span>
+  </span>
+  <span class="btn ghost sm" aria-hidden="true">+ Follow</span>
+</a>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Dracula</span>
+    <span class="mono who">Bram Stoker · 1897</span>
+    <span class="votes"><span class="num">412</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Pride and Prejudice</span>
+    <span class="mono who">Jane Austen · 1813</span>
+    <span class="votes"><span class="num">388</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">The Picture of Dorian Gray</span>
+    <span class="mono who">Oscar Wilde · 1890</span>
+    <span class="votes"><span class="num">301</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Jekyll &amp; Hyde</span>
+    <span class="mono who">R. L. Stevenson · 1886</span>
+    <span class="votes"><span class="num">274</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Feature</span>
+    <span class="ttl">Moby-Dick</span>
+    <span class="mono who">Herman Melville · 1851</span>
+    <span class="votes"><span class="num">236</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Peter Pan</span>
+    <span class="mono who">J. M. Barrie · 1911</span>
+    <span class="votes"><span class="num">219</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Tom Sawyer</span>
+    <span class="mono who">Mark Twain · 1876</span>
+    <span class="votes"><span class="num">187</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Feature</span>
+    <span class="ttl">Heart of Darkness</span>
+    <span class="mono who">Joseph Conrad · 1899</span>
+    <span class="votes"><span class="num">164</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Shorts</span>
+    <span class="ttl">The Metamorphosis</span>
+    <span class="mono who">Franz Kafka · 1915</span>
+    <span class="votes"><span class="num">152</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Games</span>
+    <span class="ttl">More arcade games</span>
+    <span class="mono who">Requested by 61 players</span>
+    <span class="votes"><span class="num">143</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Stories</span>
+    <span class="ttl">A horror story collection</span>
+    <span class="mono who">Requested by 48 readers</span>
+    <span class="votes"><span class="num">128</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<a class="card slate ask" href="#home">
+  <span class="cover">
+    <span class="plus">+</span>
+    <span class="ttl">Request a title →</span>
+    <span class="mono who">A book, a game, an album, anything</span>
+  </span>
+  <span class="btn ghost sm" aria-hidden="true">Request</span>
+</a>
+  </div></div>
+</section>
+
+<section class="section">
+  <div class="wrap sec-h"><div class="sec-t"><h2 class="plain">Continue</h2></div><a class="mono more" href="#home">History →</a></div>
+  <div class="wrap cont-grid">
+    <a class="card cont" href="#episode">
+      <span class="poster r34 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 7 still" style="object-position:50% 20%"></span>
+      <span class="ct"><b>A Study in Scarlet</b><span class="mono">Ep 7 · Light in the Darkness · 4 min left</span><span class="bar"><i style="width:62%;background:var(--emerald)"></i></span></span>
+    </a>
+    <a class="card cont" href="#home">
+      <span class="poster r34"><img src="assets/story-falls-water-34.jpg" alt=""></span>
+      <span class="ct"><b>Falls Water</b><span class="mono">Chapter 3 of 6 · 14 min left</span><span class="bar"><i style="width:44%;background:var(--amber)"></i></span></span>
+    </a>
+    <a class="card cont" href="#home">
+      <span class="poster r34"><img src="assets/neon-tetris-thumb.svg" alt=""></span>
+      <span class="ct"><b>Neon Tetris</b><span class="mono">Level 9 · Best 48,210</span><span class="bar"><i style="width:72%;background:var(--amethyst)"></i></span></span>
+    </a>
+  </div>
+</section>
+
+<section class="section" style="--accent:var(--emerald)">
+  <div class="wrap sec-h"><div class="sec-t"><h2 class="plain">Shorts</h2></div><a class="mono more" href="#movies">6 shorts →</a></div>
+  <div class="wrap"><div class="rail" style="--w:132px">
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 1 still" style="object-position:50% 30%"></span>
+  <span class="cap"><span class="mono">Short · 0:58</span><b>The tin box</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 3 still" style="object-position:50% 60%"></span>
+  <span class="cap"><span class="mono">Short · 0:44</span><b>Rache</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 6 still" style="object-position:50% 40%"></span>
+  <span class="cap"><span class="mono">Short · 0:59</span><b>The cabman</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 2 still" style="object-position:50% 70%"></span>
+  <span class="cap"><span class="mono">Short · 0:52</span><b>221B</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 5 still" style="object-position:50% 25%"></span>
+  <span class="cap"><span class="mono">Short · 0:47</span><b>Two pills</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 4 still" style="object-position:50% 65%"></span>
+  <span class="cap"><span class="mono">Short · 0:55</span><b>The wedding ring</b></span>
+</a>
+  </div></div>
+</section>
+
+<section class="section how">
+  <div class="wrap how-in">
+    <p><span class="mono">Updated 25 Sep 2026 · </span>Visurena is one person and a set of AI tools making stories, movies, music and games in the open. Every frame is generated; every cut is chosen. Vote on what we make next. <a href="#home">How it's made →</a></p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="f-grid">
+      <div class="f-brand">
+        <span class="wordmark">VISURENA</span>
+        <p>Stories, movies, music, games. You choose what's next.</p>
+      </div>
+      <div class="f-col"><h4>Stories</h4><a href="#home">All stories</a><a href="#home">Falls Water</a><a href="#home">Casebook</a><a href="#home">Audiobook</a></div>
+      <div class="f-col"><h4>Movies</h4><a href="#movies">Movies hub</a><a href="#series">A Study in Scarlet</a><a href="#movies">Frankenstein</a><a href="#movies">Trailers &amp; shorts</a></div>
+      <div class="f-col"><h4>Music</h4><a href="#home">Last Train</a><a href="#home">Somebody Knew My Name</a><a href="#home">Audiobook</a></div>
+      <div class="f-col"><h4>Games</h4><a href="#home">Arcade</a><a href="#home">Puzzle</a><a href="#home">Leaderboards</a></div>
+      <div class="f-col"><h4>Studio</h4><a href="#home">Request board</a><a href="#home">How it's made</a><a href="#home">Newsletter</a><a href="#home">Contact</a></div>
+    </div>
+    <div class="f-bottom">
+      <label class="lang mono">Language <select aria-label="Language"><option>English</option><option>Deutsch</option><option>Español</option><option>日本語</option></select></label>
+      <p class="mono">Every frame on this site is generated with AI tools. Every cut, line and choice is made by one person.</p>
+      <p class="mono">© Visurena 2026</p>
+    </div>
+  </div>
+</footer>
+</section>
+
+<section class="view" id="movies" aria-label="Movies hub">
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="wordmark" href="#home" aria-label="Visurena home">VISURENA</a>
+    <nav class="nav-c" aria-label="Primary">
+      <a href="#home" data-accent="stories">Stories</a><a href="#movies" class="is-active" data-accent="movies">Movies</a><a href="#home" data-accent="music">Music</a><a href="#home" data-accent="games">Games</a><a href="#home" data-accent="req">Requests <span class="mono">(312)</span></a>
+    </nav>
+    <div class="nav-r">
+      <a class="icon-btn" href="#home" aria-label="Search"><svg width="20" height="20"><use href="#i-search"/></svg></a>
+      <a class="pill" href="#episode"><svg width="12" height="12"><use href="#i-play"/></svg><span class="mono">Ep 7 · 4 min left</span></a>
+      <a class="avatar" href="#home" aria-label="Your account">V</a>
+    </div>
+  </div>
+</header>
+<section class="hub-head glow" style="--accent:var(--emerald)">
+  <div class="glow-bg" aria-hidden="true"><img class="web-garnish" src="assets/yt-AIX83NAcTGc.jpg" alt="" style="transform:scale(1.9)"></div>
+  <div class="wrap">
+    <p class="mono eyebrow">Movies · Emerald room</p>
+    <h1 class="roomed">Movies</h1>
+    <p class="mono subline">1 series complete · 14 episodes · 2 trailers · 6 shorts · 3 titles in development · Played on YouTube</p>
+  </div>
+</section>
+
+<section class="section" style="--accent:var(--emerald)">
+  <div class="wrap sec-h" style="--accent:var(--emerald)"><div class="sec-t"><h2 class="roomed">Series</h2></div><span class="mono more">1 complete · 1 in production</span></div>
+  <div class="wrap series-grid">
+    <a class="card scard" href="#series">
+      <span class="poster r916 lit"><img src="assets/title-ep01.jpg" alt="A Study in Scarlet poster"></span>
+      <span class="ct">
+        <span class="kicker">Sherlock Holmes</span>
+        <b class="big">A Study in Scarlet</b>
+        <span class="mono">Series · Complete · 14 episodes · ~10 min each · 1887</span>
+        <span class="syn2">London, 1881. Dr John Watson, invalided home from Afghanistan, takes rooms at 221B Baker Street with Sherlock Holmes, a consulting detective who reads a life from a bootlace. A body in an empty house on Brixton Road, a word scrawled in blood and a lost wedding ring lead them, and the story, to the Utah desert thirty years earlier.</span>
+        <span class="ctas"><span class="btn primary"><span class="ring" aria-hidden="true" style="--p:62"></span>Continue Ep 7</span><span class="btn ghost">Start Ep 1</span><span class="btn ghost">Trailer</span></span>
+      </span>
+    </a>
+    <a class="card scard" href="#movies">
+      <span class="poster r916 lit cover-type"><span class="chip">In production</span><span class="ttl">Frankenstein</span><span class="mono who">Mary Shelley · 1818</span><span class="mono state">Script ✓ · Cast ✓<br>Ep 1 rendering</span></span>
+      <span class="ct">
+        <span class="kicker">Next series</span>
+        <b class="big">Frankenstein</b>
+        <span class="mono">Series · In production · Script ✓ · Cast ✓ · Ep 1 rendering · Chosen by 517 votes</span>
+        <span class="syn2">A student of natural philosophy assembles a life from the dead and then refuses to look at what he has made. Ep 1 lands the hour it renders; followers get it first.</span>
+        <span class="ctas"><span class="btn primary">+ Follow</span><span class="btn ghost">Read the script notes</span></span>
+      </span>
+    </a>
+  </div>
+</section>
+
+<section class="section" style="--accent:var(--emerald)">
+  <div class="wrap sec-h" style="--accent:var(--emerald)"><div class="sec-t"><h2 class="roomed">Latest episodes</h2><span class="mono subline">A Study in Scarlet · newest first</span></div><a class="mono more" href="#series">Series page →</a></div>
+  <div class="wrap"><div class="rail" style="--w:172px">
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 14 still" style="object-position:50% 80%"><span class="epchip mono">Ep 14</span></span><span class="floor"></span>
+  <span class="cap"><span class="mono">Ep 14 · 10:26</span><b>The Conclusion</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 13 still" style="object-position:50% 80%"><span class="epchip mono">Ep 13</span></span><span class="floor"></span>
+  <span class="cap"><span class="mono">Ep 13 · 11:15</span><b>A Continuation of the Reminiscences of John Watson</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 12 still" style="object-position:50% 20%"><span class="epchip mono">Ep 12</span></span><span class="floor"></span>
+  <span class="cap"><span class="mono">Ep 12 · 10:19</span><b>The Avenging Angels</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 11 still" style="object-position:50% 20%"><span class="epchip mono">Ep 11</span></span><span class="floor"></span>
+  <span class="cap"><span class="mono">Ep 11 · 9:58</span><b>A Flight for Life</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 10 still" style="object-position:50% 20%"><span class="epchip mono">Ep 10</span></span><span class="floor"></span>
+  <span class="cap"><span class="mono">Ep 10 · 10:47</span><b>John Ferrier Talks with the Prophet</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 9 still" style="object-position:50% 20%"><span class="epchip mono">Ep 9</span></span><span class="floor"></span>
+  <span class="cap"><span class="mono">Ep 9 · 9:12</span><b>The Flower of Utah</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 8 still" style="object-position:50% 20%"><span class="epchip mono">Ep 8</span></span><span class="floor"></span>
+  <span class="cap"><span class="mono">Ep 8 · 11:40</span><b>On the Great Alkali Plain</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 7 still" style="object-position:50% 20%"><span class="epchip mono">Ep 7</span></span><span class="floor"><i class="fill" style="width:62%"></i></span>
+  <span class="cap"><span class="mono">Ep 7 · 10:31 <span class="cont">Continue</span></span><b>Light in the Darkness</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 6 still" style="object-position:50% 50%"><span class="epchip mono">Ep 6</span></span><span class="floor"><i class="fill is-done" style="width:100%"></i></span>
+  <span class="cap"><span class="mono">Ep 6 · 9:54 <span class="tick" aria-label="Watched">✓</span></span><b>Tobias Gregson Shows What He Can Do</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 5 still" style="object-position:50% 50%"><span class="epchip mono">Ep 5</span></span><span class="floor"><i class="fill is-done" style="width:100%"></i></span>
+  <span class="cap"><span class="mono">Ep 5 · 11:02 <span class="tick" aria-label="Watched">✓</span></span><b>Our Advertisement Brings a Visitor</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 4 still" style="object-position:50% 50%"><span class="epchip mono">Ep 4</span></span><span class="floor"><i class="fill is-done" style="width:100%"></i></span>
+  <span class="cap"><span class="mono">Ep 4 · 10:04 <span class="tick" aria-label="Watched">✓</span></span><b>What John Rance Had to Tell</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 3 still" style="object-position:50% 50%"><span class="epchip mono">Ep 3</span></span><span class="floor"><i class="fill is-done" style="width:100%"></i></span>
+  <span class="cap"><span class="mono">Ep 3 · 9:48 <span class="tick" aria-label="Watched">✓</span></span><b>The Lauriston Garden Mystery</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 2 still" style="object-position:50% 50%"><span class="epchip mono">Ep 2</span></span><span class="floor"><i class="fill is-done" style="width:100%"></i></span>
+  <span class="cap"><span class="mono">Ep 2 · 9:36 <span class="tick" aria-label="Watched">✓</span></span><b>The Science of Deduction</b></span>
+</a>
+<a class="card ep" href="#episode">
+  <span class="poster r23 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 1 still" style="object-position:50% 50%"><span class="epchip mono">Ep 1</span></span><span class="floor"><i class="fill is-done" style="width:100%"></i></span>
+  <span class="cap"><span class="mono">Ep 1 · 10:12 <span class="tick" aria-label="Watched">✓</span></span><b>A Mr. Sherlock Holmes</b></span>
+</a>
+  </div></div>
+</section>
+
+<section class="section" style="--accent:var(--emerald)">
+  <div class="wrap sec-h" style="--accent:var(--emerald)"><div class="sec-t"><h2 class="roomed">Trailers &amp; shorts</h2></div><span class="mono more">2 trailers · 6 shorts</span></div>
+  <div class="wrap"><div class="rail" style="--w:148px">
+<a class="card" href="#series">
+  <span class="poster r916 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 2 still" style="object-position:50% 45%"><span class="playmini" aria-hidden="true"><svg width="12" height="12"><use href="#i-play"/></svg></span></span>
+  <span class="cap"><span class="mono">Trailer · 0:60</span><b>A Study in Scarlet</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r916 still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 5 still" style="object-position:50% 55%"><span class="playmini" aria-hidden="true"><svg width="12" height="12"><use href="#i-play"/></svg></span></span>
+  <span class="cap"><span class="mono">Teaser · 0:30</span><b>A Study in Scarlet</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 1 still" style="object-position:50% 30%"></span>
+  <span class="cap"><span class="mono">Short · 0:58</span><b>The tin box</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 3 still" style="object-position:50% 60%"></span>
+  <span class="cap"><span class="mono">Short · 0:44</span><b>Rache</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 6 still" style="object-position:50% 40%"></span>
+  <span class="cap"><span class="mono">Short · 0:59</span><b>The cabman</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 2 still" style="object-position:50% 70%"></span>
+  <span class="cap"><span class="mono">Short · 0:52</span><b>221B</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 5 still" style="object-position:50% 25%"></span>
+  <span class="cap"><span class="mono">Short · 0:47</span><b>Two pills</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 4 still" style="object-position:50% 65%"></span>
+  <span class="cap"><span class="mono">Short · 0:55</span><b>The wedding ring</b></span>
+</a>
+  </div></div>
+</section>
+
+<section class="section" style="--accent:var(--sapphire)">
+  <div class="wrap sec-h"><div class="sec-t"><h2 class="plain">In development</h2><span class="mono subline">Feature requests on the slate</span></div><a class="mono more" href="#home">Request board →</a></div>
+  <div class="wrap vote3">
+<a class="card slate is-live" href="#movies">
+  <span class="cover">
+    <span class="chip">In production</span>
+    <span class="ttl">Frankenstein</span>
+    <span class="mono who">Mary Shelley · 1818</span>
+    <span class="mono state">Script ✓ · Cast ✓<br>Ep 1 rendering</span>
+    <span class="votes"><span class="num">517</span><span class="mono lbl">votes · chosen</span></span>
+  </span>
+  <span class="btn ghost sm" aria-hidden="true">+ Follow</span>
+</a>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Feature</span>
+    <span class="ttl">Moby-Dick</span>
+    <span class="mono who">Herman Melville · 1851</span>
+    <span class="votes"><span class="num">236</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Feature</span>
+    <span class="ttl">Heart of Darkness</span>
+    <span class="mono who">Joseph Conrad · 1899</span>
+    <span class="votes"><span class="num">164</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<a class="card slate ask" href="#home">
+  <span class="cover">
+    <span class="plus">+</span>
+    <span class="ttl">Request a title →</span>
+    <span class="mono who">A book, a game, an album, anything</span>
+  </span>
+  <span class="btn ghost sm" aria-hidden="true">Request</span>
+</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="f-grid">
+      <div class="f-brand">
+        <span class="wordmark">VISURENA</span>
+        <p>Stories, movies, music, games. You choose what's next.</p>
+      </div>
+      <div class="f-col"><h4>Stories</h4><a href="#home">All stories</a><a href="#home">Falls Water</a><a href="#home">Casebook</a><a href="#home">Audiobook</a></div>
+      <div class="f-col"><h4>Movies</h4><a href="#movies">Movies hub</a><a href="#series">A Study in Scarlet</a><a href="#movies">Frankenstein</a><a href="#movies">Trailers &amp; shorts</a></div>
+      <div class="f-col"><h4>Music</h4><a href="#home">Last Train</a><a href="#home">Somebody Knew My Name</a><a href="#home">Audiobook</a></div>
+      <div class="f-col"><h4>Games</h4><a href="#home">Arcade</a><a href="#home">Puzzle</a><a href="#home">Leaderboards</a></div>
+      <div class="f-col"><h4>Studio</h4><a href="#home">Request board</a><a href="#home">How it's made</a><a href="#home">Newsletter</a><a href="#home">Contact</a></div>
+    </div>
+    <div class="f-bottom">
+      <label class="lang mono">Language <select aria-label="Language"><option>English</option><option>Deutsch</option><option>Español</option><option>日本語</option></select></label>
+      <p class="mono">Every frame on this site is generated with AI tools. Every cut, line and choice is made by one person.</p>
+      <p class="mono">© Visurena 2026</p>
+    </div>
+  </div>
+</footer>
+</section>
+
+<section class="view" id="series" aria-label="Series: A Study in Scarlet" style="--accent:var(--emerald)">
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="wordmark" href="#home" aria-label="Visurena home">VISURENA</a>
+    <nav class="nav-c" aria-label="Primary">
+      <a href="#home" data-accent="stories">Stories</a><a href="#movies" class="is-active" data-accent="movies">Movies</a><a href="#home" data-accent="music">Music</a><a href="#home" data-accent="games">Games</a><a href="#home" data-accent="req">Requests <span class="mono">(312)</span></a>
+    </nav>
+    <div class="nav-r">
+      <a class="icon-btn" href="#home" aria-label="Search"><svg width="20" height="20"><use href="#i-search"/></svg></a>
+      <a class="pill" href="#episode"><svg width="12" height="12"><use href="#i-play"/></svg><span class="mono">Ep 7 · 4 min left</span></a>
+      <a class="avatar" href="#home" aria-label="Your account">V</a>
+    </div>
+  </div>
+</header>
+<section class="s-head glow">
+  <div class="glow-bg" aria-hidden="true"><img class="web-garnish" src="assets/title-ep01.jpg" alt=""></div>
+  <div class="wrap s-grid">
+    <div class="s-poster">
+      <span class="poster r916 lit"><img src="assets/title-ep01.jpg" alt="A Study in Scarlet poster" fetchpriority="high"></span>
+      <span class="floor"><i class="fill" style="width:100%"></i></span>
+    </div>
+    <div class="s-copy">
+      <p class="mono crumb"><a href="#movies">Movies</a> › A Study in Scarlet</p>
+      <p class="kicker">Sherlock Holmes</p>
+      <h1>A Study in Scarlet</h1>
+      <p class="mono eyebrow">Series · Complete · 14 episodes · ~10 min each · 1887</p>
+      <p class="syn">London, 1881. Dr John Watson, invalided home from Afghanistan, takes rooms at 221B Baker Street with Sherlock Holmes, a consulting detective who reads a life from a bootlace. A body in an empty house on Brixton Road, a word scrawled in blood and a lost wedding ring lead them, and the story, to the Utah desert thirty years earlier.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#episode"><span class="ring" aria-hidden="true" style="--p:62"></span>Continue Ep 7</a>
+        <a class="btn ghost" href="#series">Trailer</a>
+        <a class="btn ghost" href="#series">+ Follow</a>
+        <a class="icon-btn" href="#series" aria-label="Share"><svg width="20" height="20"><use href="#i-share"/></svg></a>
+      </div>
+      <p class="mono sub">Played on YouTube · Audiobook 4 h 51 min · Casebook · Cast sheets</p>
+    </div>
+    <div class="s-rows">
+      <div class="sec-h tight"><h3>Episodes</h3><a class="mono more" href="#series">All 14 ↓</a></div>
+      <div class="erows">
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 1 still" style="object-position:50% 50%"></span>
+  <span class="mono en">01</span>
+  <span class="et"><b>A Mr. Sherlock Holmes</b><span class="mono">10:12 · Watched ✓</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 2 still" style="object-position:50% 50%"></span>
+  <span class="mono en">02</span>
+  <span class="et"><b>The Science of Deduction</b><span class="mono">9:36 · Watched ✓</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 3 still" style="object-position:50% 50%"></span>
+  <span class="mono en">03</span>
+  <span class="et"><b>The Lauriston Garden Mystery</b><span class="mono">9:48 · Watched ✓</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 4 still" style="object-position:50% 50%"></span>
+  <span class="mono en">04</span>
+  <span class="et"><b>What John Rance Had to Tell</b><span class="mono">10:04 · Watched ✓</span></span>
+</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap sec-h" style="--accent:var(--emerald)"><div class="sec-t"><h2 class="roomed">All 14 episodes</h2></div><span class="mono more">Chronological · 6 watched · Ep 7 in progress</span></div>
+  <div class="wrap rows2">
+    <div class="erows">
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 1 still" style="object-position:50% 50%"></span>
+  <span class="mono en">01</span>
+  <span class="et"><b>A Mr. Sherlock Holmes</b><span class="mono">10:12 · Watched ✓</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 2 still" style="object-position:50% 50%"></span>
+  <span class="mono en">02</span>
+  <span class="et"><b>The Science of Deduction</b><span class="mono">9:36 · Watched ✓</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 3 still" style="object-position:50% 50%"></span>
+  <span class="mono en">03</span>
+  <span class="et"><b>The Lauriston Garden Mystery</b><span class="mono">9:48 · Watched ✓</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 4 still" style="object-position:50% 50%"></span>
+  <span class="mono en">04</span>
+  <span class="et"><b>What John Rance Had to Tell</b><span class="mono">10:04 · Watched ✓</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 5 still" style="object-position:50% 50%"></span>
+  <span class="mono en">05</span>
+  <span class="et"><b>Our Advertisement Brings a Visitor</b><span class="mono">11:02 · Watched ✓</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 6 still" style="object-position:50% 50%"></span>
+  <span class="mono en">06</span>
+  <span class="et"><b>Tobias Gregson Shows What He Can Do</b><span class="mono">9:54 · Watched ✓</span></span>
+</a>
+<a class="erow is-now" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 7 still" style="object-position:50% 20%"></span>
+  <span class="mono en">07</span>
+  <span class="et"><b>Light in the Darkness</b><span class="mono">10:31 · 4 min left</span><span class="bar"><i style="width:62%;background:var(--accent)"></i></span></span>
+</a>
+    </div>
+    <div class="erows">
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 8 still" style="object-position:50% 20%"></span>
+  <span class="mono en">08</span>
+  <span class="et"><b>On the Great Alkali Plain</b><span class="mono">11:40</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 9 still" style="object-position:50% 20%"></span>
+  <span class="mono en">09</span>
+  <span class="et"><b>The Flower of Utah</b><span class="mono">9:12</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 10 still" style="object-position:50% 20%"></span>
+  <span class="mono en">10</span>
+  <span class="et"><b>John Ferrier Talks with the Prophet</b><span class="mono">10:47</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 11 still" style="object-position:50% 20%"></span>
+  <span class="mono en">11</span>
+  <span class="et"><b>A Flight for Life</b><span class="mono">9:58</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 12 still" style="object-position:50% 20%"></span>
+  <span class="mono en">12</span>
+  <span class="et"><b>The Avenging Angels</b><span class="mono">10:19</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 13 still" style="object-position:50% 80%"></span>
+  <span class="mono en">13</span>
+  <span class="et"><b>A Continuation of the Reminiscences of John Watson</b><span class="mono">11:15</span></span>
+</a>
+<a class="erow" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 14 still" style="object-position:50% 80%"></span>
+  <span class="mono en">14</span>
+  <span class="et"><b>The Conclusion</b><span class="mono">10:26</span></span>
+</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="tabs" role="tablist">
+      <a role="tab" aria-selected="true" class="is-on" href="#series">Cast</a>
+      <a role="tab" href="#series">Audiobook</a>
+      <a role="tab" href="#series">Casebook</a>
+      <a role="tab" href="#series">Shorts</a>
+      <a role="tab" href="#series">About the adaptation</a>
+    </div>
+    <div class="grid6">
+<a class="card" href="#series">
+  <span class="poster r34 face"><img src="assets/cast-holmes.jpg" alt="Sherlock Holmes" style="object-position:50% 30%"></span>
+  <span class="cap"><span class="mono">The consulting detective</span><b>Sherlock Holmes</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r34 face"><img src="assets/cast-watson.jpg" alt="Dr John Watson" style="object-position:50% 30%"></span>
+  <span class="cap"><span class="mono">Narrator · late of the Berkshires</span><b>Dr John Watson</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r34 face"><span class="ini">L</span></span>
+  <span class="cap"><span class="mono">Scotland Yard</span><b>Inspector Lestrade</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r34 face"><span class="ini">TG</span></span>
+  <span class="cap"><span class="mono">Scotland Yard</span><b>Tobias Gregson</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r34 face"><span class="ini">JH</span></span>
+  <span class="cap"><span class="mono">The cabman</span><b>Jefferson Hope</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r34 face"><span class="ini">LF</span></span>
+  <span class="cap"><span class="mono">The flower of Utah</span><b>Lucy Ferrier</b></span>
+</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="--accent:var(--sapphire)">
+  <div class="wrap sec-h"><div class="sec-t"><h2 class="plain">What should we adapt after this?</h2></div><span class="mono more">2,850 votes this season</span></div>
+  <div class="wrap vote3">
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Dracula</span>
+    <span class="mono who">Bram Stoker · 1897</span>
+    <span class="votes"><span class="num">412</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Pride and Prejudice</span>
+    <span class="mono who">Jane Austen · 1813</span>
+    <span class="votes"><span class="num">388</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">The Picture of Dorian Gray</span>
+    <span class="mono who">Oscar Wilde · 1890</span>
+    <span class="votes"><span class="num">301</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<a class="card slate ask" href="#home">
+  <span class="cover">
+    <span class="plus">+</span>
+    <span class="ttl">Request a title →</span>
+    <span class="mono who">A book, a game, an album, anything</span>
+  </span>
+  <span class="btn ghost sm" aria-hidden="true">Request</span>
+</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="f-grid">
+      <div class="f-brand">
+        <span class="wordmark">VISURENA</span>
+        <p>Stories, movies, music, games. You choose what's next.</p>
+      </div>
+      <div class="f-col"><h4>Stories</h4><a href="#home">All stories</a><a href="#home">Falls Water</a><a href="#home">Casebook</a><a href="#home">Audiobook</a></div>
+      <div class="f-col"><h4>Movies</h4><a href="#movies">Movies hub</a><a href="#series">A Study in Scarlet</a><a href="#movies">Frankenstein</a><a href="#movies">Trailers &amp; shorts</a></div>
+      <div class="f-col"><h4>Music</h4><a href="#home">Last Train</a><a href="#home">Somebody Knew My Name</a><a href="#home">Audiobook</a></div>
+      <div class="f-col"><h4>Games</h4><a href="#home">Arcade</a><a href="#home">Puzzle</a><a href="#home">Leaderboards</a></div>
+      <div class="f-col"><h4>Studio</h4><a href="#home">Request board</a><a href="#home">How it's made</a><a href="#home">Newsletter</a><a href="#home">Contact</a></div>
+    </div>
+    <div class="f-bottom">
+      <label class="lang mono">Language <select aria-label="Language"><option>English</option><option>Deutsch</option><option>Español</option><option>日本語</option></select></label>
+      <p class="mono">Every frame on this site is generated with AI tools. Every cut, line and choice is made by one person.</p>
+      <p class="mono">© Visurena 2026</p>
+    </div>
+  </div>
+</footer>
+</section>
+
+<section class="view" id="episode" aria-label="Episode 4" style="--accent:var(--emerald)">
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="wordmark" href="#home" aria-label="Visurena home">VISURENA</a>
+    <nav class="nav-c" aria-label="Primary">
+      <a href="#home" data-accent="stories">Stories</a><a href="#movies" class="is-active" data-accent="movies">Movies</a><a href="#home" data-accent="music">Music</a><a href="#home" data-accent="games">Games</a><a href="#home" data-accent="req">Requests <span class="mono">(312)</span></a>
+    </nav>
+    <div class="nav-r">
+      <a class="icon-btn" href="#home" aria-label="Search"><svg width="20" height="20"><use href="#i-search"/></svg></a>
+      <a class="pill" href="#episode"><svg width="12" height="12"><use href="#i-play"/></svg><span class="mono">Ep 7 · 4 min left</span></a>
+      <a class="avatar" href="#home" aria-label="Your account">V</a>
+    </div>
+  </div>
+</header>
+<section class="stage-sec glow">
+  <div class="glow-bg" aria-hidden="true"><img class="web-garnish wide" src="assets/yt-WN2ktyq8tr0.jpg" alt=""></div>
+  <div class="wrap">
+    <p class="crumb mono"><a href="#movies">Movies</a> › <a href="#series">A Study in Scarlet</a> › Ep 4 of 14</p>
+    <div class="stage">
+      <div class="player-col">
+        <a class="player poster lit still" href="https://www.youtube.com/watch?v=WN2ktyq8tr0" target="_blank" rel="noopener" aria-label="Play Episode 4 on YouTube">
+          <img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 4 still" style="object-position:50% 50%">
+          <span class="playbig" aria-hidden="true"><svg width="26" height="26"><use href="#i-play"/></svg></span>
+          <span class="mono loadnote">Click to load on YouTube · 10:04</span>
+        </a>
+        <span class="floor"><i class="fill is-done" style="width:100%"></i></span>
+        <a class="mono ytlink" href="https://www.youtube.com/watch?v=WN2ktyq8tr0" target="_blank" rel="noopener">Watch on YouTube ↗</a>
+      </div>
+      <aside class="panel">
+        <div class="tabs small" role="tablist">
+          <a role="tab" aria-selected="true" class="is-on" href="#episode">Episodes</a>
+          <a role="tab" href="#episode">Chapters</a>
+          <a role="tab" href="#episode">About</a>
+        </div>
+        <div class="plist">
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 1 still" style="object-position:50% 50%"></span>
+  <span class="mono pn">01</span>
+  <span class="pt"><b>A Mr. Sherlock Holmes</b><i class="pbar"><b style="width:100%;background:var(--t3)"></b></i></span>
+  <span class="mono prt">10:12</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 2 still" style="object-position:50% 50%"></span>
+  <span class="mono pn">02</span>
+  <span class="pt"><b>The Science of Deduction</b><i class="pbar"><b style="width:100%;background:var(--t3)"></b></i></span>
+  <span class="mono prt">9:36</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 3 still" style="object-position:50% 50%"></span>
+  <span class="mono pn">03</span>
+  <span class="pt"><b>The Lauriston Garden Mystery</b><i class="pbar"><b style="width:100%;background:var(--t3)"></b></i></span>
+  <span class="mono prt">9:48</span>
+</a>
+<a class="prow is-now" href="#episode" aria-current="true">
+  <span class="pthumb still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 4 still" style="object-position:50% 50%"></span>
+  <span class="mono pn">04</span>
+  <span class="pt"><b>What John Rance Had to Tell</b><i class="pbar"><b style="width:100%;background:var(--t3)"></b></i></span>
+  <span class="mono prt">10:04</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 5 still" style="object-position:50% 50%"></span>
+  <span class="mono pn">05</span>
+  <span class="pt"><b>Our Advertisement Brings a Visitor</b><i class="pbar"><b style="width:100%;background:var(--t3)"></b></i></span>
+  <span class="mono prt">11:02</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 6 still" style="object-position:50% 50%"></span>
+  <span class="mono pn">06</span>
+  <span class="pt"><b>Tobias Gregson Shows What He Can Do</b><i class="pbar"><b style="width:100%;background:var(--t3)"></b></i></span>
+  <span class="mono prt">9:54</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 7 still" style="object-position:50% 20%"></span>
+  <span class="mono pn">07</span>
+  <span class="pt"><b>Light in the Darkness</b><i class="pbar"><b style="width:62%"></b></i></span>
+  <span class="mono prt">10:31</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 8 still" style="object-position:50% 20%"></span>
+  <span class="mono pn">08</span>
+  <span class="pt"><b>On the Great Alkali Plain</b></span>
+  <span class="mono prt">11:40</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 9 still" style="object-position:50% 20%"></span>
+  <span class="mono pn">09</span>
+  <span class="pt"><b>The Flower of Utah</b></span>
+  <span class="mono prt">9:12</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 10 still" style="object-position:50% 20%"></span>
+  <span class="mono pn">10</span>
+  <span class="pt"><b>John Ferrier Talks with the Prophet</b></span>
+  <span class="mono prt">10:47</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 11 still" style="object-position:50% 20%"></span>
+  <span class="mono pn">11</span>
+  <span class="pt"><b>A Flight for Life</b></span>
+  <span class="mono prt">9:58</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 12 still" style="object-position:50% 20%"></span>
+  <span class="mono pn">12</span>
+  <span class="pt"><b>The Avenging Angels</b></span>
+  <span class="mono prt">10:19</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 13 still" style="object-position:50% 80%"></span>
+  <span class="mono pn">13</span>
+  <span class="pt"><b>A Continuation of the Reminiscences of John Watson</b></span>
+  <span class="mono prt">11:15</span>
+</a>
+<a class="prow" href="#episode">
+  <span class="pthumb still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 14 still" style="object-position:50% 80%"></span>
+  <span class="mono pn">14</span>
+  <span class="pt"><b>The Conclusion</b></span>
+  <span class="mono prt">10:26</span>
+</a>
+        </div>
+      </aside>
+    </div>
+
+    <div class="ep-meta">
+      <div class="ep-title">
+        <h1>What John Rance Had to Tell</h1>
+        <p class="mono eyebrow">Ep 4 · 10:04 · Chapter 4 · Watched</p>
+      </div>
+      <div class="ep-actions">
+        <a class="btn ghost" href="#episode">‹ Ep 3</a>
+        <a class="btn ghost" href="#episode">Ep 5 ›</a>
+        <span class="spacer"></span>
+        <a class="icon-btn" href="#episode" aria-label="Like"><svg width="20" height="20"><use href="#i-heart"/></svg></a>
+        <a class="icon-btn" href="#episode" aria-label="Comments"><svg width="20" height="20"><use href="#i-comment"/></svg></a>
+        <a class="icon-btn" href="#episode" aria-label="Share"><svg width="20" height="20"><use href="#i-share"/></svg></a>
+      </div>
+      <a class="upnext card" href="#episode">
+        <span class="pthumb still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 5 still" style="object-position:50% 50%"></span>
+        <span class="ct"><span class="mono">Up next</span><b>Ep 5 · Our Advertisement Brings a Visitor</b><span class="mono">11:02 · Auto-advance 10 s after the credits · <u>Turn off</u></span></span>
+      </a>
+      <p class="prov mono">Every frame generated with AI. Every cut chosen by one person. <a href="#home">How this was made →</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap sec-h" style="--accent:var(--emerald)"><div class="sec-t"><h2 class="roomed">Shorts from this episode</h2></div><a class="mono more" href="#movies">4 shorts →</a></div>
+  <div class="wrap"><div class="rail" style="--w:148px">
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 4 still" style="object-position:50% 40%"></span>
+  <span class="cap"><span class="mono">Short · 0:55</span><b>The wedding ring</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 2 still" style="object-position:50% 60%"></span>
+  <span class="cap"><span class="mono">Short · 0:49</span><b>Rance's beat</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 6 still" style="object-position:50% 35%"></span>
+  <span class="cap"><span class="mono">Short · 0:58</span><b>The drunk in the road</b></span>
+</a>
+<a class="card" href="#episode">
+  <span class="poster r916 still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 3 still" style="object-position:50% 55%"></span>
+  <span class="cap"><span class="mono">Short · 0:38</span><b>Half a sovereign</b></span>
+</a>
+  </div></div>
+</section>
+
+<section class="section" style="--accent:var(--sapphire)">
+  <div class="wrap sec-h"><div class="sec-t"><h2 class="plain">More from the slate</h2><span class="mono subline">2,850 votes this season</span></div><a class="mono more" href="#home">Request board →</a></div>
+  <div class="wrap"><div class="rail" style="--w:172px">
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Dracula</span>
+    <span class="mono who">Bram Stoker · 1897</span>
+    <span class="votes"><span class="num">412</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Pride and Prejudice</span>
+    <span class="mono who">Jane Austen · 1813</span>
+    <span class="votes"><span class="num">388</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">The Picture of Dorian Gray</span>
+    <span class="mono who">Oscar Wilde · 1890</span>
+    <span class="votes"><span class="num">301</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Jekyll &amp; Hyde</span>
+    <span class="mono who">R. L. Stevenson · 1886</span>
+    <span class="votes"><span class="num">274</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Feature</span>
+    <span class="ttl">Moby-Dick</span>
+    <span class="mono who">Herman Melville · 1851</span>
+    <span class="votes"><span class="num">236</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Peter Pan</span>
+    <span class="mono who">J. M. Barrie · 1911</span>
+    <span class="votes"><span class="num">219</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+<div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Tom Sawyer</span>
+    <span class="mono who">Mark Twain · 1876</span>
+    <span class="votes"><span class="num">187</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div>
+  </div></div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="f-grid">
+      <div class="f-brand">
+        <span class="wordmark">VISURENA</span>
+        <p>Stories, movies, music, games. You choose what's next.</p>
+      </div>
+      <div class="f-col"><h4>Stories</h4><a href="#home">All stories</a><a href="#home">Falls Water</a><a href="#home">Casebook</a><a href="#home">Audiobook</a></div>
+      <div class="f-col"><h4>Movies</h4><a href="#movies">Movies hub</a><a href="#series">A Study in Scarlet</a><a href="#movies">Frankenstein</a><a href="#movies">Trailers &amp; shorts</a></div>
+      <div class="f-col"><h4>Music</h4><a href="#home">Last Train</a><a href="#home">Somebody Knew My Name</a><a href="#home">Audiobook</a></div>
+      <div class="f-col"><h4>Games</h4><a href="#home">Arcade</a><a href="#home">Puzzle</a><a href="#home">Leaderboards</a></div>
+      <div class="f-col"><h4>Studio</h4><a href="#home">Request board</a><a href="#home">How it's made</a><a href="#home">Newsletter</a><a href="#home">Contact</a></div>
+    </div>
+    <div class="f-bottom">
+      <label class="lang mono">Language <select aria-label="Language"><option>English</option><option>Deutsch</option><option>Español</option><option>日本語</option></select></label>
+      <p class="mono">Every frame on this site is generated with AI tools. Every cut, line and choice is made by one person.</p>
+      <p class="mono">© Visurena 2026</p>
+    </div>
+  </div>
+</footer>
+</section>
+
+<section class="view" id="mobile" aria-label="Mobile frames">
+  <div class="mob-wrap">
+    <div class="phone">
+      <div class="p-top">
+  <span class="wordmark">VISURENA</span>
+  <span class="p-top-r"><a class="reqchip mono" href="#mobile">Requests <b>312</b></a><span class="icon-btn"><svg width="20" height="20"><use href="#i-search"/></svg></span><span class="avatar">V</span></span>
+</div>
+      <div class="p-scroll">
+        <div class="m-hero glow" data-rotator data-slot="1">
+  <div class="glow-bg" aria-hidden="true"></div>
+  <div class="m-arts">
+    <a class="poster lit m-art r34" href="#mobile" data-slot-art="1"><img src="assets/story-falls-water-34.jpg" alt="Falls Water" style="object-position:50% 0"></a>
+    <a class="poster lit m-art r916" href="#mobile" data-slot-art="2" hidden><img src="assets/title-ep01.jpg" alt="A Study in Scarlet" style="object-position:50% 0"></a>
+    <a class="poster lit m-art r11" href="#mobile" data-slot-art="3" hidden><img src="assets/music-last-train.jpg" alt="Last Train"></a>
+    <a class="poster lit m-art r169 gamecard" href="#mobile" data-slot-art="4" hidden><img src="assets/neon-tetris-thumb.svg" alt="Neon Tetris"></a>
+    <span class="floor"><i class="fill" style="width:100%"></i></span>
+  </div>
+  <div class="hero-slot is-on" data-slot="1">
+    <p class="kicker">Stories · New this week</p>
+    <h2 class="m-title">Falls Water</h2>
+    <p class="mono m-status">Short story · Coming-of-age · 32 min</p>
+    <a class="btn primary full" href="#mobile">Read it</a>
+    <a class="btn ghost full" href="#mobile">+ Follow · Get the next story first</a>
+  </div>
+  <div class="hero-slot" data-slot="2">
+    <p class="kicker">Movies · Sherlock Holmes</p>
+    <h2 class="m-title">A Study in Scarlet</h2>
+    <p class="mono m-status">Series · Complete · 14 episodes · 2 h 20 min</p>
+    <a class="btn primary full" href="#mobile"><svg width="12" height="12"><use href="#i-play"/></svg>Continue Ep 7 · 4 min left</a>
+    <a class="btn ghost full" href="#mobile">Trailer · 0:60</a>
+  </div>
+  <div class="hero-slot" data-slot="3">
+    <p class="kicker">Music</p>
+    <h2 class="m-title">Last Train</h2>
+    <p class="mono m-status">Single · Released · 3:42</p>
+    <a class="btn primary full" href="#mobile"><svg width="12" height="12"><use href="#i-play"/></svg>Play</a>
+    <a class="btn ghost full" href="#mobile">All music</a>
+  </div>
+  <div class="hero-slot" data-slot="4">
+    <p class="kicker">Games</p>
+    <h2 class="m-title">Neon Tetris</h2>
+    <p class="mono m-status">Game · Puzzle · Browser · No install</p>
+    <a class="btn primary full" href="#mobile">Play now</a>
+    <a class="btn ghost full" href="#mobile">All games</a>
+  </div>
+  <div class="strip m-strip" role="tablist" aria-label="Featured by room"><button type="button" role="tab" data-dot="1" aria-selected="true" class="is-on" style="--a:var(--amber)">Stories</button><button type="button" role="tab" data-dot="2" aria-selected="false" style="--a:var(--emerald)">Movies</button><button type="button" role="tab" data-dot="3" aria-selected="false" style="--a:var(--ruby)">Music</button><button type="button" role="tab" data-dot="4" aria-selected="false" style="--a:var(--amethyst)">Games</button></div>
+</div>
+        <div class="m-sec">
+          <div class="sec-h tight"><h3>New this week</h3><span class="mono more">8 releases</span></div>
+          <div class="rail m-rail mixrail" style="--h:167px"><a class="card mix" href="#home" style="--w:125px">
+  <span class="poster r34"><img src="assets/story-falls-water-34.jpg" alt="Falls Water cover"><span class="kind mono" style="--k:var(--amber)">Story</span></span>
+  <span class="cap"><span class="mono">Short story · Coming-of-age · 32 min</span><b>Falls Water</b></span>
+</a>
+<a class="card mix" href="#episode" style="--w:111px">
+  <span class="poster r23 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 14 still" style="object-position:50% 80%"><span class="epchip mono">Ep 14</span><span class="kind mono" style="--k:var(--emerald)">Episode</span></span>
+  <span class="cap"><span class="mono">Ep 14 · 10:26</span><b>The Conclusion</b></span>
+</a>
+<a class="card mix" href="#home" style="--w:125px">
+  <span class="poster r34"><img src="assets/story-as-promised-34.jpg" alt="As Promised cover"><span class="kind mono" style="--k:var(--amber)">Story</span></span>
+  <span class="cap"><span class="mono">Short story · Drama · 18 min</span><b>As Promised</b></span>
+</a>
+<a class="card mix" href="#home" style="--w:167px">
+  <span class="poster r11"><img src="assets/music-last-train.jpg" alt="Last Train cover"><span class="kind mono" style="--k:var(--ruby)">Single</span></span>
+  <span class="cap"><span class="mono">Single · Released · 3:42</span><b>Last Train</b></span>
+</a>
+<a class="card mix" href="#home" style="--w:297px">
+  <span class="poster r169"><img src="assets/neon-tetris-thumb.svg" alt="Neon Tetris"><span class="kind mono" style="--k:var(--amethyst)">Game</span></span>
+  <span class="cap"><span class="mono">Puzzle · 8 min · Browser</span><b>Neon Tetris</b></span>
+</a>
+<a class="card mix" href="#episode" style="--w:111px">
+  <span class="poster r23 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 13 still" style="object-position:50% 80%"><span class="epchip mono">Ep 13</span><span class="kind mono" style="--k:var(--emerald)">Episode</span></span>
+  <span class="cap"><span class="mono">Ep 13 · 11:15</span><b>A Continuation of the Reminiscences of John Watson</b></span>
+</a>
+<a class="card mix" href="#home" style="--w:125px">
+  <span class="poster r34"><img src="assets/story-glass-and-granite-34.jpg" alt="Glass and Granite cover"><span class="kind mono" style="--k:var(--amber)">Story</span></span>
+  <span class="cap"><span class="mono">Short story · Literary · 24 min</span><b>Glass and Granite</b></span>
+</a>
+<a class="card mix" href="#home" style="--w:297px">
+  <span class="poster r169"><img src="assets/cosmic-defense-thumb.svg" alt="Cosmic Defense"><span class="kind mono" style="--k:var(--amethyst)">Game</span></span>
+  <span class="cap"><span class="mono">Shooter · 5 min · Browser</span><b>Cosmic Defense</b></span>
+</a></div>
+        </div>
+        <div class="m-sec" style="--accent:var(--amber)">
+          <div class="sec-h tight"><h3 class="roomed">Stories</h3><span class="mono more">7 stories</span></div>
+          <div class="rail m-rail" style="--w:111px"><a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-falls-water-34.jpg" alt="Falls Water cover"></span>
+  <span class="cap"><span class="mono">Short story · Coming-of-age · 32 min</span><b>Falls Water</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-as-promised-34.jpg" alt="As Promised cover"></span>
+  <span class="cap"><span class="mono">Short story · Drama · 18 min</span><b>As Promised</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-glass-and-granite-34.jpg" alt="Glass and Granite cover"></span>
+  <span class="cap"><span class="mono">Short story · Literary · 24 min</span><b>Glass and Granite</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-one-mitten-34.jpg" alt="One Mitten cover"></span>
+  <span class="cap"><span class="mono">Short story · Winter tale · 12 min</span><b>One Mitten</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-rich-ground-34.jpg" alt="Rich Ground cover"></span>
+  <span class="cap"><span class="mono">Short story · Rural · 27 min</span><b>Rich Ground</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-slack-water-34.jpg" alt="Slack Water cover"></span>
+  <span class="cap"><span class="mono">Short story · Coastal · 21 min</span><b>Slack Water</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r34"><img src="assets/story-the-mortar-line-34.jpg" alt="The Mortar Line cover"></span>
+  <span class="cap"><span class="mono">Short story · War · 35 min</span><b>The Mortar Line</b></span>
+</a></div>
+        </div>
+        <div class="m-sec" style="--accent:var(--emerald)">
+          <div class="sec-h tight"><h3 class="roomed">Movies</h3><span class="mono more">A Study in Scarlet · 14 ep</span></div>
+          <div class="rail m-rail" style="--w:111px"><a class="card m-ep" href="#mobile"><span class="poster r916 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 14 still" style="object-position:50% 80%"><span class="epchip mono">Ep 14</span></span><span class="floor"></span><span class="cap"><span class="mono">10:26</span><b>The Conclusion</b></span></a>
+<a class="card m-ep" href="#mobile"><span class="poster r916 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 13 still" style="object-position:50% 80%"><span class="epchip mono">Ep 13</span></span><span class="floor"></span><span class="cap"><span class="mono">11:15</span><b>A Continuation of the Reminiscences of John Watson</b></span></a>
+<a class="card m-ep" href="#mobile"><span class="poster r916 still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 12 still" style="object-position:50% 20%"><span class="epchip mono">Ep 12</span></span><span class="floor"></span><span class="cap"><span class="mono">10:19</span><b>The Avenging Angels</b></span></a>
+<a class="card m-ep" href="#mobile"><span class="poster r916 still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 11 still" style="object-position:50% 20%"><span class="epchip mono">Ep 11</span></span><span class="floor"></span><span class="cap"><span class="mono">9:58</span><b>A Flight for Life</b></span></a>
+<a class="card m-ep" href="#mobile"><span class="poster r916 still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 10 still" style="object-position:50% 20%"><span class="epchip mono">Ep 10</span></span><span class="floor"></span><span class="cap"><span class="mono">10:47</span><b>John Ferrier Talks with the Prophet</b></span></a>
+<a class="card m-ep" href="#mobile"><span class="poster r916 still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 9 still" style="object-position:50% 20%"><span class="epchip mono">Ep 9</span></span><span class="floor"></span><span class="cap"><span class="mono">9:12</span><b>The Flower of Utah</b></span></a>
+<a class="card m-ep" href="#mobile"><span class="poster r916 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 8 still" style="object-position:50% 20%"><span class="epchip mono">Ep 8</span></span><span class="floor"></span><span class="cap"><span class="mono">11:40</span><b>On the Great Alkali Plain</b></span></a>
+<a class="card m-ep" href="#mobile"><span class="poster r916 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 7 still" style="object-position:50% 20%"><span class="epchip mono">Ep 7</span></span><span class="floor"><i class="fill" style="width:62%"></i></span><span class="cap"><span class="mono">10:31</span><b>Light in the Darkness</b></span></a></div>
+        </div>
+        <div class="m-sec" style="--accent:var(--ruby)">
+          <div class="sec-h tight"><h3 class="roomed">Music</h3><span class="mono more">3 items</span></div>
+          <div class="rail m-rail" style="--w:111px"><a class="card" href="#mobile"><span class="poster r11"><img src="assets/music-last-train.jpg" alt="Last Train"></span><span class="cap"><span class="mono">Single · 3:42</span><b>Last Train</b></span></a>
+<a class="card" href="#mobile"><span class="poster r11"><img src="assets/music-somebody-knew-my-name.jpg" alt="Somebody Knew My Name"></span><span class="cap"><span class="mono">Single · 4:08</span><b>Somebody Knew My Name</b></span></a>
+<a class="card" href="#mobile"><span class="poster r11"><img src="assets/title-ep02.jpg" alt="A Study in Scarlet"></span><span class="cap"><span class="mono">Audiobook · 4 h 51 min</span><b>A Study in Scarlet</b></span></a></div>
+        </div>
+        <div class="m-sec" style="--accent:var(--amethyst)">
+          <div class="sec-h tight"><h3 class="roomed">Games</h3><span class="mono more">10 games</span></div>
+          <div class="rail m-rail" style="--w:171px"><a class="card" href="#home">
+  <span class="poster r169"><img src="assets/cosmic-defense-thumb.svg" alt="Cosmic Defense thumbnail"></span>
+  <span class="cap"><span class="mono">Shooter · 5 min · Browser</span><b>Cosmic Defense</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/neon-tetris-thumb.svg" alt="Neon Tetris thumbnail"></span>
+  <span class="cap"><span class="mono">Puzzle · 8 min · Browser</span><b>Neon Tetris</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/snake-evolution-thumb.svg" alt="Snake Evolution thumbnail"></span>
+  <span class="cap"><span class="mono">Arcade · 4 min · Browser</span><b>Snake Evolution</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/brick-breaker-thumb.svg" alt="Brick Breaker Ultra thumbnail"></span>
+  <span class="cap"><span class="mono">Arcade · 6 min · Browser</span><b>Brick Breaker Ultra</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/pong-championship-thumb.svg" alt="Pong Championship thumbnail"></span>
+  <span class="cap"><span class="mono">Sport · 3 min · Browser</span><b>Pong Championship</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/pac-runner-thumb.svg" alt="Pac-Runner thumbnail"></span>
+  <span class="cap"><span class="mono">Maze · 5 min · Browser</span><b>Pac-Runner</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/asteroid-blaster-thumb.svg" alt="Asteroid Blaster thumbnail"></span>
+  <span class="cap"><span class="mono">Shooter · 5 min · Browser</span><b>Asteroid Blaster</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/frogger-crossing-thumb.svg" alt="Frogger Crossing thumbnail"></span>
+  <span class="cap"><span class="mono">Arcade · 4 min · Browser</span><b>Frogger Crossing</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/missile-defense-thumb.svg" alt="Missile Defense thumbnail"></span>
+  <span class="cap"><span class="mono">Strategy · 6 min · Browser</span><b>Missile Defense</b></span>
+</a>
+<a class="card" href="#home">
+  <span class="poster r169"><img src="assets/centipede-garden-thumb.svg" alt="Centipede Garden thumbnail"></span>
+  <span class="cap"><span class="mono">Shooter · 5 min · Browser</span><b>Centipede Garden</b></span>
+</a></div>
+        </div>
+        <div class="m-sec" style="--accent:var(--sapphire)">
+          <div class="sec-h tight"><h3>On the slate</h3><span class="mono more">2,850 votes</span></div>
+          <a class="m-slate" href="#mobile"><span class="chip">In production</span><span class="ct"><b>Frankenstein</b><span class="mono">Script ✓ · Cast ✓ · Ep 1 rendering · Chosen by <span class="num">517</span> votes</span></span><span class="btn ghost sm">+ Follow</span></a>
+        </div>
+        <div class="m-sec how"><p class="mono">One person, a set of AI tools, stories, movies, music and games made in the open. <a href="#mobile">How it's made →</a></p></div>
+      </div>
+      <nav class="p-tabs" aria-label="Tabs"><a href="#mobile" class="is-on" style="--a:var(--sapphire)"><svg width="24" height="24"><use href="#i-home"/></svg><span>Home</span></a><a href="#mobile" style="--a:var(--amber)"><svg width="24" height="24"><use href="#i-book"/></svg><span>Stories</span></a><a href="#mobile" style="--a:var(--emerald)"><svg width="24" height="24"><use href="#i-play"/></svg><span>Movies</span></a><a href="#mobile" style="--a:var(--ruby)"><svg width="24" height="24"><use href="#i-music"/></svg><span>Music</span></a><a href="#mobile" style="--a:var(--amethyst)"><svg width="24" height="24"><use href="#i-game"/></svg><span>Games</span></a></nav>
+    </div>
+
+    <div class="phone">
+      <div class="p-top">
+  <span class="wordmark">VISURENA</span>
+  <span class="p-top-r"><a class="reqchip mono" href="#mobile">Requests <b>312</b></a><span class="icon-btn"><svg width="20" height="20"><use href="#i-search"/></svg></span><span class="avatar">V</span></span>
+</div>
+      <div class="p-scroll">
+        <div class="m-key">
+          <img src="assets/title-ep01.jpg" alt="A Study in Scarlet key art" style="object-position:50% 20%">
+          <span class="scrim" aria-hidden="true"></span>
+          <div class="m-key-copy">
+            <p class="mono crumb"><span>Movies</span> › Series</p>
+            <p class="kicker">Sherlock Holmes</p>
+            <h2 class="m-title big">A Study in Scarlet</h2>
+            <p class="mono m-status">Series · Complete · 14 episodes · ~10 min each · 1887</p>
+          </div>
+        </div>
+        <div class="m-pad">
+          <a class="btn primary full" href="#mobile"><svg width="12" height="12"><use href="#i-play"/></svg>Start Ep 1</a>
+          <div class="m-two"><a class="btn ghost full" href="#mobile">+ Follow</a><a class="btn ghost full" href="#mobile">Trailer</a></div>
+          <p class="syn clamp3">London, 1881. Dr John Watson, invalided home from Afghanistan, takes rooms at 221B Baker Street with Sherlock Holmes, a consulting detective who reads a life from a bootlace. A body in an empty house on Brixton Road, a word scrawled in blood and a lost wedding ring lead them, and the story, to the Utah desert thirty years earlier.</p>
+        </div>
+        <div class="m-sec" style="--accent:var(--emerald)">
+          <div class="sec-h tight"><h3 class="roomed">Episodes</h3><span class="mono more">14 · 2 h 20 min</span></div>
+          <div class="m-rows"><a class="m-row" href="#mobile">
+  <span class="poster r916 still"><img src="assets/yt-K2ucdt_mCg.jpg" alt="Episode 1 still" style="object-position:50% 50%"></span>
+  <span class="mono en">01</span>
+  <span class="ct"><b>A Mr. Sherlock Holmes</b><span class="mono">10:12 · Watched ✓</span></span>
+</a>
+<a class="m-row" href="#mobile">
+  <span class="poster r916 still"><img src="assets/yt-P8i7niWhEWo.jpg" alt="Episode 2 still" style="object-position:50% 50%"></span>
+  <span class="mono en">02</span>
+  <span class="ct"><b>The Science of Deduction</b><span class="mono">9:36 · Watched ✓</span></span>
+</a>
+<a class="m-row" href="#mobile">
+  <span class="poster r916 still"><img src="assets/yt-Pkr4HudmQPo.jpg" alt="Episode 3 still" style="object-position:50% 50%"></span>
+  <span class="mono en">03</span>
+  <span class="ct"><b>The Lauriston Garden Mystery</b><span class="mono">9:48 · Watched ✓</span></span>
+</a>
+<a class="m-row" href="#mobile">
+  <span class="poster r916 still"><img src="assets/yt-WN2ktyq8tr0.jpg" alt="Episode 4 still" style="object-position:50% 50%"></span>
+  <span class="mono en">04</span>
+  <span class="ct"><b>What John Rance Had to Tell</b><span class="mono">10:04 · Watched ✓</span></span>
+</a>
+<a class="m-row" href="#mobile">
+  <span class="poster r916 still"><img src="assets/yt-g-U-P0ZOoq8.jpg" alt="Episode 5 still" style="object-position:50% 50%"></span>
+  <span class="mono en">05</span>
+  <span class="ct"><b>Our Advertisement Brings a Visitor</b><span class="mono">11:02 · Watched ✓</span></span>
+</a>
+<a class="m-row" href="#mobile">
+  <span class="poster r916 still"><img src="assets/yt-AIX83NAcTGc.jpg" alt="Episode 6 still" style="object-position:50% 50%"></span>
+  <span class="mono en">06</span>
+  <span class="ct"><b>Tobias Gregson Shows What He Can Do</b><span class="mono">9:54 · Watched ✓</span></span>
+</a></div>
+          <a class="btn ghost full" href="#mobile">All 14 episodes</a>
+        </div>
+        <div class="m-sec">
+          <div class="sec-h tight"><h3>Cast</h3><span class="mono more">6</span></div>
+          <div class="rail m-rail" style="--w:111px"><a class="card" href="#series">
+  <span class="poster r34 face"><img src="assets/cast-holmes.jpg" alt="Sherlock Holmes" style="object-position:50% 30%"></span>
+  <span class="cap"><span class="mono">The consulting detective</span><b>Sherlock Holmes</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r34 face"><img src="assets/cast-watson.jpg" alt="Dr John Watson" style="object-position:50% 30%"></span>
+  <span class="cap"><span class="mono">Narrator · late of the Berkshires</span><b>Dr John Watson</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r34 face"><span class="ini">L</span></span>
+  <span class="cap"><span class="mono">Scotland Yard</span><b>Inspector Lestrade</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r34 face"><span class="ini">TG</span></span>
+  <span class="cap"><span class="mono">Scotland Yard</span><b>Tobias Gregson</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r34 face"><span class="ini">JH</span></span>
+  <span class="cap"><span class="mono">The cabman</span><b>Jefferson Hope</b></span>
+</a>
+<a class="card" href="#series">
+  <span class="poster r34 face"><span class="ini">LF</span></span>
+  <span class="cap"><span class="mono">The flower of Utah</span><b>Lucy Ferrier</b></span>
+</a></div>
+        </div>
+        <div class="m-sec" style="--accent:var(--sapphire)">
+          <div class="sec-h tight"><h3>What next?</h3><span class="mono more">2,850 votes</span></div>
+          <div class="rail m-rail" style="--w:111px"><div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Dracula</span>
+    <span class="mono who">Bram Stoker · 1897</span>
+    <span class="votes"><span class="num">412</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div><div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">Pride and Prejudice</span>
+    <span class="mono who">Jane Austen · 1813</span>
+    <span class="votes"><span class="num">388</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div><div class="card slate">
+  <span class="cover">
+    <span class="mono fmt">Episodes</span>
+    <span class="ttl">The Picture of Dorian Gray</span>
+    <span class="mono who">Oscar Wilde · 1890</span>
+    <span class="votes"><span class="num">301</span><span class="mono lbl">votes</span></span>
+  </span>
+  <a class="btn ghost sm" href="#home">Vote</a>
+</div></div>
+        </div>
+      </div>
+      <nav class="p-tabs" aria-label="Tabs"><a href="#mobile" style="--a:var(--sapphire)"><svg width="24" height="24"><use href="#i-home"/></svg><span>Home</span></a><a href="#mobile" style="--a:var(--amber)"><svg width="24" height="24"><use href="#i-book"/></svg><span>Stories</span></a><a href="#mobile" class="is-on" style="--a:var(--emerald)"><svg width="24" height="24"><use href="#i-play"/></svg><span>Movies</span></a><a href="#mobile" style="--a:var(--ruby)"><svg width="24" height="24"><use href="#i-music"/></svg><span>Music</span></a><a href="#mobile" style="--a:var(--amethyst)"><svg width="24" height="24"><use href="#i-game"/></svg><span>Games</span></a></nav>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  var views=['home','movies','series','episode','mobile'];
+  function show(){
+    var h=(location.hash||'#home').slice(1);
+    if(views.indexOf(h)<0)h='home';
+    views.forEach(function(v){document.getElementById(v).classList.toggle('is-on',v===h);});
+    var links=document.querySelectorAll('.dev a[data-view]');
+    for(var i=0;i<links.length;i++)links[i].classList.toggle('is-on',links[i].getAttribute('data-view')===h);
+    window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange',show);
+  show();
+  window.addEventListener('load',function(){window.scrollTo(0,0);});
+  var nat=document.getElementById('native');
+  nat.addEventListener('click',function(){
+    var on=document.documentElement.classList.toggle('native');
+    nat.setAttribute('aria-pressed',on?'true':'false');
+  });
+  /* rotators: one per vertical; JS only swaps which slot is shown */
+  var rots=document.querySelectorAll('[data-rotator]');
+  for(var r=0;r<rots.length;r++)(function(rot){
+    var btns=rot.querySelectorAll('[data-dot]');
+    for(var b=0;b<btns.length;b++)btns[b].addEventListener('click',function(){
+      var n=this.getAttribute('data-dot');
+      rot.setAttribute('data-slot',n);
+      for(var i=0;i<btns.length;i++){var on=btns[i]===this;btns[i].classList.toggle('is-on',on);btns[i].setAttribute('aria-selected',on?'true':'false');}
+      var slots=rot.querySelectorAll('.hero-slot');
+      for(var s=0;s<slots.length;s++)slots[s].classList.toggle('is-on',slots[s].getAttribute('data-slot')===n);
+      var arts=rot.querySelectorAll('[data-slot-art]');
+      for(var a=0;a<arts.length;a++)arts[a].hidden=arts[a].getAttribute('data-slot-art')!==n;
+      var glows=rot.querySelectorAll('[data-slot-glow]');
+      for(var g=0;g<glows.length;g++)glows[g].hidden=glows[g].getAttribute('data-slot-glow')!==n;
+    });
+  })(rots[r]);
+  /* dev-only URL hooks for headless captures: ?native=1 and ?slot=N */
+  var q=location.search.slice(1).split('&'),qs={};
+  for(var k=0;k<q.length;k++){var kv=q[k].split('=');if(kv[0])qs[kv[0]]=kv[1]||'';}
+  if(qs.native==='1'){document.documentElement.classList.add('native');nat.setAttribute('aria-pressed','true');}
+  if(qs.slot){var sb=document.querySelectorAll('[data-rotator] [data-dot="'+qs.slot+'"]');for(var j=0;j<sb.length;j++)sb[j].click();}
+})();
+</script>
+</body>
+</html>

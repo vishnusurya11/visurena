@@ -53,6 +53,7 @@ node_modules/
 
 # Generated story assets copied in from the content drop at build time (not source of record)
 /apps/web/public/stories/
+/apps/web/public/research/
 
 # Local cache of the S3 content bucket for an S3-sourced build (pnpm content:pull)
 /apps/web/.content-cache/

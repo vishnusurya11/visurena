@@ -20,3 +20,6 @@ export { VRCounter } from "./VRCounter";
 export { VRMagnetic } from "./VRMagnetic";
 export { VRCursorDot } from "./VRCursorDot";
 export { VRMarquee } from "./VRMarquee";
+
+// Cinema Lobby system (2026-09-25 redesign)
+export * from "./lobby";

@@ -1,0 +1,19 @@
+{
+  "season": "2026-autumn",
+  "totalVotes": 2850,
+  "openRequests": 312,
+  "items": [
+    { "id": "req_frankenstein", "title": "Frankenstein", "author": "Mary Shelley", "year": "1818", "format": "Episodes", "votes": 517, "state": "in-production", "producedSlug": "frankenstein" },
+    { "id": "req_dracula", "title": "Dracula", "author": "Bram Stoker", "year": "1897", "format": "Episodes", "votes": 412, "state": "voting" },
+    { "id": "req_pride-and-prejudice", "title": "Pride and Prejudice", "author": "Jane Austen", "year": "1813", "format": "Episodes", "votes": 388, "state": "voting" },
+    { "id": "req_dorian-gray", "title": "The Picture of Dorian Gray", "author": "Oscar Wilde", "year": "1890", "format": "Episodes", "votes": 301, "state": "voting" },
+    { "id": "req_jekyll-hyde", "title": "Jekyll & Hyde", "author": "R. L. Stevenson", "year": "1886", "format": "Episodes", "votes": 274, "state": "voting" },
+    { "id": "req_moby-dick", "title": "Moby-Dick", "author": "Herman Melville", "year": "1851", "format": "Feature", "votes": 236, "state": "voting" },
+    { "id": "req_peter-pan", "title": "Peter Pan", "author": "J. M. Barrie", "year": "1911", "format": "Episodes", "votes": 219, "state": "voting" },
+    { "id": "req_tom-sawyer", "title": "Tom Sawyer", "author": "Mark Twain", "year": "1876", "format": "Episodes", "votes": 187, "state": "voting" },
+    { "id": "req_heart-of-darkness", "title": "Heart of Darkness", "author": "Joseph Conrad", "year": "1899", "format": "Feature", "votes": 164, "state": "voting" },
+    { "id": "req_metamorphosis", "title": "The Metamorphosis", "author": "Franz Kafka", "year": "1915", "format": "Shorts", "votes": 152, "state": "voting" },
+    { "id": "req_more-arcade", "title": "More arcade games", "format": "Games", "votes": 143, "state": "voting" },
+    { "id": "req_horror-collection", "title": "A horror story collection", "format": "Stories", "votes": 128, "state": "voting" }
+  ]
+}

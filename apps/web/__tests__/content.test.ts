@@ -22,4 +22,9 @@ describe("web content adapter", () => {
       );
     }
   });
+
+  it("never turns a drop folder's manifest.json into a story", () => {
+    const stories = getLatestStories(new Date("2100-01-01T00:00:00Z"));
+    expect(stories.some((s) => s.slug === "manifest")).toBe(false);
+  });
 });

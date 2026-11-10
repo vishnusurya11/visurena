@@ -29,7 +29,7 @@ interface VRNewsletterProps {
 export function VRNewsletter({
   eyebrow       = "The Monday Post",
   headline,
-  subtext       = "One short story, one essay, one piece of music we made that week. No tracking, no ads. Free during open beta.",
+  subtext       = "One short story, one essay, one piece of music we made that week. No tracking, no ads.",
   // TODO(future): subscriber count — no default literal anymore (the old "2,847
   // readers subscribed" number was fabricated). Hidden unless a real count is passed.
   subscriberLine,

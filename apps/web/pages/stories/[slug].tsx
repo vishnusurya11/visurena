@@ -219,29 +219,62 @@ function ReaderRail({ story }: { story: StoryProps["story"] }) {
 }
 
 // ─── Reader ──────────────────────────────────────────────────────
+// SOLID dark sheet behind prose. The nebula is *brand identity for browse pages*,
+// not a reading surface. Every premium reader (NYT, New Yorker, Royal Road) puts
+// prose on a single legible plane. Nebula stays visible only in the hero above and
+// after the read — never behind body text. Off-white #EDE6D6 on dark #0E0E14
+// surface = ~13:1 contrast (comfortable AAA), no halation.
 function StoryReader({ story }: { story: StoryProps["story"] }) {
   const tint = story.accent || AMBER;
   return (
-    <section id="read" style={{ padding: "96px clamp(28px, 4vw, 80px) 40px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-      <div style={{ maxWidth: 720, margin: "0 auto" }}>
+    <section
+      id="read"
+      style={{
+        background: "#0E0E14",         // solid plane — occludes the nebula behind prose
+        position: "relative",          // own stacking context
+        padding: "96px 0 64px",
+        borderTop: `1px solid ${tint}1f`,
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        boxShadow: "0 -1px 60px -20px rgba(0,0,0,0.7)",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 680,               // ~65ch in Spectral — classical comfort measure
+          margin: "0 auto",
+          padding: "0 clamp(28px, 4vw, 56px)",
+        }}
+      >
         {story.scenes.map((scene, si) => (
           <div key={si} id={`scene-${si}`} data-scene-index={si} style={{ scrollMarginTop: 90 }}>
             {si > 0 && (
-              <div aria-hidden style={{ textAlign: "center", color: tint, fontFamily: F_DISPLAY, fontSize: 22, letterSpacing: "0.5em", margin: "44px 0 40px", opacity: 0.8 }}>
+              <div aria-hidden style={{
+                textAlign: "center", color: tint, fontFamily: F_DISPLAY,
+                fontSize: 20, letterSpacing: "0.5em",
+                margin: "48px 0 44px", opacity: 0.55,
+              }}>
                 ✦
               </div>
             )}
             {paragraphs(scene.prose).map((p, pi) => (
-              <p key={pi} className="vr-prose-p" style={{
-                fontFamily: F_BODY, fontSize: 20, lineHeight: 1.75,
-                color: "#e6e1d2", margin: "0 0 1.35em",
-              }}>
+              <p
+                key={pi}
+                className="vr-prose-p"
+                style={{
+                  fontFamily: F_BODY,
+                  fontSize: 19,                // body text, post-research sweet spot
+                  lineHeight: 1.7,             // air for long reads on dark surface
+                  color: "#EDE6D6",            // warm off-white, NOT #FFF (kills halation)
+                  margin: "0 0 1.25em",
+                  textWrap: "pretty" as React.CSSProperties["textWrap"],
+                }}
+              >
                 {p}
               </p>
             ))}
           </div>
         ))}
-        <div style={{ textAlign: "center", marginTop: 56, fontFamily: F_MONO, fontSize: 10, letterSpacing: "0.34em", color: "#5a5345", textTransform: "uppercase" }}>
+        <div style={{ textAlign: "center", marginTop: 64, fontFamily: F_MONO, fontSize: 10, letterSpacing: "0.34em", color: "#5a5345", textTransform: "uppercase" }}>
           ✦ End ✦
         </div>
       </div>

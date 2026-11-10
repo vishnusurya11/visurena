@@ -46,7 +46,7 @@ const GENRE_TINT: Record<string, string> = {
   Romance: "#a64a52",
 };
 
-function contentRoot(): string {
+export function contentRoot(): string {
   // s3 mode: `pnpm content:pull` (scripts/pull-content.mjs) syncs the bucket into
   // .content-cache first; we then read it with the same local walker below.
   if (process.env.VR_CONTENT_SOURCE === "s3") {
@@ -119,7 +119,8 @@ function readStory(dir: string): StoryFull | null {
   } catch {
     return null;
   }
-  const jsonName = entries.find((n) => n.endsWith(".json"));
+  // A drop folder also holds manifest.json (pipeline bookkeeping); the story is the other .json.
+  const jsonName = entries.find((n) => n.endsWith(".json") && n !== "manifest.json");
   if (!jsonName) return null;
 
   let raw: any;

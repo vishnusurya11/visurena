@@ -10,7 +10,7 @@ function Probe() {
 describe("ThemeProvider", () => {
   it("uses the section accent when no item accent is set", () => {
     render(<ThemeProvider section="movies"><Probe /></ThemeProvider>);
-    expect(screen.getByTestId("accent").textContent).toBe("#00d97e");
+    expect(screen.getByTestId("accent").textContent).toBe("#3DD68C");
   });
   it("prefers the item accent when provided", () => {
     render(<ThemeProvider section="stories" itemAccent="#7c8fa8"><Probe /></ThemeProvider>);

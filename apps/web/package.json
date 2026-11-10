@@ -9,6 +9,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "content:pull": "node scripts/pull-content.mjs",
+    "content:ingest-studio": "node scripts/ingest-studio.mjs",
     "export": "next build",
     "test": "vitest run",
     "test:watch": "vitest"

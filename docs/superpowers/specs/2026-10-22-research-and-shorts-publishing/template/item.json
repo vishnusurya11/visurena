@@ -1,0 +1,50 @@
+{
+  "id": "res_UPSCALE_AB",
+  "section": "research",
+  "slug": "anime-upscale-ab-realesrgan-vs-rtx-vsr",
+  "kind": "note",
+  "type": "benchmark",
+  "status": "scheduled",
+  "createdAt": "2026-10-18",
+  "publishAt": "2026-10-27T08:00:00Z",
+  "version": "1.0.0",
+  "updatedAt": "2026-10-22",
+
+  "title": "Denoise + Real-ESRGAN vs RTX VSR on anime video",
+  "claim": "On 1:1 anime episodes, denoise + Real-ESRGAN animevideov3 x4 jitters 51-58 % less than RTX VSR and renders faces 21-33 % sharper, at about 4.8 min per episode.",
+  "headline": { "value": "51-58 %", "label": "less jitter than RTX VSR" },
+  "summary": "At most 200 words. What was compared, how it was measured, what was found, what it does not show.",
+
+  "measuredOn": {
+    "date": "2026-10-18",
+    "hardware": "1x RTX 4090, Windows 11",
+    "models": ["Real-ESRGAN animevideov3 x4", "NVIDIA RTX VSR"],
+    "commit": "visurena-studio@<sha>",
+    "n": 3,
+    "units": "takes x 124 frames"
+  },
+
+  "accent": { "primary": "#6C9BFF" },
+  "cover": "summary.png",
+  "tags": ["upscaling", "anime", "video", "benchmark"],
+  "credits": { "author": "ViSuReNa", "orcid": "0000-0000-0000-0000" },
+
+  "files": {
+    "article": "article.md",
+    "report": null,
+    "pdf": "paper.pdf",
+    "summary": "summary.png",
+    "data": ["data/metrics.json", "data/ledger.jsonl"]
+  },
+
+  "license": { "text": "CC-BY-4.0", "code": "Apache-2.0" },
+  "doi": null,
+  "repo": "https://github.com/vishnusurya11/visurena-research",
+  "changelog": [
+    { "version": "1.0.0", "date": "2026-10-27", "note": "First publication." }
+  ],
+
+  "related": [
+    { "toId": "mov_WOTW", "type": "measured-on" }
+  ]
+}

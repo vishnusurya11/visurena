@@ -8,7 +8,7 @@ export function NewsletterCTA() {
         New chapters in your inbox, <em className="text-jewel-amber not-italic font-display italic">every Monday morning.</em>
       </h2>
       <p className="font-body text-jewel-ivory/60 mt-5 max-w-xl mx-auto">
-        One short story, one essay, one piece of music we made that week. No tracking, no ads. Free during open beta.
+        One short story, one essay, one piece of music we made that week. No tracking, no ads.
       </p>
     </section>
   );

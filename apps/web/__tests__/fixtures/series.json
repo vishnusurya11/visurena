@@ -1,0 +1,259 @@
+[
+ {
+  "id": "mov_a-study-in-scarlet",
+  "section": "movies",
+  "kind": "series",
+  "slug": "a-study-in-scarlet",
+  "title": "A Study in Scarlet",
+  "subtitle": "Sherlock Holmes",
+  "author": "Arthur Conan Doyle",
+  "year": "1887",
+  "status": "complete",
+  "aspect": "1:1",
+  "synopsis": "A wounded army doctor takes rooms with a stranger who can read a whole life from a bootlace, and follows him to a murder written in blood in an empty Brixton house.",
+  "poster": "/movies/a-study-in-scarlet/poster.jpg",
+  "backdrop": "/movies/a-study-in-scarlet/backdrop.jpg",
+  "glow": "/movies/a-study-in-scarlet/glow.jpg",
+  "accent": "#3DD68C",
+  "trailer": {
+   "file": "/movies/a-study-in-scarlet/trailer-60.mp4",
+   "runtime": "0:54",
+   "poster": "/movies/a-study-in-scarlet/trailer.jpg"
+  },
+  "playlistId": "PLWwu0OoN4CkQ",
+  "compilation": {
+   "youtubeId": "HOLHQEN0Gic",
+   "title": "Sherlock Holmes: A Study in Scarlet — Full Adaptation, All 14 Episodes",
+   "publishAt": "2026-10-11T05:34:38.124848+00:00"
+  },
+  "episodes": [
+   {
+    "n": 1,
+    "slug": "ep-01",
+    "title": "A Mr. Sherlock Holmes",
+    "youtubeId": "-K2ucdt_mCg",
+    "runtime": "2:54",
+    "aspect": "9:16",
+    "publishAt": "2026-09-12T20:47:02Z",
+    "chapter": 1,
+    "still": "/movies/a-study-in-scarlet/ep01.jpg"
+   },
+   {
+    "n": 2,
+    "slug": "ep-02",
+    "title": "The Science of Deduction",
+    "youtubeId": "P8i7niWhEWo",
+    "runtime": "2:41",
+    "aspect": "1:1",
+    "publishAt": "2026-09-13T09:00:01Z",
+    "chapter": 2,
+    "still": "/movies/a-study-in-scarlet/ep02.jpg"
+   },
+   {
+    "n": 3,
+    "slug": "ep-03",
+    "title": "The Lauriston Garden Mystery",
+    "youtubeId": "Pkr4HudmQPo",
+    "runtime": "2:47",
+    "aspect": "1:1",
+    "publishAt": "2026-09-13T20:04:46Z",
+    "chapter": 3,
+    "still": "/movies/a-study-in-scarlet/ep03.jpg"
+   },
+   {
+    "n": 4,
+    "slug": "ep-04",
+    "title": "What John Rance Had to Tell",
+    "youtubeId": "WN2ktyq8tr0",
+    "runtime": "2:23",
+    "aspect": "1:1",
+    "publishAt": "2026-09-14T07:28:05Z",
+    "chapter": 4,
+    "still": "/movies/a-study-in-scarlet/ep04.jpg"
+   },
+   {
+    "n": 5,
+    "slug": "ep-05",
+    "title": "Our Advertisement Brings a Visitor",
+    "youtubeId": "g-U-P0ZOoq8",
+    "runtime": "2:42",
+    "aspect": "1:1",
+    "publishAt": "2026-09-14T18:11:44Z",
+    "chapter": 5,
+    "still": "/movies/a-study-in-scarlet/ep05.jpg"
+   },
+   {
+    "n": 6,
+    "slug": "ep-06",
+    "title": "Tobias Gregson Shows What He Can Do",
+    "youtubeId": "AIX83NAcTGc",
+    "runtime": "2:44",
+    "aspect": "1:1",
+    "publishAt": "2026-09-14T22:40:40Z",
+    "chapter": 6,
+    "still": "/movies/a-study-in-scarlet/ep06.jpg"
+   },
+   {
+    "n": 7,
+    "slug": "ep-07",
+    "title": "Light in the Darkness",
+    "youtubeId": "xksX2qouWEo",
+    "runtime": "2:15",
+    "aspect": "1:1",
+    "publishAt": "2026-09-15T11:08:28Z",
+    "chapter": 7,
+    "still": "/movies/a-study-in-scarlet/ep07.jpg"
+   },
+   {
+    "n": 8,
+    "slug": "ep-08",
+    "title": "On the Great Alkali Plain",
+    "youtubeId": "V5sFXhGemRk",
+    "runtime": "2:44",
+    "aspect": "1:1",
+    "publishAt": "2026-09-16T03:08:30Z",
+    "chapter": 8,
+    "still": "/movies/a-study-in-scarlet/ep08.jpg"
+   },
+   {
+    "n": 9,
+    "slug": "ep-09",
+    "title": "The Flower of Utah",
+    "youtubeId": "Me9h8oQwx6E",
+    "runtime": "2:31",
+    "aspect": "1:1",
+    "publishAt": "2026-09-16T09:45:20Z",
+    "chapter": 9,
+    "still": "/movies/a-study-in-scarlet/ep09.jpg"
+   },
+   {
+    "n": 10,
+    "slug": "ep-10",
+    "title": "John Ferrier Talks with the Prophet",
+    "youtubeId": "nftf6bbjQMs",
+    "runtime": "2:56",
+    "aspect": "1:1",
+    "publishAt": "2026-09-16T21:55:57Z",
+    "chapter": 10,
+    "still": "/movies/a-study-in-scarlet/ep10.jpg"
+   },
+   {
+    "n": 11,
+    "slug": "ep-11",
+    "title": "A Flight for Life",
+    "youtubeId": "ZC7AWsoTrlo",
+    "runtime": "2:44",
+    "aspect": "1:1",
+    "publishAt": "2026-09-17T04:46:57Z",
+    "chapter": 11,
+    "still": "/movies/a-study-in-scarlet/ep11.jpg"
+   },
+   {
+    "n": 12,
+    "slug": "ep-12",
+    "title": "The Avenging Angels",
+    "youtubeId": "s7_uJ-VSDHk",
+    "runtime": "2:50",
+    "aspect": "1:1",
+    "publishAt": "2026-09-17T09:14:23Z",
+    "chapter": 12,
+    "still": "/movies/a-study-in-scarlet/ep12.jpg"
+   },
+   {
+    "n": 13,
+    "slug": "ep-13",
+    "title": "A Continuation of the Reminiscences of John Watson, M.D.",
+    "youtubeId": "OoTLbV3KurU",
+    "runtime": "2:50",
+    "aspect": "1:1",
+    "publishAt": "2026-09-17T12:49:12Z",
+    "chapter": 13,
+    "still": "/movies/a-study-in-scarlet/ep13.jpg"
+   },
+   {
+    "n": 14,
+    "slug": "ep-14",
+    "title": "The Conclusion",
+    "youtubeId": "FSVrTMyOxxs",
+    "runtime": "2:43",
+    "aspect": "1:1",
+    "publishAt": "2026-09-18T05:14:18Z",
+    "chapter": 14,
+    "still": "/movies/a-study-in-scarlet/ep14.jpg"
+   }
+  ],
+  "cast": [
+   {
+    "id": "sherlock_holmes",
+    "name": "Sherlock Holmes",
+    "role": "Consulting detective",
+    "portrait": "/movies/a-study-in-scarlet/cast/sherlock_holmes.jpg"
+   },
+   {
+    "id": "john_watson",
+    "name": "Dr. John Watson",
+    "role": "Narrator",
+    "portrait": "/movies/a-study-in-scarlet/cast/john_watson.jpg"
+   },
+   {
+    "id": "g_lestrade",
+    "name": "Inspector Lestrade",
+    "role": "Scotland Yard",
+    "portrait": "/movies/a-study-in-scarlet/cast/g_lestrade.jpg"
+   },
+   {
+    "id": "tobias_gregson",
+    "name": "Tobias Gregson",
+    "role": "Scotland Yard",
+    "portrait": "/movies/a-study-in-scarlet/cast/tobias_gregson.jpg"
+   },
+   {
+    "id": "jefferson_hope",
+    "name": "Jefferson Hope",
+    "role": "The cabman",
+    "portrait": "/movies/a-study-in-scarlet/cast/jefferson_hope.jpg"
+   },
+   {
+    "id": "lucy_ferrier",
+    "name": "Lucy Ferrier",
+    "role": "The Flower of Utah",
+    "portrait": "/movies/a-study-in-scarlet/cast/lucy_ferrier.jpg"
+   }
+  ],
+  "extras": {
+   "audiobook": {
+    "runtime": "4 h 51 min",
+    "chapters": 14
+   },
+   "casebook": true
+  },
+  "createdAt": "2026-08-22",
+  "publishAt": "2026-09-12T20:47:02Z"
+ },
+ {
+  "id": "mov_frankenstein",
+  "section": "movies",
+  "kind": "series",
+  "slug": "frankenstein",
+  "title": "Frankenstein",
+  "subtitle": "or, The Modern Prometheus",
+  "author": "Mary Shelley",
+  "year": "1818",
+  "status": "in-production",
+  "aspect": "9:16",
+  "synopsis": "A student of natural philosophy builds a living thing from the dead, then abandons it. The thing follows him across Europe asking one question.",
+  "poster": "/movies/frankenstein/poster.jpg",
+  "glow": "/movies/frankenstein/glow.jpg",
+  "accent": "#3DD68C",
+  "episodes": [],
+  "cast": [],
+  "production": {
+   "script": true,
+   "cast": true,
+   "note": "Ep 1 rendering",
+   "votes": 517
+  },
+  "createdAt": "2026-08-25",
+  "publishAt": "2026-08-25T23:59:49Z"
+ }
+]
