@@ -3,8 +3,8 @@
 // Build-time content provider for Research (a studio page, sapphire; ARCHITECTURE.md D36/D37).
 // Server-only — used inside getStaticProps / getStaticPaths.
 //
-// One article = one self-contained, dated folder in the content drop (same rule as every work, D10/D22):
-//   <content root>/research/YYYY/MM/DD/<slug>/
+// One article = one self-contained, dated folder (same shape as every work, D22), kept in git:
+//   <repo>/content-local/research/YYYY/MM/DD/<slug>/      (VR_RESEARCH_DIR overrides)
 //     item.json      the manifest (single source of truth) — see docs/content-management.md
 //     article.md     kind "note":   Markdown (+ optional front-matter), rendered into the Lobby reader
 //     report.html    kind "report": a self-contained HTML report, embedded in a sandboxed iframe
@@ -20,7 +20,6 @@ import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
 import { selectLive, type ContentItem } from "@visurena/core";
-import { contentRoot } from "./content";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 export const RESEARCH_TYPES = ["benchmark", "negative-result", "design-essay", "note", "system"] as const;
@@ -277,6 +276,16 @@ export function measuredLine(m?: MeasuredOn): string[] {
 }
 
 // ─── IO ──────────────────────────────────────────────────────────────────────
+/**
+ * Where the article folders live. Research is versioned in git (owner, 2026-11-10: the articles
+ * travel with the branch), so the default is <repo>/content-local/research — not the content drop.
+ * VR_RESEARCH_DIR overrides it (tests point it at a temp folder).
+ */
+export function researchRoot(): string {
+  // cwd during next build / dev / vitest is apps/web → repo is ../..
+  return process.env.VR_RESEARCH_DIR || path.resolve(process.cwd(), "..", "..", "content-local", "research");
+}
+
 function publicRoot(): string {
   // VR_PUBLIC_DIR lets tests copy into a temp folder instead of apps/web/public.
   return process.env.VR_PUBLIC_DIR || path.join(process.cwd(), "public");
@@ -359,7 +368,7 @@ let _cache: ResearchFull[] | null = null;
 
 function loadAll(): ResearchFull[] {
   if (_cache) return _cache;
-  _cache = findResearchDirs(path.join(contentRoot(), "research"))
+  _cache = findResearchDirs(researchRoot())
     .map(readArticle)
     .filter((r): r is ResearchFull => r !== null);
   return _cache;

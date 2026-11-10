@@ -1,0 +1,1390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>try{var t=new URLSearchParams(location.search).get('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t;}catch(e){}</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Visurena Story Department</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --paper:#0f1012; --paper-2:#18191c; --ink:#ededef; --ink-2:#b4b6bc; --ink-3:#8e9199;
+  --rule:#26282d; --rule-2:#34373d; --line:#4a4d55;
+  --code:#1c1d21; --code-ink:#d6d8dd;
+  --accent:#e0664c; --accent-ink:#0f1012;
+  --think:#9dc0dd; --think-bg:#1b2733;
+  --qc:#e2c979; --qc-bg:#2b2616;
+  --invent:#c8a6e0; --invent-bg:#261d2e;
+  --ok:#8fcf9b; --ok-bg:#1a2b1f;
+  --lead:#ededef; --lead-ink:#0f1012;
+}
+/* the owner's neutral Studio dark is the default (board review 2026-10-12, A23: the warm beige is retired);
+   Graphite light only when asked for */
+:root[data-theme="light"]{
+  color-scheme:light;
+  --paper:#f4f5f7; --paper-2:#eceef1; --ink:#16181d; --ink-2:#454952; --ink-3:#6b707a;
+  --rule:#d9dce1; --rule-2:#c3c7ce; --line:#9aa0a9;
+  --code:#e8eaee; --code-ink:#2c2f36;
+  --accent:#a4341f; --accent-ink:#ffffff;
+  --think:#2c4f6b; --think-bg:#e3ebf2;
+  --qc:#5f4b1c; --qc-bg:#f1e8c9;
+  --invent:#6a3b8f; --invent-bg:#ece3f3;
+  --ok:#2f6b3a; --ok-bg:#dfeee2;
+  --lead:#16181d; --lead-ink:#f4f5f7;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0f1012; --paper-2:#18191c; --ink:#ededef; --ink-2:#b4b6bc; --ink-3:#8e9199;
+  --rule:#26282d; --rule-2:#34373d; --line:#4a4d55;
+  --code:#1c1d21; --code-ink:#d6d8dd;
+  --accent:#e0664c; --accent-ink:#0f1012;
+  --think:#9dc0dd; --think-bg:#1b2733;
+  --qc:#e2c979; --qc-bg:#2b2616;
+  --invent:#c8a6e0; --invent-bg:#261d2e;
+  --ok:#8fcf9b; --ok-bg:#1a2b1f;
+  --lead:#ededef; --lead-ink:#0f1012;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 56px;padding-inline:16px}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",sans-serif;text-wrap:balance;margin:0}
+h1{font-size:42px;font-weight:700;letter-spacing:.01em;line-height:1}
+h2{font-size:30px;font-weight:700}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.lede{max-width:66ch;color:var(--ink-2);margin-top:10px}
+.lede b{color:var(--ink)}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px}
+code{background:var(--code);color:var(--code-ink);padding:1px 5px;border-radius:3px}
+section.block{margin-top:44px;border-top:3px solid var(--ink);padding-top:12px}
+section.block .head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 16px}
+section.block .head p{margin:0;color:var(--ink-2);max-width:66ch}
+.chip{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:2px;border:1px solid var(--rule-2);color:var(--ink-2);background:var(--paper)}
+.chip.think{border-color:var(--think);color:var(--think);background:var(--think-bg)}
+.chip.qc{border-color:var(--qc);color:var(--qc);background:var(--qc-bg)}
+.chip.code{border-color:var(--rule-2);color:var(--ink-3);background:var(--code)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:14px;color:var(--ink-2);font-size:12.5px;align-items:center}
+.legend .k{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:14px;height:14px;border:1px solid var(--rule-2);display:inline-block}
+.swatch.lead{background:var(--lead)}
+.swatch.agent{background:var(--paper-2);border-left:4px solid var(--accent)}
+.swatch.qc{background:var(--paper-2);border-left:4px solid var(--qc)}
+.swatch.think{background:var(--paper-2);border-left:4px solid var(--think)}
+
+/* ===== ORG CHART (tree) ===== */
+.chart-tools{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:14px;color:var(--ink-3);font-size:12.5px}
+button.btn{font:inherit;font-size:12.5px;padding:5px 11px;border:1px solid var(--rule-2);background:var(--paper-2);color:var(--ink);border-radius:3px;cursor:pointer}
+button.btn[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+button.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chart-scroll{overflow-x:auto;margin-top:12px;padding-bottom:6px}
+.chart-fit{transform-origin:top left}
+.tree{display:inline-block}
+.tree ul{display:flex;justify-content:center;padding:26px 0 0;margin:0;list-style:none;position:relative}
+.tree ul ul::before{content:"";position:absolute;top:0;left:50%;width:2px;margin-left:-1px;height:26px;background:var(--line)}
+.tree li{position:relative;padding:26px 6px 0;display:flex;flex-direction:column;align-items:center}
+.tree li::before,.tree li::after{content:"";position:absolute;top:0;right:50%;width:50%;height:26px;border-top:2px solid var(--line)}
+.tree li::after{right:auto;left:50%;border-left:2px solid var(--line)}
+.tree li:only-child::before,.tree li:only-child::after{display:none}
+.tree li:only-child{padding-top:0}
+.tree li:first-child::before,.tree li:last-child::after{border:0 none}
+.tree li:last-child::before{border-right:2px solid var(--line);border-radius:0 6px 0 0}
+.tree li:first-child::after{border-radius:6px 0 0 0}
+.tree>ul{padding-top:0}
+.node{width:158px;border:1px solid var(--rule-2);background:var(--paper-2);text-align:left;padding:8px 10px 8px 12px;position:relative;font-size:12px;line-height:1.3}
+.node::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+.node .n{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:600;line-height:1.1}
+.node .r{color:var(--ink-2);margin-top:2px}
+.node .f{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-3);margin-top:4px;word-break:break-all}
+.node .chip{margin-top:6px}
+.node.lead{background:var(--lead);color:var(--lead-ink);border-color:var(--lead)}
+.node.lead::before{display:none}
+.node.lead .r,.node.lead .f{color:var(--lead-ink);opacity:.8}
+.node.lead .n{font-size:17px}
+.node.dept{width:210px}
+.node.dept .n{font-size:20px}
+.node.qc::before{background:var(--qc)}
+.node.think::before{background:var(--think)}
+.node.dept.invent{background:var(--invent);border-color:var(--invent);color:#fff}
+.node.dept.invent .r,.node.dept.invent .f{color:#fff}
+.node.owner{width:190px;background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.node.owner::before{display:none}
+.node.owner .r{color:var(--accent-ink);opacity:.9}
+.tree .grp{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:-18px;padding-top:6px}
+.dept-trees{display:grid;gap:26px;margin-top:8px}
+
+/* ===== FLOW (animated run) ===== */
+.flow{margin-top:14px;border:1px solid var(--rule-2);background:var(--paper-2)}
+.flow-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--rule)}
+.flow-top .status{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-2);margin-left:auto;font-variant-numeric:tabular-nums}
+.flow-top .status b{color:var(--ink)}
+.track-scroll{overflow-x:auto}
+.track{display:block;width:100%;min-width:760px;height:auto}
+.track text{font-family:"IBM Plex Sans",system-ui,sans-serif;fill:var(--ink)}
+.track .lane-label{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;fill:var(--ink-3);letter-spacing:.04em}
+.track .lane-label.invent{fill:var(--invent)}
+.track .edge{stroke:var(--line);stroke-width:2;fill:none}
+.track .edge.done{stroke:var(--ink)}
+.track .loop{stroke:var(--qc);stroke-width:1.5;fill:none;stroke-dasharray:4 3;opacity:.35}
+.track .loop.on{opacity:1}
+.track .nd rect{fill:var(--paper);stroke:var(--rule-2);stroke-width:1.5}
+.track .nd .id{font-family:"IBM Plex Mono",monospace;font-size:10px;fill:var(--ink-3)}
+.track .nd .nm{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:600}
+.track .nd.done rect{stroke:var(--ink)}
+.track .nd.done .tick{opacity:1}
+.track .nd .tick{opacity:0;fill:var(--ok);font-size:12px;font-weight:600}
+.track .nd.on rect{stroke:var(--accent);stroke-width:2.5;fill:var(--paper)}
+.track .nd.invent.on rect{stroke:var(--invent)}
+.track .dot{fill:var(--accent);stroke:var(--paper);stroke-width:2}
+.track .dot.invent{fill:var(--invent)}
+.flow-body{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0;border-top:1px solid var(--rule)}
+.flow-body>div{min-width:0;padding:12px 14px}
+.flow-body>div+div{border-left:1px solid var(--rule)}
+.inside .eyebrow{margin-bottom:6px}
+.inside h3{font-size:22px;font-weight:600}
+.inside .why{color:var(--ink-2);margin:4px 0 10px;min-height:2.6em}
+.subs{display:flex;flex-direction:column;gap:5px}
+.sub{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;padding:6px 8px;border:1px solid transparent;background:var(--paper);font-size:12.5px;color:var(--ink-3)}
+.sub .m{font-family:"IBM Plex Mono",monospace;font-size:10px;text-align:center}
+.sub .who{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-3);text-align:right;white-space:nowrap}
+.sub.done{color:var(--ink-2)}
+.sub.done .m{color:var(--ok)}
+.sub.on{border-color:var(--accent);color:var(--ink);background:var(--paper)}
+.sub.on.agent{border-color:var(--accent)}
+.sub.on.qc{border-color:var(--qc)}
+.sub.on.think{border-color:var(--think)}
+.sub.on .who{color:var(--ink)}
+.sub .bar{grid-column:1/-1;height:3px;background:var(--rule);overflow:hidden;display:none}
+.sub.on .bar{display:block}
+.sub .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .12s linear}
+.sub.qc.on .bar i{background:var(--qc)}
+.sub.think.on .bar i{background:var(--think)}
+.log{font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.5;color:var(--ink-2);max-height:360px;overflow-y:auto;padding:8px 10px;background:var(--paper);border:1px solid var(--rule)}
+.log div{padding:1px 0;border-bottom:1px dotted var(--rule)}
+.log .t{color:var(--ink-3)}
+.log .a{color:var(--accent)}
+.log .q{color:var(--qc)}
+.log .k{color:var(--ok)}
+.log .v{color:var(--invent)}
+.progress{height:4px;background:var(--rule);position:relative}
+.progress i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--accent);transition:width .2s linear}
+.flow-note{color:var(--ink-3);font-size:12.5px;margin-top:8px;max-width:70ch}
+
+/* ===== ROSTER (reference) ===== */
+.roster{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.card{position:relative;border:1px solid var(--rule-2);background:var(--paper-2);padding:10px 12px 10px 14px;min-width:0}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+.card.qc::before{background:var(--qc)}
+.card.think::before{background:var(--think)}
+.card .name{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:600;line-height:1.1}
+.card .title{color:var(--ink-2);font-size:13px;margin-top:2px}
+.card .io{margin-top:7px;font-size:12.5px;color:var(--ink-2)}
+.card .io span{color:var(--ink-3)}
+.card .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tally{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:22px}
+.tally div{border-top:1px solid var(--rule-2);padding-top:6px}
+.tally .n{font-family:"Barlow Condensed",sans-serif;font-size:30px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.tally .l{font-size:12px;color:var(--ink-3);margin-top:2px}
+
+@media (max-width:820px){
+  h1{font-size:34px}
+  .flow-body{grid-template-columns:1fr}
+  .flow-body>div+div{border-left:0;border-top:1px solid var(--rule)}
+  .roster{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tally{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:460px){.roster{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){
+  .sub .bar i,.progress i{transition:none}
+}
+
+/* ===== TABS ===== */
+.tabs{display:flex;gap:0;margin-top:22px;border-bottom:2px solid var(--ink)}
+.tabs button{font:inherit;font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:600;letter-spacing:.02em;padding:8px 18px;border:1px solid var(--rule-2);border-bottom:0;background:var(--paper-2);color:var(--ink-2);cursor:pointer;margin-bottom:-2px}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tabs .sub{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-left:8px}
+
+/* ===== FUTURE: states ===== */
+.node.built{border-style:solid}
+.node.partial{border-style:dashed;border-color:var(--accent)}
+.node.missing{border-style:dotted;border-color:var(--ink-3);background:var(--paper)}
+.node.slot{border-style:dashed;border-color:var(--rule-2);background:transparent;color:var(--ink-3)}
+.node.slot::before{background:var(--rule-2)}
+.node.slot .n{color:var(--ink-3)}
+.node.div{width:170px}
+.node.div .n{font-size:18px}
+.node .st{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-top:5px}
+.st.built{color:var(--ok)}
+.st.partial{color:var(--accent)}
+.st.missing{color:var(--ink-3)}
+.st.slot{color:var(--ink-3)}
+.legend .sw{width:26px;height:14px;display:inline-block;border:1px solid var(--rule-2);background:var(--paper-2)}
+.legend .sw.partial{border:1px dashed var(--accent)}
+.legend .sw.missing{border:1px dotted var(--ink-3);background:var(--paper)}
+.legend .sw.slot{border:1px dashed var(--rule-2);background:transparent}
+
+/* ===== FUTURE: verdict table ===== */
+.tbl-wrap{overflow-x:auto;margin-top:14px}
+table.v{border-collapse:collapse;width:100%;min-width:640px;font-size:13px}
+table.v th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:6px 8px;border-bottom:2px solid var(--ink)}
+table.v td{padding:8px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+table.v td:first-child{color:var(--ink);font-weight:500;width:22%}
+table.v td .lose{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:1px 5px;border-radius:2px;margin-right:6px;white-space:nowrap}
+table.v td .win{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ok);border:1px solid var(--ok);padding:1px 5px;border-radius:2px;margin-right:6px;white-space:nowrap}
+table.v td .half{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--qc);border:1px solid var(--qc);padding:1px 5px;border-radius:2px;margin-right:6px;white-space:nowrap}
+table.v td code{white-space:nowrap}
+pre.wire{font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.35;color:var(--ink);background:var(--code);border:1px solid var(--rule);border-radius:3px;padding:12px 14px;margin:10px 0 0;overflow-x:auto;white-space:pre}
+pre.ddl{font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.4;color:var(--code-ink);background:var(--code);border:1px solid var(--rule);border-radius:3px;padding:12px 14px;margin:10px 0 0;overflow-x:auto;white-space:pre}
+.states{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-2)}
+.states b{font-weight:600;color:var(--ink)}
+.states .dev{color:var(--accent)} .states .own{color:var(--ink);font-weight:700} .states .amb{color:var(--qc)} .states .nxt{color:var(--invent)} .states .run{color:var(--think)} .states .ok{color:var(--ok)}
+.two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:14px}
+.two-col>div{min-width:0}
+.mini{border:1px solid var(--rule-2);background:var(--paper-2);padding:12px 14px}
+.mini h3{font-size:20px;font-weight:600}
+.mini p{margin:6px 0 0;color:var(--ink-2)}
+.mini ul{margin:8px 0 0;padding-left:18px;color:var(--ink-2)}
+.mini li{margin:3px 0}
+.pill{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border-radius:2px;border:1px solid var(--rule-2);color:var(--ink-3);margin-right:4px}
+.track .nd.owner rect{stroke:var(--qc)}
+.track .own{font-family:"IBM Plex Mono",monospace;font-size:9px;fill:var(--qc);letter-spacing:.06em}
+.track .lane-label.dist{fill:var(--think)}
+.track .lane-label.mkt{fill:var(--accent)}
+.track .nd.pre rect{}
+.track .dot.dist{fill:var(--think)}
+.track .dot.mkt{fill:var(--accent)}
+.sub.own{border-left:3px solid var(--qc)}
+.migr ol{margin:8px 0 0;padding-left:22px;color:var(--ink-2)}
+.migr li{margin:4px 0}
+.migr li b{color:var(--ink)}
+@media (max-width:820px){.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="eyebrow">Visurena Studio · book → screenplay → episode</div>
+  <h1>The Story Department</h1>
+  <p class="lede">Twenty agents in five departments, read as a company. <b>Code is management</b>: every step script decides the order, hands out briefs, assembles, counts and checks. <b>Agents are specialists</b>: each gets one brief and returns one typed object. Nobody edits a file; nobody reads another agent's answer. The chart below is who reports to whom; the flow after it is one book going through a typical run, from the EPUB to a delivered episode master. Updated 2026-10-12: the reference bible (refs) and the episode line are departments with runners.</p>
+
+  <div class="legend">
+    <span class="k"><span class="swatch lead"></span> leader (code: a runner or step script)</span>
+    <span class="k"><span class="swatch agent"></span> agent, workhorse tier</span>
+    <span class="k"><span class="swatch think"></span> agent, reasoning tier</span>
+    <span class="k"><span class="swatch qc"></span> QC agent: judges work, never the book</span>
+  </div>
+
+  <!-- ===== ORG CHART ===== -->
+  
+  <nav class="tabs" role="tablist"><button role="tab" data-tab="current" aria-selected="true">Current architecture<span class="sub">built</span></button><button role="tab" data-tab="future" aria-selected="false">Future architecture<span class="sub">proposed</span></button><button role="tab" data-tab="command" aria-selected="false">Command Center<span class="sub">built</span></button></nav>
+  <div id="tab-current">
+
+
+
+
+
+
+<section class="block">
+    <div class="head"><h2>Org chart</h2><p>Every box reports to the one above it. A step script is a unit head: it calls its agents in order and owns their output.</p></div>
+    <div class="chart-tools">
+      <button class="btn" data-fit="fit" aria-pressed="true">Fit to width</button>
+      <button class="btn" data-fit="full" aria-pressed="false">100 %</button>
+      <span>Drag sideways to scroll at 100 %.</span>
+    </div>
+
+    <div class="chart-scroll"><div class="chart-fit" id="chart1"><div class="tree">
+      <ul>
+        <li><div class="node owner"><div class="n">Owner</div><div class="r">Studio head. One signature left: money. Taste retired 2026-09-24 (judges sign); publish retired 2026-10-01 (judge-signed terminals auto-clear the lock; the owner audits after). Every gate that spends escalates here.</div></div>
+          <ul>
+            <li><div class="node lead"><div class="n">Production office</div><div class="r">Order, run, hire, record</div><div class="f">stages.yaml · studio/registry.py · studio/llm.py + models.yaml · studio/db.py (events with a unit)</div></div>
+              <ul>
+                <li><div class="node lead dept"><div class="n">Pre-production</div><div class="r">Asserts, invents, binds identity</div></div>
+                  <ul>
+                    <li><div class="node lead"><div class="n">Analysis</div><div class="r">Asserts what the book says · 6 units · unit: book</div><div class="f">analysis.py</div></div></li>
+                    <li><div class="node lead"><div class="n">Screenplay</div><div class="r">Invents · 5 units · unit: book × target</div><div class="f">screenplay.py</div></div></li>
+                    <li><div class="node lead"><div class="n">Refs &amp; Cast</div><div class="r">The reference bible · 4 units · unit: book × style · LOOK gate · the look table (refs/looks.json)</div><div class="f">refs.py</div></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead dept invent"><div class="n">Production</div><div class="r">Format lines. End at a master; never publish.</div></div>
+                  <ul>
+                    <li><div class="node lead"><div class="n">Episode</div><div class="r">One chapter, one master · 12 units · unit: book × chapter · PLAN, LOOK-STATE, EYE ×2, MASTER gates · G-LOOK / G-PLACE cured in code · a round is a change of bytes; a settled keep_best take ships flagged (2026-10-19)</div><div class="f">episode.py</div></div></li>
+                    <li><div class="node lead"><div class="n">Trailer</div><div class="r">Music-first cut · 10 units · unit: book</div><div class="f">trailer.py</div></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead dept"><div class="n">Audit bench</div><div class="r">Blind second opinions, on request.</div><div class="f">scripts/*/audit_locations.py</div></div>
+                  <ul>
+                    <li><div class="node qc"><div class="n">Location auditor</div><div class="r">Where does this scene happen? Sees nobody else's answer.</div><span class="chip qc">QC</span></div></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div></div></div>
+
+    <div class="dept-trees">
+      <div>
+        <div class="eyebrow">Analysis department · units and their agents</div>
+        <div class="chart-scroll"><div class="chart-fit" id="chart2"><div class="tree">
+          <ul>
+            <li><div class="node lead dept"><div class="n">Analysis dept.</div><div class="r">Manager: analysis.py</div></div>
+              <ul>
+                <li><div class="node lead"><div class="n">01 Ingest</div><div class="r">EPUB → numbered chapters</div><div class="f">step_01_ingest.py</div></div>
+                  <ul>
+                    <li><div class="node"><div class="n">Book cartographer</div><div class="r">Maps the book's real divisions</div><div class="f">01_03</div></div></li>
+                    <li><div class="node qc"><div class="n">Ingest validator</div><div class="r">Was the parse clean?</div><div class="f">01_05</div></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead"><div class="n">02 Extract</div><div class="r">The crew, per chapter</div><div class="f">step_02_extract.py</div></div>
+                  <ul>
+                    <li><div class="node"><div class="n">Scene breakdown</div><div class="r">1st AD. Cuts the scenes; everyone below uses its numbers</div><div class="f">02_01</div></div>
+                      <ul>
+                        <li><div class="node"><div class="n">Script supervisor</div><div class="r">Time evidence, continuity</div><div class="f">02_02 · 1st</div></div></li>
+                        <li><div class="node"><div class="n">Casting director</div><div class="r">Who is in each scene</div><div class="f">02_02 · 2nd</div></div></li>
+                        <li><div class="node"><div class="n">Story analyst</div><div class="r">What happens</div><div class="f">02_02 · 3rd</div></div></li>
+                        <li><div class="node"><div class="n">Dialogue editor</div><div class="r">Who speaks to whom</div><div class="f">02_02 · 4th</div></div></li>
+                      </ul>
+                    </li>
+                    <li><div class="node qc"><div class="n">Extraction auditor</div><div class="r">Checks the crew's work per dimension</div><div class="f">02_05</div></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead"><div class="n">03 Standardize</div><div class="r">Canonical ids + coordinates</div><div class="f">step_03_standardize.py</div></div>
+                  <ul>
+                    <li><div class="node"><div class="n">Entity resolver</div><div class="r">Merges surface forms; geocodes places</div><div class="f">03_02</div></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead"><div class="n">04 Timeline</div><div class="r">Worldlines, contradictions</div><div class="f">step_04_timeline.py</div></div>
+                  <ul>
+                    <li><div class="node"><div class="n">Gap filler</div><div class="r">Every scene gets a place and hour</div><div class="f">04_06</div></div></li>
+                    <li><div class="node"><div class="n">Journey tracer</div><div class="r">A moving span is a route</div><div class="f">04</div></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead"><div class="n">05 Consolidate</div><div class="r">Per-character, per-place files</div><div class="f">step_05_consolidate.py</div></div>
+                  <ul>
+                    <li><div class="node"><div class="n">Profile writer</div><div class="r">Profiles from the dossier only</div><div class="f">05_02</div></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead"><div class="n">06 Verify</div><div class="r">Code only, zero LLM</div><div class="f">step_06_verify.py</div></div></li>
+              </ul>
+            </li>
+          </ul>
+        </div></div></div>
+      </div>
+
+      <div>
+        <div class="eyebrow">Screenplay department · units and their agents</div>
+        <div class="chart-scroll"><div class="chart-fit" id="chart3"><div class="tree">
+          <ul>
+            <li><div class="node lead dept invent"><div class="n">Screenplay dept.</div><div class="r">Run per (book, target)</div></div>
+              <ul>
+                <li><div class="node lead"><div class="n">01 Dossier</div><div class="r">Code only. One record per source scene</div><div class="f">step_01_dossier.py</div></div></li>
+                <li><div class="node lead"><div class="n">02 Plan</div><div class="r">What survives, in what order</div><div class="f">step_02_plan.py</div></div>
+                  <ul>
+                    <li><div class="node think"><div class="n">Story editor</div><div class="r">Chooses which scenes exist; lists every omission</div><div class="f">02_02</div><span class="chip think">reasoning</span></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead"><div class="n">03 Draft</div><div class="r">Per beat, two calls in order</div><div class="f">step_03_draft.py</div></div>
+                  <ul>
+                    <li><div class="node think"><div class="n">Screenwriter</div><div class="r">Action + dialogue, provenance on every line</div><div class="f">03_01 · first</div><span class="chip think">reasoning</span></div></li>
+                    <li><div class="node"><div class="n">Shot designer</div><div class="r">Camera on the frozen stream; rewrites nothing</div><div class="f">03_02 · second</div></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead"><div class="n">04 Render</div><div class="r">Code only. json → fountain → pdf</div><div class="f">step_04_render.py</div></div></li>
+                <li><div class="node lead"><div class="n">05 Verify</div><div class="r">Guards, then one sampled audit</div><div class="f">step_05_verify.py</div></div>
+                  <ul>
+                    <li><div class="node qc"><div class="n">Adaptation auditor</div><div class="r">Contradiction, never difference</div><div class="f">05_02</div></div></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div></div></div>
+      </div>
+    </div>
+    <div id="dept-trees-current" class="dept-trees" style="margin-top:26px"></div>
+  </section>
+
+  <!-- ===== THE DESK ===== -->
+  <section class="block">
+    <div class="head"><h2>The desk</h2><p>Built 2026-09-26 (decision 2026-09-25, the Command Center, commits C1–C11). The production office keeps one work-order row per (book, department, unit); each department's table is a view over it. The runners are unchanged: a row is written from one place (<code>db.add_event</code>) and the disk stays the truth of a step. The desk refreshes the rows on a <b>tick</b> — the first act of every run, and <code>uv run python studio.py tick</code> from a shell.</p></div>
+    <div class="tbl-wrap"><table class="v">
+      <tr><th>What</th><th>One row is</th><th>Who writes it</th></tr>
+      <tr><td><code>work_orders</code></td><td>a unit in a department: state (blocked · queued · running · done · failed · deferred · escalated · held · stale), step, priority, sequence, attempts, flags, gpu seconds, cost, deliverable, verdicts</td><td><code>db.add_event</code> projects every event onto it (the runner claims and settles by running); the tick materializes, settles, promotes, parks and sweeps; the owner's orders land on it when a run takes them</td></tr>
+      <tr><td><code>work_steps</code></td><td>one step of one order: the unit page's chip, with its verdict file, signer and word</td><td><code>db.add_event</code>, and the signature read off the file when the step completes</td></tr>
+      <tr><td><code>orders</code></td><td>the owner's intent: hold · lift · redo · bump · retry · requeue · acknowledge (the owner has seen a shipped unit's flags; applied at once)</td><td><code>studio_cli.py</code> and the board's buttons (<code>POST /act/*</code>); a runner takes them at the top of <code>run_steps</code></td></tr>
+      <tr><td><code>holds</code></td><td>a brake at studio, book or unit scope; <code>RENDER_HOLD</code> mirrored in</td><td><code>studio_cli.py hold | lift</code> and the board's hold / lift buttons; the tick mirrors the file</td></tr>
+      <tr><td><code>episode_orders</code> … · <code>v_queue</code> · <code>v_attention</code></td><td>a view per registered department, generated from <code>stages.yaml</code>; the queue in priority, sequence order; the rows that need a person (failed · deferred · escalated · stale)</td><td>nobody — a view</td></tr>
+    </table></div>
+    <div class="tbl-wrap" style="margin-top:14px"><table class="v">
+      <tr><th>The tick's verb</th><th>Rule</th><th>Where</th></tr>
+      <tr><td>slate · materialize</td><td>every <code>episodes/epNN</code> folder is an episode unit; every other department has its book-level unit (<code>main</code> for refs, <code>book</code> for the rest). One <code>blocked</code> row each, <code>source = queue</code>, never twice</td><td><code>studio/tick.py</code></td></tr>
+      <tr><td>settle</td><td>a blocked or queued row whose every declared <code>out:</code> of every step is on disk, and whose deliverable exists, is <code>done</code> — the unit whose every step was skipped. An episode with a publish record (<code>youtube.json</code> and an upload row with a video id) is <code>done</code> when its row is blocked, queued, or lost its lease — the deliverable is the uploaded file, found by the upload's sha8 (2026-10-11: units published outside the runner sat queued, blocked or stale). A row written <code>done</code> waits on nothing: <code>blocked_on</code> is cleared. <b>The events ledger first</b> (2026-10-12): a blocked or queued book-level row with terminal step events is what they say — <code>done</code> when the last step completed (⚑1 when a later re-run failed), <code>failed</code> when nothing delivered and the newest terminal event failed, else only its cursor moves; the disk settles a row only where the ledger is silent (every stage now declares a <code>deliverable:</code> — analysis <code>qc_report.json</code>, screenplay <code>feature/qc_report.json</code>, trailer <code>main/TRAILER-*.mp4</code>); an upstream row the episode requires, with no ledger and no deliverable, is done once an episode built on it is published (Scarlet's legacy refs)</td><td><code>tick.settle_from_events</code> · <code>studio/ledger_settle.py</code> · <code>tick.settle_skipped</code> · <code>tick.settle_published</code> · <code>tick.settle_consumed</code> · <code>db.done_waits_on_nothing</code></td></tr>
+      <tr><td>promote</td><td><code>blocked → queued</code> when every <code>requires</code> row is done and the first step's <code>in:</code> exist; back to <code>blocked</code> when they stop, <code>blocked_on</code> naming the first want (<code>refs/04</code>, <code>in: refs/refs.json</code>). No other state is touched</td><td><code>tick.promote</code></td></tr>
+      <tr><td>hold</td><td>a hold that reaches the unit parks a blocked or queued row as <code>held</code>; on lift it returns to <code>blocked</code> and the same tick promotes it again — the pre-hold state is never stored, it is re-derived</td><td><code>tick.park_held</code> · <code>release_held</code></td></tr>
+      <tr><td>cost</td><td>GPU seconds off the unit's clock (every pass, retries included); dollars off <code>usage</code>, NULL while a call is unpriced</td><td><code>tick.project_costs</code> · <code>studio/timing_sum.py</code></td></tr>
+      <tr><td>sweep</td><td>a running row whose lease ran out is <code>stale</code> — never requeued; a <code>requeue</code> order does that</td><td><code>tick.sweep_leases</code></td></tr>
+      <tr><td>verify</td><td>rows against the disk: a moved signature or a missing deliverable is named and marked <code>stale</code>; nothing is resolved. Not called by the tick (wiring it would flip published units stale; an owner ruling, 2026-10-12): the unit page re-checks the PLAN and LOOK signatures at render and shows a moved one <code>stale</code></td><td><code>studio.py verify</code> · <code>unit_view.moved_gates</code></td></tr>
+      <tr><td>from a shell</td><td><code>studio.py tick [--book]</code> · <code>queue &lt;codex&gt; &lt;stage&gt; [&lt;unit&gt;] [--priority N]</code> · <code>verify &lt;codex&gt; &lt;stage&gt; &lt;unit&gt;</code> · <code>board</code> (the queue and the attention strip as text — the terminal preview of the web board, C10)</td><td><code>studio.py</code> · <code>studio_cli.py</code> for the hand</td></tr>
+    </table></div>
+    <div class="tbl-wrap" style="margin-top:14px"><table class="v">
+      <tr><th>The board</th><th>What it does</th><th>Where</th></tr>
+      <tr><td>open it</td><td><code>uv run python command_center.py</code> → <code>http://127.0.0.1:8700</code>, bound to the loopback only; <code>--read-only</code> shows the studio and refuses every order (405); <code>--check</code> prints the routes and serves nothing</td><td><code>command_center.py</code></td></tr>
+      <tr><td>the pages</td><td>studio home <code>/</code> (on the floor, needs you, a lane per department, the Orders strip — the last ten orders and the run that took each, today) · <code>/floor</code> (now, next, held) · <code>/d/&lt;stage&gt;</code> (the department's table) · <code>/d/&lt;stage&gt;/&lt;codex&gt;/&lt;unit&gt;</code> (steps, verdicts, deliverable, thumbnails, tails, timing) · <code>/b/&lt;codex&gt;</code> (the book down every department) · <code>/org</code> (this page); htmx partials on a poll, a JSON twin per partial. The GPU card also reads the engine (2026-10-12): ComfyUI's <code>/queue</code>, read-only, cached 5 s and refreshed off the request, with the process table naming the script that holds it ("GPU busy outside the runner"); Home and the card carry one line per book's autopilot (paused and why, complete). RETRO 2026-10-19: the live card folds a step’s history across rewinds (a 0 s marker is no history), counts owed units in its ETA and prints the debt line; the git commits-ahead count lives in studio/git_ahead.py, outside the web package</td><td><code>studio/command_center/</code> <code>app</code> · <code>views</code> · <code>models</code> · <code>templates</code> · <code>comfy_tap</code></td></tr>
+      <tr><td>the actions</td><td>hold (studio · book · unit, with a reason) · lift · bump · retry (a deferred or failed unit) · requeue · redo (a step and a note; the note is also a casebook row) · acknowledge (a flagged done unit, stamped with its flags count and verdicts sha; it leaves Needs you until either changes). A published unit needs nobody: its flags are history (the 2026-10-01 ruling, no human input at publish) — it shows <code>done</code> with its gate chips kept, and the inbox, the department and the sidebar dots read one rule, <code>views.flags_open</code>. Each is ONE call into <code>studio/work_orders</code> — one <code>orders</code> row (a hold adds its <code>holds</code> row) — and answers with the row's id and its effect: "queued at next run", "held — runs stop before the first GPU step"</td><td><code>studio/command_center/actions.py</code> → <code>work_orders.hold | lift | order</code></td></tr>
+      <tr><td>the guards</td><td>pages read through a <code>mode=ro</code> connection; the actions write through a separate writable factory; a POST from a foreign Origin/Referer is refused 403; an unregistered stage, an unknown book or unit 404; an empty reason or note 422; no route spawns a process or imports a runner (grep-tested); <code>/lib</code> serves a book's artefacts behind a resolved-path check and a suffix allowlist</td><td><code>tests/test_an_action_is_one_orders_row_and_never_a_subprocess.py</code> · <code>test_the_web_process_imports_nothing_from_scripts.py</code></td></tr>
+    </table></div>
+    <p class="flow-note">A queued row is a request, not an instruction: no worker loop drains it (not built, on purpose). The explicit runners — <code>episode.py &lt;book&gt; &lt;n&gt;</code>, <code>refs.py &lt;book&gt;</code> — run as before; C9 teaches the no-unit form to take the queue in order. Rows for the books already made come from the backfill (C8), never from the tick guessing.</p>
+  </section>
+
+  <!-- ===== FLOW ===== -->
+  <section class="block">
+    <div class="head"><h2>A typical run</h2><p>One book, start to finish: analysis, screenplay, the reference bible, then one chapter through the episode line to a delivered master. Press play: the dot is the work, the panel shows who is inside the current step, the log is what the runners print. Gold-edged steps park for one of your signatures. Numbers are illustrative.</p></div>
+    <div class="flow" id="flow1">
+      <div class="flow-top">
+        <button class="btn" data-role="play">Play</button>
+        <button class="btn" data-role="step">Step</button>
+        <button class="btn" data-role="reset">Restart</button>
+        <span style="color:var(--ink-3);font-size:12.5px">Speed</span>
+        <button class="btn spd" data-s="1" aria-pressed="true">1×</button>
+        <button class="btn spd" data-s="2" aria-pressed="false">2×</button>
+        <button class="btn spd" data-s="4" aria-pressed="false">4×</button>
+        <span class="status" data-role="status"><b>ready</b> · 0 / 0</span>
+      </div>
+      <div class="progress"><i data-role="prog"></i></div>
+      <div class="track-scroll"><svg class="track" data-role="track" role="img" aria-label="Pipeline track: analysis steps 01 to 06, then screenplay steps 01 to 05"></svg></div>
+      <div class="flow-body">
+        <div class="inside">
+          <div class="eyebrow" data-role="lane">Inside the step</div>
+          <h3 data-role="name">Press play</h3>
+          <div class="why" data-role="why">The run starts at Analysis 01 with the EPUB and ends with screenplay.json handed to the trailer and episode departments.</div>
+          <div class="subs" data-role="subs"></div>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom:6px">Run log</div>
+          <div class="log" data-role="log"></div>
+        </div>
+      </div>
+    </div>
+    <p class="flow-note">The dashed return arrows are the improve loops, each capped at two rounds. Pre-production spends only text-model tokens; the episode line is $0 on the local GPU. Publishing is not a step of any line yet: the master is delivered and the upload script runs unattended — judge-signed terminals auto-clear the publish lock (2026-10-01) — until the publish department exists (Future tab).</p>
+  </section>
+
+  <!-- ===== ROSTER ===== -->
+  <section class="block">
+    <div class="head"><h2>Roster</h2><p>What each agent is handed and what it returns. One skill file each in <code>agents/skills/</code>; the return type is a pydantic model, validated before anyone downstream sees it.</p></div>
+    <div class="roster">
+      <div class="card"><div class="name">Book cartographer</div><div class="title">Analysis 01_03</div><div class="io">Gets every heading + the TOC · <span>returns</span> BookMap</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card qc"><div class="name">Ingest validator</div><div class="title">Analysis 01_05</div><div class="io">Gets manifest + chapter samples · <span>returns</span> Verdict</div><div class="meta"><span class="chip qc">QC</span><span class="chip">workhorse</span></div></div>
+      <div class="card"><div class="name">Scene breakdown (1st AD)</div><div class="title">Analysis 02_01</div><div class="io">Gets numbered paragraphs · <span>returns</span> CallSheet</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card"><div class="name">Script supervisor</div><div class="title">Analysis 02_02</div><div class="io">Gets chapter + call sheet · <span>returns</span> TimeReport</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card"><div class="name">Casting director</div><div class="title">Analysis 02_02</div><div class="io">Gets chapter + call sheet · <span>returns</span> CastReport</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card"><div class="name">Story analyst</div><div class="title">Analysis 02_02</div><div class="io">Gets chapter + call sheet · <span>returns</span> EventReport</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card"><div class="name">Dialogue editor</div><div class="title">Analysis 02_02</div><div class="io">Gets chapter + call sheet · <span>returns</span> DialogueReport</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card qc"><div class="name">Extraction auditor</div><div class="title">Analysis 02_05</div><div class="io">Gets full chapter + extraction · <span>returns</span> AuditVerdict</div><div class="meta"><span class="chip qc">QC</span><span class="chip">workhorse</span></div></div>
+      <div class="card"><div class="name">Entity resolver</div><div class="title">Analysis 03_02</div><div class="io">Gets observed forms + chapters · <span>returns</span> CharacterRegistry, LocationRegistry</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card"><div class="name">Gap filler</div><div class="title">Analysis 04_06</div><div class="io">Gets scene + neighbours + place list · <span>returns</span> Placement</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card"><div class="name">Journey tracer</div><div class="title">Analysis 04</div><div class="io">Gets a travelling span + neighbours · <span>returns</span> Journey</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card"><div class="name">Profile writer</div><div class="title">Analysis 05_02</div><div class="io">Gets an evidence dossier · <span>returns</span> CharacterProfile / LocationProfile</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card think"><div class="name">Story editor</div><div class="title">Screenplay 02_02</div><div class="io">Gets a scene index + target · <span>returns</span> ScreenplayPlan</div><div class="meta"><span class="chip think">reasoning</span></div></div>
+      <div class="card think"><div class="name">Screenwriter</div><div class="title">Screenplay 03_01</div><div class="io">Gets source scenes verbatim + voices + style · <span>returns</span> SceneDraft</div><div class="meta"><span class="chip think">reasoning</span></div></div>
+      <div class="card"><div class="name">Shot designer</div><div class="title">Screenplay 03_02</div><div class="io">Gets the frozen element stream · <span>returns</span> ShotPlan</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card qc"><div class="name">Adaptation auditor</div><div class="title">Screenplay 05_02</div><div class="io">Gets a drafted scene + its paragraphs · <span>returns</span> AuditVerdict</div><div class="meta"><span class="chip qc">QC</span><span class="chip">workhorse</span></div></div>
+      <div class="card qc"><div class="name">Location auditor</div><div class="title">Audit bench</div><div class="io">Gets verbatim scene text + place list · <span>returns</span> LocationVerdict</div><div class="meta"><span class="chip qc">QC</span><span class="chip">workhorse</span></div></div>
+      <div class="card"><div class="name">Look back</div><div class="title">Refs 02 · Episode 03</div><div class="io">Gets a drawn picture + its prompt · <span>returns</span> LookReading (seen, missing) · advisory until calibrated</div><div class="meta"><span class="chip">local VLM</span></div></div>
+      <div class="card"><div class="name">Look timeline writer</div><div class="title">Refs 01_03 · built 2026-10-10</div><div class="io">Gets one character's dossier (body, physical evolution, the script supervisor's appearance ledger) · <span>returns</span> LookDraft; code keeps a look only when its quote is in its chapter at 0.85</div><div class="meta"><span class="chip">workhorse</span></div></div>
+      <div class="card think"><div class="name">Episode writer</div><div class="title">Episode 02</div><div class="io">Gets the chapter brief (the book's narrator, scenes, text, screenplay elements, bound rows, places, camera catalog, dq rules, five viewer rules) · <span>returns</span> Episode, through plan_check + an improve loop of two</div><div class="meta"><span class="chip think">reasoning · local tier</span></div></div>
+      <div class="card qc"><div class="name">Panel reader</div><div class="title">Episode 08, 09 · inside the wrapped scripts</div><div class="io">Gets one panel or three take frames, shown no plan · <span>returns</span> a list; code judges it</div><div class="meta"><span class="chip qc">QC</span><span class="chip">local VLM</span></div></div>
+    </div>
+    <div class="tally">
+      <div><div class="n">20</div><div class="l">agents (+ Whisper and the panel reader inside the wrapped scripts)</div></div>
+      <div><div class="n">3</div><div class="l">reasoning tier: story editor, screenwriter, episode writer — all resolve to the same model today</div></div>
+      <div><div class="n">5</div><div class="l">QC judges: ingest, extraction, adaptation, location, panel reader</div></div>
+      <div><div class="n">6</div><div class="l">owner signatures as files: LOOK, PLAN, EYE ×2, MASTER, PUBLISH</div></div>
+    </div>
+  </section>
+  </div>
+
+<div id="tab-future" hidden>
+
+  <p class="lede" style="margin-top:18px">Proposed, not decided. Five reports (two web researches, a production executive, an organisation designer, the codebase's own constraints) argued it out; a chair ruled each point. The shape is a <b>big studio from day one</b>: five divisions by function, one registry stage per format line inside Production, the IP as a data key. Episodes are the only line built; every other line has a defined empty slot and grows into it without a reorganisation. Amended 2026-09-24 by the owner: no step of the refs or episode line parks on a person — every taste gate is a judge with a priced ladder, and the owner audits after the fact (<code>architecture/decisions/2026-09-24_judges_replace_the_eye.md</code>). Full record: <code>architecture/decisions/2026-09-24_future_departments.md</code>; draft registry: <code>architecture/decisions/2026-09-24_stages_future.yaml</code>.</p>
+
+  <!-- verdicts -->
+  <section class="block">
+    <div class="head"><h2>The debate, ruled</h2><p>Where your framing lost, it says so and names the replacement.</p></div>
+    <div class="tbl-wrap"><table class="v">
+      <tr><th>Point</th><th>Your framing</th><th>Verdict</th></tr>
+      <tr><td>"Post-production"</td><td>One department: finishing + publishing + promotion</td><td><span class="lose">word loses</span><span class="win">list wins</span> Everything after the master leaves the format line, but as two divisions with different unit keys: <b>Distribution</b> (publish, analytics; per master × platform; irreversible; owns the catalogue) and <b>Marketing</b> (promo; per release; writes orders). The cut, mix and QC stay as the last steps of each production line, because picture is cut to the measured voice. Retire the word.</td></tr>
+      <tr><td>Trailer</td><td>Under promotion</td><td><span class="lose">placement loses</span><span class="win">purpose wins</span> A Production format line that Marketing orders. It has a 10-step DAG, a runner and event history; moving it renumbers stable ids and breaks ten tests. Same rule for shorts, cutdowns, key art: Marketing decides, Production or Distribution makes.</td></tr>
+      <tr><td>Promotion</td><td>A unit of post</td><td><span class="half">split</span> The decision (assets, dates, platforms, budget) is Marketing's step; the manufacture of anything that needs a render is a Production order; the shipping is Distribution. Marketing never touches a GPU or a platform API.</td></tr>
+      <tr><td>Owner gates</td><td>"Remove them. Automate them all."</td><td><span class="win">owner decision</span> The taste gates (LOOK, PLAN, EYE ×2, MASTER) are judged from day one, never signed by a person: detectors for counts and geometry, embeddings for identity, a VLM that only names, code that judges; a priced ladder per gate; the terminal rung signs <b>flagged</b> and writes an audit row. What stays a signature: PUBLISH, MONEY for paid credits, OVERRIDE. The owner's eye becomes an audit sheet whose findings re-calibrate the judges through a bench and a ratchet test.</td></tr>
+      <tr><td>Organising axis</td><td>"A big studio with TV, movies, music, games, books"</td><td><span class="win">stands</span> Function on top (five divisions), one registry stage per format line inside Production, IP as the data key plus one owned record (<code>series.json</code> + catalogue). Every line names its steps from six words: plan, record, board, shoot, edit, qc. Never a department per book.</td></tr>
+      <tr><td>Research</td><td>One department, later</td><td><span class="lose">loses</span> Three things wear the word and each gets a slot now: <b>R&amp;D</b> (models, prompts, calibration) under Platform with its own experiments ledger; <b>Analytics</b> as a Distribution stage, read-only, and a view count may never move a gate threshold; <b>Development</b> (the slate: what to make next) at Studio level.</td></tr>
+      <tr><td>Unit of work</td><td>"A chapter can be a unit; it can expand"</td><td><span class="win">stands, mechanised</span> A <code>unit</code> column on the events table; each stage declares its own grammar: <code>ch04</code>, <code>ch04-05</code>, <code>scene_12</code>, <code>cue_03</code>, <code>&lt;sha8&gt;@youtube</code>. A season is the ordered unit list in <code>series.json</code>; a feature is one unit whose steps fan out per sequence.</td></tr>
+      <tr><td>The episode plan</td><td>—</td><td><span class="win">ruled</span> Production's first step, written by a registered <code>episode_writer</code> agent, stored as data under <code>library/&lt;book&gt;/episodes/&lt;unit&gt;/plan.json</code>. Never a <code>.py</code> in the code tree; the 18 plan scripts move under the library.</td></tr>
+      <tr><td>Who leads a department</td><td>—</td><td><span class="win">unanimous</span> A root runner, always. A skill is the owner's desk over it, with a command table generated from the registry. Episode and Shorts are led by skills today: the largest defect, and the first migration target.</td></tr>
+      <tr><td>Trailer and Shorts in the registry</td><td>—</td><td><span class="win">ruled</span> Own stages. Trailer untouched. Shorts registers as an honest empty slot until a Python client for its paid service and a credit ledger exist. The episode stage is named <code>episode</code>, not <code>production</code>: production is the division.</td></tr>
+    </table></div>
+  </section>
+
+  <!-- future org chart -->
+  <section class="block">
+    <div class="head"><h2>The studio, future shape</h2><p>Five divisions. Every box reports to the one above it; a box's border says how much of it exists.</p></div>
+    <div class="legend">
+      <span class="k"><span class="sw"></span> built and registered</span>
+      <span class="k"><span class="sw partial"></span> scripts exist, stage and runner missing</span>
+      <span class="k"><span class="sw missing"></span> missing</span>
+      <span class="k"><span class="sw slot"></span> defined empty slot</span>
+    </div>
+    <div class="chart-scroll"><div class="chart-fit" id="chart4"><div class="tree">
+      <ul>
+        <li><div class="node owner"><div class="n">Owner</div><div class="r">Three signatures: money, publish, taste. RENDER_HOLD is the brake.</div></div>
+          <ul>
+            <li><div class="node lead"><div class="n">Studio office</div><div class="r">Autopilot (head of production) + the brain on a leash, the slate, decisions</div><div class="f">scripts/episode/autopilot.py · studio/brain.py · series.json · DECISIONS.md · successor handover, stuck-step watchdog, engine health (2026-10-19) · pause leases {by, why, expires}, the supervisor watchdog task, HELD_PUBLISH at G-STANDING (standing.json lists its episodes, 2026-10-20), code held still under a live drive, the YouTube token checked at launch and render start (2026-10-20)</div><div class="st built">autopilot built 2026-10-06</div></div>
+              <ul>
+                <li><div class="node lead div"><div class="n">Platform</div><div class="r">Shared services. No deliverable of its own.</div><div class="f">llm · GPU lease · device router (GPU when idle, CPU when rendering; 2026-10-18; VRAM first, claims need a living holder, 2026-10-19) · family-boundary free (2026-10-19) · GPU ledger (library/.device/gpu_util.jsonl, 2026-10-19) · ledger (a 60 s step-wall heartbeat, 2026-10-19) · approval · measures · notify · publish clients · R&amp;D ledger · run clock (the process, 60 s beat; 2026-10-11; an owner repair of a delivered episode on its own capped clock, studio/repair_clock, 2026-10-19) · model store (the episode working set on the C: NVMe, C:\comfy_models, searched first) · visual onsets (studio/sfx_onset, 2026-10-17) · rehearsal harness (the real step code on a fenced sandbox library, recorded engines, studio/rehearsal + scripts/proof; the time back-test and the proof report, 2026-10-21)</div><div class="st partial">mostly built</div></div></li>
+                <li><div class="node lead div"><div class="n">Pre-production</div><div class="r">Asserts, invents, binds identity</div></div>
+                  <ul>
+                    <li><div class="node built"><div class="n">Analysis</div><div class="r">12 agents · unit: book</div><div class="f">analysis.py</div><div class="st built">built</div></div></li>
+                    <li><div class="node built"><div class="n">Screenplay</div><div class="r">4 agents · unit: book × target</div><div class="f">screenplay.py</div><div class="st built">built</div></div></li>
+                    <li><div class="node built"><div class="n">Refs &amp; Cast</div><div class="r">4 steps, look-back + look-timeline agents, the LOOK gate, refs/looks.json · unit: book × style</div><div class="f">refs.py</div><div class="st built">built 2026-09-24</div></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead div"><div class="n">Production</div><div class="r">One stage per format line. Ends at a master; never publishes.</div></div>
+                  <ul>
+                    <li><div class="node built"><div class="n">Episode (TV)</div><div class="r">12 steps, writer agent, eyes as files · unit: book × chapter(s)</div><div class="f">episode.py</div><div class="st built">built 2026-09-24</div></div></li>
+                    <li><div class="node built"><div class="n">Trailer</div><div class="r">10 steps · ordered by Marketing</div><div class="f">trailer.py</div><div class="st built">built</div></div></li>
+                    <li><div class="node missing"><div class="n">Shorts</div><div class="r">Paid line · unit: book × scene</div><div class="f">shorts.py</div><div class="st missing">skills only</div></div></li>
+                    <li><div class="node slot"><div class="n">Feature</div><div class="r">book × target · sequence → scene → shot</div><div class="st slot">slot</div></div></li>
+                    <li><div class="node slot"><div class="n">Song</div><div class="r">book × cue · section → bar</div><div class="st slot">slot</div></div></li>
+                    <li><div class="node slot"><div class="n">Audiobook</div><div class="r">book × chapter · paragraph → line</div><div class="st slot">slot</div></div></li>
+                    <li><div class="node slot"><div class="n">Game</div><div class="r">book × arc · level → screen · build replaces shoot</div><div class="st slot">slot</div></div></li>
+                    <li><div class="node slot"><div class="n">Book</div><div class="r">book × prose · chapter → scene</div><div class="st slot">slot</div></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead div"><div class="n">Distribution</div><div class="r">Per master × platform. Irreversible. Owns the catalogue.</div></div>
+                  <ul>
+                    <li><div class="node partial"><div class="n">Publish</div><div class="r">9 steps · adapters per platform, incl. our own</div><div class="f">publish.py</div><div class="st partial">upload exists</div></div></li>
+                    <li><div class="node missing"><div class="n">Analytics</div><div class="r">Read-only, scheduled · never moves a gate</div><div class="f">analytics.py</div><div class="st missing">missing</div></div></li>
+                  </ul>
+                </li>
+                <li><div class="node lead div"><div class="n">Marketing</div><div class="r">Per release. Decides; never renders; never posts itself.</div></div>
+                  <ul>
+                    <li><div class="node missing"><div class="n">Promo</div><div class="r">campaign → orders → key art → cutdowns → posts</div><div class="f">promo.py</div><div class="st missing">missing</div></div></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div></div></div>
+
+    <div class="head" style="margin-top:26px"><h2 style="font-size:24px">Broken down by team</h2><p>Every department that has a team: its units in execution order, and the agents each unit calls. Border states as above; a unit's script note says whether it wraps an existing script or is still to be written.</p></div>
+    <div class="legend">
+      <span class="k"><span class="swatch lead"></span> unit leader (a step script)</span>
+      <span class="k"><span class="swatch agent"></span> agent</span>
+      <span class="k"><span class="swatch think"></span> agent, reasoning tier</span>
+      <span class="k"><span class="swatch qc"></span> QC agent</span>
+      <span class="k"><span class="chip qc">JUDGE</span> a judge signs the gate; <span class="chip qc">OWNER</span> only PUBLISH parks for a signature</span>
+    </div>
+    <div id="dept-trees-future" class="dept-trees"></div>
+
+    <div class="two-col">
+      <div class="mini">
+        <h3>Unit of work, per stage</h3>
+        <p>The grain each stage runs at, and how it subdivides. A stage declares it in the registry; the events table carries it.</p>
+        <ul>
+          <li><b>analysis</b> · book → chapter → scene → paragraph</li>
+          <li><b>screenplay</b> · book × target → sequence → scene → element</li>
+          <li><b>refs</b> · book × style → entity (character, prop, voice)</li>
+          <li><b>episode</b> · book × chapter or range (<code>ch04-05</code>) → setup → shot → take</li>
+          <li><b>trailer</b> · book (<code>main</code>) → beat → take</li>
+          <li><b>shorts</b> · book × scene → shot → clip</li>
+          <li><b>publish</b> · master × platform (<code>&lt;sha8&gt;@youtube</code>) → deliverable bundle</li>
+          <li><b>promo</b> · release → order → asset → post</li>
+          <li><b>feature / song / audiobook / game / book</b> · defined above, in the slots</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h3>Signatures, five — and what is judged instead</h3>
+        <p>Each is a file or a flag the ledger records. A sentence in chat signs nothing.</p>
+        <ul>
+          <li><b>MONEY</b> · any paid cost kind · <code>--approved=&lt;kind&gt;</code> · never retires (these lines spend none)</li>
+          <li><b>PUBLISH</b> · every public write · <code>--approved=publish</code> · retired for WotW × YouTube 2026-10-01 (judge-signed terminals auto-clear)</li>
+          <li><b>OVERRIDE</b> · any waiver of a machine gate · never retires</li>
+          <li><b>Synthetic declaration</b> · <code>series.json</code> <code>synthetic</code> · typed once</li>
+          <li><b>RENDER_HOLD</b> · a file; the brake, not a gate</li>
+        </ul>
+        <p><b>Judged, not signed:</b> LOOK, PLAN, EYE (board, takes) and MASTER are signed by <code>judge:&lt;name&gt;@&lt;version&gt;</code> from day one (decision <code>2026-09-24-automate-the-taste-gates</code>). A judge signs <code>pass</code> or <code>flagged</code>, never <code>fault</code>; it never waives. <b>Audit, not gate:</b> <code>library/&lt;book&gt;/audit/&lt;unit&gt;.html</code> shows every flag and a seeded sample; the owner's findings append to the casebook and re-calibrate the judges through the bench. No step reads it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- future flow -->
+  <section class="block">
+    <div class="head"><h2>A typical run, future shape</h2><p>One chapter unit, from bound cast to a promoted release. Gold JUDGE rows are the judges; a flagged terminal is gold in the log. Nothing in the line parks on a person. Numbers are illustrative.</p></div>
+    <div class="flow" id="flow2">
+      <div class="flow-top">
+        <button class="btn" data-role="play">Play</button>
+        <button class="btn" data-role="step">Step</button>
+        <button class="btn" data-role="reset">Restart</button>
+        <span style="color:var(--ink-3);font-size:12.5px">Speed</span>
+        <button class="btn spd" data-s="1" aria-pressed="true">1×</button>
+        <button class="btn spd" data-s="2" aria-pressed="false">2×</button>
+        <button class="btn spd" data-s="4" aria-pressed="false">4×</button>
+        <span class="status" data-role="status"><b>ready</b> · 0 / 0</span>
+      </div>
+      <div class="progress"><i data-role="prog"></i></div>
+      <div class="track-scroll"><svg class="track" data-role="track" role="img" aria-label="Future pipeline: pre-production, the episode line, distribution, marketing"></svg></div>
+      <div class="flow-body">
+        <div class="inside">
+          <div class="eyebrow" data-role="lane">Inside the step</div>
+          <h3 data-role="name">Press play</h3>
+          <div class="why" data-role="why">The scheduler finds a chapter whose requirements are complete and launches the line. It parks on every owner gate, batches the escalations into one call sheet, and moves on.</div>
+          <div class="subs" data-role="subs"></div>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom:6px">Run log</div>
+          <div class="log" data-role="log"></div>
+        </div>
+      </div>
+    </div>
+    <p class="flow-note">The trailer is shown being ordered by Marketing and made by Production: the same run, one loop later. Nothing in a production line publishes; nothing in Marketing renders or posts; nothing in a line waits for a person — the only signature left in this run is PUBLISH.</p>
+  </section>
+
+  <!-- migration -->
+  <section class="block">
+    <div class="head"><h2>Order of work</h2><p>Cheapest and highest leverage first. Nothing here adds a capability the scripts don't have; it adds the org.</p></div>
+    <div class="two-col">
+      <div class="mini migr">
+        <h3>Ten commits</h3>
+        <ol>
+          <li><b>Registry keys and the unit column</b> — done 2026-09-24 · <code>unit</code>, <code>requires</code>; <code>events.unit</code>; <code>db.STAGES</code> from the registry · ~150 lines, 5 tests</li>
+          <li><b><code>refs</code> stage</b> — done · runner from the trailer template; four wrappers; the LOOK verdict file · ~300 lines, 8 tests</li>
+          <li><b><code>episode</code> stage</b> — done, with the writer agent · every eye = ESCALATE; the skill's command table generated from the registry · ~1,400 lines, ~30 tests</li>
+          <li><b>Distribution contracts</b> · FinishedFile, PublishManifest, CatalogEntry; a <code>local</code> model tier · ~200 lines</li>
+          <li><b><code>publish</code> stage</b> · intake, catalogue, in-repo notify; publishing leaves the format line · ~700 lines</li>
+          <li><b>The new agents</b> · episode_writer, cast_lister, metadata_writer, look_back, each behind a deterministic gate · ~600 lines</li>
+          <li><b><code>studio.py</code> scheduler</b> · the loop over <code>requires</code>; batched call sheet · ~250 lines</li>
+          <li><b><code>analytics</code>, <code>promo</code></b> · the loop closes: numbers feed the next brief · ~600 lines</li>
+          <li><b>Higgsfield client + credit ledger → <code>shorts</code></b> · the showrunner skill retires as manager · ~1,700 lines</li>
+          <li><b>Gate retirements</b> · one (format, gate) at a time, each a DECISIONS line with its count</li>
+          <li><b>Judges replace the eye</b> · casebook + bench + ratchet; <code>gates.yaml</code>; picture, take, plan and master judges with priced ladders; every refs/episode park removed; the audit sheet · done 2026-09-24</li>
+        </ol>
+      </div>
+      <div class="mini">
+        <h3>What exists vs what's a slot</h3>
+        <ul>
+          <li><span class="pill">built</span> analysis, screenplay, trailer, refs, episode (2026-09-24)</li>
+          <li><span class="pill">scripts, no stage</span> publish</li>
+          <li><span class="pill">missing</span> analytics, promo, notify, scheduler, R&amp;D ledger</li>
+          <li><span class="pill">skills only</span> shorts — registered as an empty slot</li>
+          <li><span class="pill">slots</span> feature, song, audiobook, game, book; the own platform as an adapter inside publish, after the catalogue</li>
+          <li><span class="pill">judged</span> LOOK, PLAN, EYE ×2, MASTER — signed by judges since 2026-09-24 (owner decision); the owner audits after the fact</li>
+        </ul>
+        <h3 style="margin-top:14px">Publishable on their own</h3>
+        <p>Standalone packages this design implies, each generalisable beyond this repo: <b>stepwise</b> (the step runner with credits-and-artefacts resume), <b>publish-manifest</b> (typed multi-platform publishing with a quota ledger), <b>higgsfield-client</b>, <b>list-then-judge</b> (the VLM content-gate pattern), <b>casebook-locked calibration</b> (rows, bench, ratchet, the flag-not-park contract), <b>trait-card</b> (identity binding for reference sheets), <b>measured-timeline</b> (the animatic as code), <b>metre</b>, <b>title-record</b>, <b>registry-org-chart</b>.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+<div id="tab-command" hidden>
+
+  <p class="lede" style="margin-top:18px"><b>Decided 2026-09-25 (owner: "looks good"); built 2026-09-26 — all eleven commits, the tracker is <code>architecture/plan/2026-09-25_command_center_build.md</code>. Open it: <code>uv run python command_center.py</code> → <code>http://127.0.0.1:8700</code>.</b> <b>Re-skinned 2026-10-04 (decision <code>2026-10-04_premium_board.md</code>):</b> Studio black, a left sidebar shell (Home · Inbox · Queue · Books · Architecture · the five departments · pinned units · the live GPU card), an in-page Viewer for pictures, takes, prompts, JSON and logs, and this org chart served inside the board at <code>/architecture</code>. The ask: a local board to watch every job, each department with its own table, and the tables driving the departments through standard inputs and outputs. Five reports argued it (a data modeller, an orchestration engineer, a production-office manager, an operations-UI designer, the codebase's own integrator); the chair ruled. The ruling, the data model, the contract, the drive and the board are below; the full text is <code>architecture/decisions/2026-09-25_command_center.md</code>, the task-level plan <code>architecture/plan/2026-09-25_command_center_build.md</code>, the reports under <code>decisions/research/2026-09-25_command_center/</code>.</p>
+
+  <!-- the brick -->
+  <section class="block">
+    <div class="head"><h2>The brick</h2><p>One rule that regenerates every department's table.</p></div>
+    <p style="max-width:78ch;margin:10px 0 0;color:var(--ink-2)"><b>One work-order row per (book, department, unit).</b> A row is <code>queued</code> when every row it <code>requires</code> (the registry's edge) is <code>done</code> and its declared inputs exist on disk. A runner claims the earliest queued row of its department and runs the registry's steps for that unit; the row's state is whatever the run's last event says. The department's last step writes the unit's <code>manifest.json</code>, which is the next department's declared input. Every department's table is <code>stages.yaml</code> applied to <code>work_orders</code>; the disk stays the truth of a step, the events table the journal, the row their projection — written from one place, rebuildable from disk.</p>
+  </section>
+
+  <!-- the debate ruled -->
+  <section class="block">
+    <div class="head"><h2>The debate, ruled</h2><p>Where a report lost, it says so and names the replacement.</p></div>
+    <div class="tbl-wrap"><table class="v">
+      <tr><th>Point</th><th>Positions</th><th>Verdict</th></tr>
+      <tr><td>Grain of the row</td><td>A: one row per (unit, step). B, C, D, E: one row per (department, unit)</td><td><span class="win">unit grain</span> A coordinator's row is a unit. A's per-step row survives as <code>work_steps</code> under the order — the unit page's chips, never the queue's grain.</td></tr>
+      <tr><td>"Each department its own table"</td><td>A, E: one table + a generated VIEW per department</td><td><span class="win">one table, one view each</span> <code>episode_orders</code>, <code>refs_orders</code>… generated from the registry like the codex status columns. The hand columns (priority, hold, redo, note) live on the row, so the view has them. <span class="lose">physical table per department</span> twelve DDLs drifting from the registry.</td></tr>
+      <tr><td>Standard inputs / outputs</td><td>A: constants on the step module + a manifest. C, E: <code>in:</code>/<code>out:</code> in <code>stages.yaml</code></td><td><span class="win">the registry declares</span> once, per step, book-relative globs; a drift-guard test holds them to each step's <code>done()</code>. <span class="win">the manifest crosses the boundary</span> a department's last step writes <code>manifest.json</code>; a <code>requires</code> is satisfied by the upstream manifest's row being done, never by a sentence. <span class="lose">module constants</span> two declarations of one fact.</td></tr>
+      <tr><td>Push, pull, scheduler</td><td>all: materialize on a tick, pull by one worker</td><td><span class="win">tick + pull</span> <code>studio.py tick</code> inserts rows from the registry × the slate, promotes <code>blocked → queued</code>, mirrors <code>RENDER_HOLD</code>, sweeps leases. <span class="lose">push</span> refs/04 fans out to N episodes; episode/01 orders refs back upstream.</td></tr>
+      <tr><td>Explicit invocation</td><td>E: must keep working</td><td><span class="win">unchanged</span> <code>episode.py &lt;book&gt; &lt;n&gt;</code> claims its own row; the no-unit form drains the queue in <code>priority, sequence</code> order. The UI never runs a step; it writes orders.</td></tr>
+      <tr><td>The one GPU</td><td>A: a partial unique index. B: lease columns. E: keep the live ComfyUI read</td><td><span class="win">all three</span> <code>claimed_by</code>/<code>lease_until</code> (15 min, renewed by the writes the runner already makes); a unique index on running GPU rows makes a second claim an IntegrityError; <code>comfy.busy()</code> and the <code>RENDER_HOLD</code> file stay (the file is the owner's one-second brake; the tick mirrors it).</td></tr>
+      <tr><td>States</td><td>B: 9. A: 10. C: 11 coordinator words. D: 11 glyphs</td><td><span class="win">nine stored</span> blocked, queued, running, stale, held, deferred, escalated, failed, done. <code>flagged</code> is a count on a done row; <code>published</code> is the publish department's own row. C's words are the legend over these; D's glyphs and colour rule stand.</td></tr>
+      <tr><td>Takes and panels</td><td>B: <code>items</code> rows. A: artefacts. D: a progress column</td><td><span class="half">v1 column, v2 rows</span> a <code>progress</code> column the runner writes ("18/25 · T10 attempt 3 move_type"); <code>items</code> when the take loop stops being a subprocess. Nothing globs the disk on a poll.</td></tr>
+      <tr><td>A deferred unit</td><td>B: wait for a bump or a changed input</td><td><span class="win">waits</span> episode 13 burned six identical ladders unattended. Resumed only by an order (<code>retry</code>) or a changed <code>input_sha8</code>, and the resume edits the kept draft.</td></tr>
+      <tr><td>Owner actions</td><td>D: an <code>orders</code> table. C: <code>redo.jsonl</code></td><td><span class="win">one writer: orders</span> hold, lift, redo, bump, retry, requeue — with a note and <code>taken_by_run</code>; runners take them at the top of each loop; a redo's note also goes to the casebook. A second redo on the same class is a bench case, not a third render.</td></tr>
+      <tr><td>Events vs rows</td><td>E's doubt: a second truth</td><td><span class="win">events stay the journal</span> the row is upserted inside <code>db.add_event</code> — one place, zero runner edits. <code>studio.py verify</code> diffs rows against disk and marks <code>stale</code>; it never auto-resolves.</td></tr>
+      <tr><td>UI stack</td><td>D: FastAPI. E: Starlette (already installed, transitive)</td><td><span class="win">FastAPI + Jinja2 + htmx</span> pinned, port 8700, <code>uv run python command_center.py</code>. Read-only SQLite from the web process; artefacts from <code>library/</code> behind a resolved-path check; tests in-process, never a server.</td></tr>
+      <tr><td>This page</td><td>D: keep it, link it</td><td><span class="win">stays</span> served at <code>/org</code>; the board copies its tokens (test-enforced).</td></tr>
+    </table></div>
+  </section>
+
+  <!-- data model -->
+  <section class="block">
+    <div class="head"><h2>The data model</h2><p>Four tables beside codex and events; one view per department, generated.</p></div>
+    <div class="tbl-wrap"><table class="v">
+      <tr><th>Table</th><th>One row is</th><th>Columns that matter</th></tr>
+      <tr><td><code>work_orders</code></td><td>a unit in a department — the department's table</td><td>codex_id · stage · unit · number · kind · home · <b>state</b> · step_id · progress · priority · sequence · gpu · attempts · flags · input_sha8 · blocked_on · claimed_by · lease_until · run_id · requested/started/updated/finished_at · gpu_seconds · cost_usd · deliverable · verdicts (JSON) · hold_reason · redo · note · source (run | queue | backfill). UNIQUE (codex_id, stage, unit); a unique index on running GPU rows.</td></tr>
+      <tr><td><code>work_steps</code></td><td>one step of one order — the unit page's chips</td><td>order_id · step_id · state · attempt · run_id · started/ended_at · seconds · gpu · verdict_path/by/word · terminal · outputs (JSON, book-relative) · detail</td></tr>
+      <tr><td><code>orders</code></td><td>the owner's intent, one writer</td><td>ts · kind (hold | lift | redo | bump | retry | requeue | acknowledge — an older table keeps its CHECK and the insert waives it for that word) · scope (studio | book | unit) · codex_id · stage · unit · step_id · note · by · taken_ts · taken_by_run</td></tr>
+      <tr><td><code>holds</code></td><td>a brake at a scope</td><td>scope · codex_id · stage · unit · reason · held_by · held_at · lifted_at — <code>RENDER_HOLD</code> mirrored in</td></tr>
+      <tr><td><code>episode_orders</code> …</td><td>a VIEW per registered department</td><td><code>SELECT * FROM work_orders WHERE stage = 'episode'</code>; studio-wide <code>v_queue</code> and <code>v_attention</code></td></tr>
+      <tr><td>existing</td><td>two columns each</td><td><code>events.order_id</code> · <code>usage.unit</code>, <code>usage.order_id</code>; <code>timing.jsonl</code> → <code>work_steps.seconds</code>; learnings and audit rows stay files the board tails</td></tr>
+    </table></div>
+    <pre class="ddl">state machine   blocked → queued → running → done | failed | deferred | escalated
+                 + held (a hold at any scope) · stale (input sha moved after done, or a lease expired)
+who transitions  the tick materializes and promotes · the runner claims and settles (add_event does it)
+                 judges and the owner only sign files and write orders — nobody types a state</pre>
+    <div class="states">
+      <span><b>○ queued</b></span><span><b>◌ blocked</b></span><span class="run"><b>● running</b> live 18/25</span><span class="ok"><b>✓ done</b></span><span class="amb"><b>⚑ n flagged</b> needs nobody now</span><span class="nxt"><b>↩ deferred</b> needs the next pass</span><span class="dev"><b>✕ failed</b> needs a developer</span><span class="own"><b>✋ escalated</b> needs the owner</span><span><b>⏸ held</b></span><span><b>~ stale</b></span>
+    </div>
+  </section>
+
+  <!-- the contract -->
+  <section class="block">
+    <div class="head"><h2>The standard department contract</h2><p>Seven columns, the same for every department, current and future. The registry carries three already.</p></div>
+    <div class="tbl-wrap"><table class="v">
+      <tr><th>Department</th><th>Unit</th><th>Turnover IN (<code>in:</code>)</th><th>Deliverables OUT (<code>out:</code>, named by the manifest)</th><th>Final when</th><th>Progress</th></tr>
+      <tr><td>analysis</td><td>book</td><td>source, the codex row</td><td>book.json, chapters, extraction/ch_NN.json, scenes, characters, locations, qc_report.json</td><td>06 verify done</td><td>chapters / chapters</td></tr>
+      <tr><td>screenplay</td><td>(book, target)</td><td>analysis manifest, targets.yaml row</td><td>plan, screenplay, elements, .fountain, qc_report.json</td><td>05 verify done</td><td>beats / beats</td></tr>
+      <tr><td>refs — the bible</td><td>(book, style)</td><td>analysis manifest, the cast list</td><td>refs.json, sheets, pack.jsonl, voices, refs/verdict.json</td><td><code>judge:look@1</code> signs the pack sha</td><td>bound / needed</td></tr>
+      <tr><td>episode — production</td><td>(book, chapter)</td><td>analysis + refs manifests, rows stamped for the unit</td><td>plan + verdict, lines, placed.json, panels + eye, takes + eye, cut/master_iterN.mp4, qc, review eye, manifest.json</td><td>12 deliver done: every verdict's sha8 matches the master</td><td>takes judged / shots</td></tr>
+      <tr><td>trailer</td><td>(book, main)</td><td>screenplay + refs manifests</td><td>story, metre, clips, master, qc, manifest</td><td>10 deliver done</td><td>clips / setups</td></tr>
+      <tr><td>publish <i>(future)</i></td><td>(master sha8, platform)</td><td>a production manifest, the master eye, the series policy</td><td>publish/&lt;sha8&gt;/&lt;platform&gt;.json, bundle, uploads.jsonl row</td><td>the platform's live status read back</td><td>items / 5</td></tr>
+      <tr><td>promo <i>(future)</i></td><td>release</td><td>a publish row, an analytics reading</td><td>campaign, orders, key art, cutdowns, posts</td><td>every order delivered and posted</td><td>orders / orders</td></tr>
+    </table></div>
+  </section>
+
+  <!-- the drive -->
+  <section class="block">
+    <div class="head"><h2>How a department is driven</h2><p>The table is the queue; the runner is unchanged; the board only writes orders.</p></div>
+    <pre class="ddl">tick(conn)    rows from the registry × the slate (INSERT OR IGNORE) · blocked → queued when requires are done
+              and in: exist · RENDER_HOLD → holds · expired leases → stale
+claim(conn)   UPDATE work_orders SET state='running', claimed_by=?, lease_until=now+15m
+              WHERE id = (SELECT id FROM v_queue WHERE stage=? LIMIT 1) RETURNING *
+run           step_runner.run_steps(ctx, steps)          -- unchanged; add_event upserts the row
+settle        the last event's word; outputs, gpu_seconds, cost from what the run wrote
+orders        taken at the top of each loop: hold/lift → holds · bump → priority 0
+              retry → deferred|failed → queued · redo → the named step re-runs although done()
+
+explicit      uv run python episode.py &lt;book&gt; &lt;n&gt;     claims that one row (works today, unchanged)
+no unit       uv run python episode.py &lt;book&gt;          drains queued rows in priority, sequence order
+not built     a worker loop that starts a five-hour GPU job unattended — a queued row is a REQUEST
+              until the owner says it is an instruction</pre>
+  </section>
+
+  <!-- the board -->
+  <section class="block">
+    <div class="head"><h2>The board</h2><p>Six pages; the studio home is the landing page. Wireframes from report D; v1 read-only (C10) and v2's order buttons (C11) are both built, 2026-09-26.</p></div>
+    <h3 style="margin:18px 0 0;font-size:14px">Studio home <code>/</code> — on the floor, needs you, the department lanes, today</h3>
+    <pre class="wire">┌ Visurena Studio ─────────────── Home · Floor · Books · Org chart ── ◐ ┐
+│ ON THE FLOOR  ● Episode › WotW › ep13 · 09 shoot · takes 18/25         │
+│               attempt 2 · gpu 1h42 of 5h · started 14:02 · next: ep14  │
+│ NEEDS YOU (2) ✋ Shorts › s07 · approve render 340 cr  [Approve][Refuse]│
+│               ✕ Refs › Dracula › style krea2 · 02 sheets · KeyError … ▸│
+├──────────┬──────────┬──────────┬──────────┬──────────┬────────────────┤
+│ ANALYSIS │SCREENPLAY│ REFS     │ TRAILER  │ EPISODE  │ DISTRIBUTION   │
+│ 3 units  │ 2 units  │ 2 units  │ 1 unit   │ 13 units │ 11 published   │
+│ ▮▮▮      │ ▮▮       │ ▮▮       │ ▮        │ ▮▮▮▮▮▮▮▮▮▮▮▮● │ ▮▮▮▮▮▮▮▮▮▮▮ │
+│ ✓3       │ ✓2       │ ✓1 ✕1    │ ✓1       │ ✓5 ⚑6 ●1 ↩1 │ ✓11           │
+│          │          │          │          │          │                │
+│ WotW  ✓  │ WotW  ✓  │ WotW  ✓  │ WotW  ✓  │ ep13 ● 18/25 │ ep11 public │
+│ Dracula ✓│ Dracula ✓│ Dracula ✕│          │ ep12 ⚑5 iter2│ ep10 public │
+│ Frankst ✓│          │          │          │ ep14 ↩ defer │ ep09 public │
+│          │          │          │          │ ep10 ⚑2      │ …           │
+│ open ▸   │ open ▸   │ open ▸   │ open ▸   │ open ▸   │ open ▸         │
+├──────────┴──────────┴──────────┴──────────┴──────────┴────────────────┤
+│ TODAY  07:40 ep12 qc 412s ✓ · 08:45 ep12 prompts 2s ✓ · 15:52 ep12     │
+│        bind ✓ · 15:52 ep12 takes 3s ✓ · 20:54 ep13 PLAN ↩ · 22:20 …    │
+│ legend  ○ queued ◌ blocked ● running ✓ passed ⚑ flagged ↩ deferred      │
+│         ✕ failed ✋ escalated ⏸ held ~ stale – skipped                   │
+└────────────────────────────────────────────────────────────────────────┘</pre>
+    <h3 style="margin:18px 0 0;font-size:14px">Floor <code>/floor</code> — the one GPU's day: now, next, waiting on, held</h3>
+    <pre class="wire">┌ Studio › Floor ─────────────────────────────────── GPU: RTX 4090 ─ ◐ ┐
+│ NOW   ● Episode WotW ep13 · 09 shoot · round 2 · take T18 of 25         │
+│       ▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮░░░░░░░ 72% · 1h42 of 5h ceiling · ETA 16:40   │
+│       run 20260827135508_episode_20260925140212 · [log tail ▾]         │
+│                                                                        │
+│ NEXT  1  Episode WotW ep14        02 plan     ↑ priority 1   [hold]     │
+│       2  Refs  Dracula krea2       02 sheets   after fix ✕    [hold]    │
+│       3  Episode WotW ep15        01 bind     queued          [↑][hold]│
+│       4  Trailer Dracula           03 music    ◌ needs refs/04          │
+│ HELD  ⏸ Episode Frankenstein *    all         owner 09-24: &quot;after ref&quot;  │
+│                                                                        │
+│ TODAY ─ 07:40 ─── 08:45 ── 15:52 ─── 20:54 ──── 22:20 ─── now         │
+│   ep12 ▮qc 412s ▮prompts ▮bind ▮takes   ep13 ▮plan ↩  ▮plan ↩  ●shoot │
+│   gpu busy 3h11 · idle 9h02 · steps 9 · flagged 1 · deferred 2         │
+└────────────────────────────────────────────────────────────────────────┘</pre>
+    <h3 style="margin:18px 0 0;font-size:14px">Department <code>/d/episode</code> — the department's table</h3>
+    <pre class="wire">┌ Studio › Episode ───────────── 13 units · 5h ceiling per unit ─── ◐ ┐
+│ filter [all books ▾] [state ▾] [flagged only □]   sort: attention ▾   │
+├─────┬────────┬──────┬────────────────────┬────────┬─────┬──────┬──────┤
+│ st  │ book   │ unit │ step · progress    │ last   │ att │ gpu  │ verd │
+├─────┼────────┼──────┼────────────────────┼────────┼─────┼──────┼──────┤
+│ ●   │ WotW   │ ep13 │ 09 shoot ▮▮▮▮░ 18/25│ 14:02  │ 2   │ 1h42 │ ✓✓⚑○○│ [hold]
+│ ✋  │ WotW   │ ep16 │ 09 shoot · render  │ 13:10  │ 1   │ 0    │ ✓✓✓○○│ [Approve]
+│ ↩   │ WotW   │ ep14 │ 02 plan · deferred │ 22:20  │ 5   │ 0    │ ↩    │ [run]
+│ ✕   │ Drac   │ ep01 │ 04 record · Error  │ 09-24  │ 1   │ 0:04 │ ✓○○○○│ [run]
+│ ⚑ 5 │ WotW   │ ep12 │ 12 deliver ✓ iter2 │ 15:52  │ 5   │ 4h58 │ ✓✓⚑⚑✓│ [redo]
+│ ⚑ 2 │ WotW   │ ep10 │ 12 deliver ✓ iter1 │ 09-23  │ 3   │ 3h20 │ ✓✓⚑✓✓│
+│ ✓   │ WotW   │ ep11 │ 12 deliver ✓ public│ 09-22  │ 3   │ 4h01 │ ✓✓✓✓✓│
+│ ○   │ WotW   │ ep15 │ 01 bind            │ –      │ 0   │ –    │ ○○○○○│ [↑]
+│ ◌   │ Drac   │ ep02 │ needs refs/04      │ –      │ 0   │ –    │      │
+│ ⏸   │ Frank  │ ep01 │ held 09-24         │ –      │ 0   │ –    │      │
+├─────┴────────┴──────┴────────────────────┴────────┴─────┴──────┴──────┤
+│ row hover: thumbnails strip (contact.png) · click unit → unit page      │
+│ footer: ✓5 ⚑6 ●1 ↩1 ✕1 ○… · gpu this week 21h · legend                 │
+└────────────────────────────────────────────────────────────────────────┘</pre>
+    <h3 style="margin:18px 0 0;font-size:14px">Unit <code>/d/episode/&lt;book&gt;/ep12</code> — steps, master, verdicts, panels, takes, learnings, log, timing</h3>
+    <pre class="wire">┌ Studio › Episode › War of the Worlds › ep12 &quot;Weybridge and Shepperton&quot; ┐
+│ ⚑ 5 flagged · 12 deliver ✓ · master_iter2 · 4h58 gpu · 5 attempts     │
+│ [run/resume] [redo ▾ with note] [hold] [audit sheet ▸] [dossier ▸]      │
+├────────────────────────────────────────────────────────────────────────┤
+│ STEPS  01 ✓ 02 ✓ 03 ✓ 04 ✓ 05 ✓ 06 ✓ 07 ✓ 08 ⚑ 09 ⚑ 10 ✓ 11 ✓ 12 ✓      │
+│        bind plan places record timeline prompts board panels shoot …   │
+│        click a chip → its timing row, its log slice, its gate faults   │
+├──────────────────────────────────┬─────────────────────────────────────┤
+│ MASTER  ┌──────────────┐         │ VERDICTS                            │
+│         │ ▶ master_iter2│ 160 s  │ PLAN   ✓ judge:plan@1  56bd2e17     │
+│         │   1:1  -14.1  │ LUFS   │ LAYOUT ✓ grid_layout@1              │
+│         └──────────────┘         │ PANELS ⚑ panel_eye@1 c7e3eb93       │
+│  iter1 · r2v  · qc: 23/23 cuts,  │   landmark at shot_00 (x28) ▸       │
+│  23/23 lines heard, gap 5.8/6.0  │ TAKES  ⚑ take_eye@1 21227f91        │
+│                                  │   face-at-end T16 0.74 · lag T16 ·  │
+│ PLAN  Q: &quot;Can the guns stop      │   cut T19 · jump T19 → still        │
+│ them?&quot; · answer shot 19 · 24     │ MASTER ○ not yet signed             │
+│ shots · 23 lines · 3 beds ▸json  │ [redo PANELS with note]             │
+├──────────────────────────────────┴─────────────────────────────────────┤
+│ PANELS (contact.png)   TAKES (strip_*.png)                             │
+│ [00][01][02][03][04]   [T00][T01][T02]…[T16⚑][T17][T18][T19⚑ still]   │
+│ [05][06][07]…  ▸ all   hover: &lt;video preload=metadata&gt;; click: lightbox│
+├────────────────────────────────────────────────────────────────────────┤
+│ LEARNINGS (tail 5)                 │ LOG run …140212 (tail, WARN+)     │
+│ 14:09 09 EYE_TAKES keep_best ⚑ …  │ 22:20 WARN plan_check refused: …  │
+│ 14:09 09 EYE_TAKES replan_cell 5   │ 22:19 WARN PLAN: measured 24.0 →  │
+│ 14:08 09 EYE_TAKES head_cut 4      │ …                                 │
+├────────────────────────────────────┴───────────────────────────────────┤
+│ TIMING  bind 0.1s · plan 31s · … · shoot 2h50 · edit 6m · qc 412s      │
+└────────────────────────────────────────────────────────────────────────┘</pre>
+    <p style="max-width:78ch;margin:12px 0 0;color:var(--ink-2)">Also <code>/b/&lt;book&gt;</code> (units across, departments down, ▲ for a public upload) and <code>/org</code> (this page). htmx partials on a 2 s poll for the floor and running cells, 10 s for tables; a JSON twin per partial. The web process reads SQLite read-only, writes only <code>orders</code> (and a hold's <code>holds</code> row) through a second connection, never runs a step, never globs the disk on a poll; thumbnails are the files the steps already write.</p>
+  </section>
+
+  <!-- migration and what is not built -->
+  <section class="block">
+    <div class="head"><h2>Migration, and what is not built</h2><p>Zero loss; nothing renamed; a projection you can rebuild.</p></div>
+    <div class="tbl-wrap"><table class="v">
+      <tr><th>Item</th><th>Ruling</th></tr>
+      <tr><td>Backfill</td><td><code>scripts/audit/backfill_work_orders.py</code> derives rows from disk and events: a signed plan verdict → plan done; <code>cut/master_iterN.mp4</code> → edit done; <code>qc_r2v.json</code> passed → qc done; <code>youtube.json</code> / <code>uploads.jsonl</code> → the publish row; <code>plan.deferred.json</code> → deferred. Dry-run first; <code>source='backfill'</code>; never a row with a live run. Verified on disk: 25 of 27 episode folders derive without judgement; ep12 is ambiguous (a hand-signed verdict, a live run) and is listed, not guessed.</td></tr>
+      <tr><td>Not built, on purpose</td><td>Crew scheduling, revision colours, VFX version trees, per-line budgets, Kanban, @mentions, ETA models, Approve/Reject on judged gates (a redo + a note replaces them), any daemon, executor, replay engine or pool.</td></tr>
+      <tr><td>Open for the owner</td><td>1. Is a <code>queued</code> row an instruction (a worker loop drains it) or a request (a runner invocation takes it)? The plan builds the request. &nbsp;2. A Distribution lane read from <code>uploads.jsonl</code> before a <code>publish</code> stage exists, or wait for the stage? &nbsp;3. <code>flagged</code> as a count on a done row (this ruling) or a state of its own?</td></tr>
+      <tr><td>The plan</td><td>Eleven commits, ~30 tests, ~1,850 lines, four days: the table (C1–C3), the contract and the hand (C4–C6), the drive (C7–C9), the board (C10–C11). Built 2026-09-26. <code>architecture/plan/2026-09-25_command_center_build.md</code>.</td></tr>
+    </table></div>
+  </section>
+
+</div>
+</div>
+
+<script>
+(function(){
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- tabs ---------- */
+  var tabs=[].slice.call(document.querySelectorAll('.tabs button'));
+  var panes={current:document.getElementById('tab-current'),future:document.getElementById('tab-future'),command:document.getElementById('tab-command')};
+  function showTab(name){
+    if(!panes[name])name='current';
+    tabs.forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===name?'true':'false');});
+    for(var k in panes){panes[k].hidden=(k!==name);}
+    try{localStorage.setItem('sd-tab',name);}catch(e){}
+    layout();
+  }
+  tabs.forEach(function(b){b.addEventListener('click',function(){showTab(b.dataset.tab);if(history.replaceState)history.replaceState(null,'','#'+b.dataset.tab);});});
+
+  /* ---------- future: department trees, generated from data ---------- */
+  /* node: [kind, name, role, file, state, chip]  kind: dept|lead|agent|think|qc|slot ; state: built|partial|missing|slot */
+  var A=function(n,r,tier){return {k:(tier==='reasoning'?'think':tier==='qc'?'qc':'agent'),n:n,r:r,chip:tier||'workhorse'};};
+  var U=function(id,name,role,state,file,kids,owner){return {k:'lead',n:id+' '+name,r:role,f:file,st:state,kids:kids||[],owner:owner};};
+  var TEAMS=[
+    {n:'Studio office',r:'The head of production is a loop over the registry',st:'missing',kids:[
+      U('','Autopilot (scheduler)','A Task-Scheduler-armed loop: launches drive.py for the next chapter, derives the episode state from disk every tick, retries, cures through work orders, parks with a reason and moves on; two parks in a row pause the series; exits when HEAD moves; never a silent stop, never a wait on the owner (built 2026-10-06). The clock it reads is the process (2026-10-11, cycle 3): each episode run is a clock.jsonl row beaten every 60 s, the ceiling is the union of run spans, a killed run counts to its last beat; a retry never resets it, a spent clock never parks (a third spent-clock stop in a row parks clock_loop) and only the closed SAFETY list stops an episode. The downstream reserve (2026-10-11): a rescue rung also runs only while spent + its price + the shares of the firsts still owed after its step fit under the owner\u2019s 6 h (Budget.leaves_reserve); a refusal is the ceiling\u2019s terminal, never a park; past the ceiling a verdict on the same bytes stands under moved code (take_dq, QC pass). OWN REPAIR CLOCK (owner ruling 2026-10-19): an owner redo of a DELIVERED episode opens a repair window when the runner takes the order; the drive runs on the repair\u2019s own budget, charged from its start and capped (the redone step\u2019s and later steps\u2019 shares + the judges\u2019 pool: 8,580 s for 09; CAP repair when spent), its run rows tagged repair and never counted in the episode\u2019s 6 h; the finish line prints both; the window ends with its drive; a normal launch is unchanged. Inside it a redo of 09 or later re-renders no delivered take (take_currency.frozen: the delivered or measured bytes stay current over moved prompt words; incident 2026-10-19 11:18 PDT, 28 takes queued), and the freeze outlives its drive (the latest closed repair row governs a relaunch until an owner redo of 01-08) and holds at the terminal (no best-draw swap of a frozen take); a leftover window is closed at the drive’s start once its repair is no longer owed (no owner receipt stands, or step 12 delivered again), a second owner order is adopted by the open window, and repair_dry_check.py says what a repair and its relaunch would render, and which terminal swaps it keeps, before it launches. `pause --at-boundary` (2026-10-11) asks the running episode to stop between steps, rungs, grids or takes; the run exits paused_at_boundary, read as PAUSED, never a crash. RETRO 2026-10-19: never asks the brain or parks on a dirty runtime tree or a moved HEAD (one relaunch per HEAD), un-parks a false brain park when runtime code lands, hands over to one detached successor per HEAD on code_moved (the 5 min scheduler stays the dead-man fallback), keeps a drive_runNN log per launch, kills a stuck step only on flat CPU and no output growth past 1.5 x its wall, restarts a dead ComfyUI after 2 missed ticks and frees or recycles it on low commit. RETRO 2026-10-20 (decision ops_leases_and_watchdog): a pause is a lease {by, why, since, expires, sha}; a retro pause is said again at 2 h, an owner pause is never lifted by code, and the autopilot resumes only its own two-parks brake, past its lease and after a commit landed; a second task (visurena-autopilot-watchdog, every 5 min) says once when heartbeat.json is 10 min silent (ep01: a Windows Update restart with nobody logged on, 4.68 h); a G-STANDING stop is the state HELD_PUBLISH, no parked row, the series moves on and the held master runs step 13 again once publish/standing.json is signed; HEAD moving under a live drive keeps the loop on its code until the drive ends, the launch records its sha, `may-commit` holds a runtime commit for `pause --at-boundary`, and a relaunch on moved code names the checks the new judge code invalidates; a YouTube token 5 days old or failing its refresh sends the consent paste link at launch and at render start. T=0 PREFLIGHT (craft ruling A23, 2026-10-21): drive.py reads the proof harness\u2019s chapter audit (scripts/proof/preconditions.py, imported), the standing hand and the token\u2019s age before a second is spent; each gap prints refuse now (no chapter text) or will park at step N, and a publish-only gap always parks (ep01 had charged 6.69 h before step 13 refused a book.json with no series)','built','scripts/episode/drive.py \u00b7 scripts/episode/autopilot.py · studio/autopilot.py · studio/engine_ops.py · studio/run_clock.py · studio/repair_clock.py · scripts/episode/repair_dry_check.py · scripts/publish/youtube_auth.py'),
+      U('','Brain (Agent SDK)','Claude on a leash: triages a stop mid-run (read-only, a JSON verdict, ledgered as stage=brain); fixes with tests only between episodes through the saved /fix-parked workflow under the ratchet; may never write library/, a verdict, a gate threshold or a model tier (built 2026-10-06; first live triage turn the same day)','built','studio/brain.py · studio/ratchet.py · .claude/workflows/fix-parked.js'),
+      U('','Slate','Ordered unit list, targets, synthetic declaration, publish policy','partial','library/<book>/series.json'),
+      U('','Brake','Every runner and the GPU lease read it on the way in','built','RENDER_HOLD'),
+      U('','Decisions','Every gate retirement with its count','built','docs/DECISIONS.md'),
+      U('','Audit sheet','Every flag and a seeded sample per unit; the owner reads it when he likes; findings append to the casebook; no step reads it','built','scripts/audit/sheet.py · library/<book>/audit/')]},
+    {n:'Platform',r:'Shared services; no deliverable of its own',st:'partial',kids:[
+      U('','Model gateway','Tiers, not models; every tier runs on the Claude Agent SDK under the owner\'s subscription (one structured session per call, the schema enforced by the SDK, tokens ledgered at no cost, never a wall); the paid providers remain only as ledger history (owner, 2026-10-07)','built','studio/llm.py · studio/brain.py · models.yaml'),
+      U('','GPU lease','One GPU, one stage; reads RENDER_HOLD','partial','studio/comfy.py'),
+      U('','Device router','Owner 2026-10-18: a heavy non-render job runs on the GPU when it is idle, on the CPU while it renders. device_for(job, need_gb): cuda only on an empty ComfyUI queue (read twice), no live GPU claim (av3 master, whisper worker) and free VRAM after /free; else cpu, today’s path; every decision logged with its reason. Wired: whisper (embedded-python worker, 498 s -> 9 s on ep01 lines) and the master encode (NVENC p7). Next: facenet/EasyOCR. RETRO 2026-10-19: reads VRAM first (a /free only when short), a down engine is cpu, a GPU claim needs a living holder (10 min stale, 60 s heartbeat)','partial','studio/compute_device.py · routed_whisper.py · whisper_worker.py · video_encoder.py'),
+      U('','Family free','RETRO 2026-10-19 (K10, D19): ComfyUI is freed once at a model-family boundary, never per read -- step_runner before a GPU step whose stages.yaml family: differs from the last, step 03 once before its VL reads (285 s offloaded vs 54 s freed on ep01)','built','studio/comfy.py free_on_family · studio/step_runner.py · stages.yaml family:'),
+      U('','GPU ledger','RETRO 2026-10-19: a 5 s sampler beside every drive -- ComfyUI queue, live claims, VRAM and utilisation, commit and RAM free, ComfyUI private bytes -- to library/.device/gpu_util.jsonl; busy / claimed / idle minutes per step','built','scripts/episode/gpu_ledger.py'),
+      U('','Torch worker','PROPOSED (deferred, D21): facenet and EasyOCR on CUDA in a worker under the embedded python, routed by the device router; needs a zero-flip verdict replay first','missing','studio/compute_device.py (route) · a worker to write'),
+      U('','Ledger / DB','STAGES from the registry; a unit column; RETRO 2026-10-19: a step wall beats wall.<id>.live every 60 s and a killed run is charged at the next open; attempts.json writes under a lock; an owner redo books to wall.<id>.order; run_clock.dead_gaps names the dead time between runs','partial','studio/db.py · spend.py'),
+      U('','Approval','Per kind, per run','built','studio/approval.py'),
+      U('','Measures','A measure returns a number: faces and identity (embedding), keypoints, boxes, flow, OCR, copy, patch embedding','built','studio/measure/'),
+      U('','Judge bench','Casebook rows per book; recall on owner catches, false refusals, flag rate; a ratchet test refuses a commit that loses a catch','built','studio/judge_bench.py · library/<book>/casebook/ · docs/calibration/bench/'),
+      U('','Gate policy','Who signs each gate: auto with a decision id; shadow = a newer judge version benched beside the current one','built','gates.yaml · studio/gate_policy.py'),
+      U('','Notify','Every department calls it; none copies it','missing','studio/notify.py'),
+      U('','Publish clients','One pinned client per platform','partial','studio/youtube.py · higgsfield.py'),
+      U('','R&D ledger','Hypothesis, variants, measures, verdict, cost','missing','experiments/<id>/manifest.json'),
+      U('','Model store','The episode working set on the C: NVMe (1.6 GB/s cold read vs 110 MB/s on the D: HDD, measured 2026-10-17), listed first in extra_model_paths.yaml (nvme_fast, is_default); the D: originals are never moved. Still on D: for want of C: room (2026-10-17): Qwen-Image 2.1 grids, Qwen-Edit 2511, Qwen3-TTS, IndexTTS2, the Krea2 identity LoRA','partial','ComfyUI extra_model_paths.yaml · C:\comfy_models'),
+      U('','Visual onsets','When a take shows its event: the walker’s stride peaks (heel strikes) and the camera-compensated motion peaks around the people; the sound layer lays each effect on it (2026-10-17)','built','studio/sfx_onset.py'),
+      U('','Run stream','APPROVED 2026-10-18 (decision run_stream_and_truth): one typed stream per run, progress.jsonl (run, step, sub, round, call, job, beat …), one Windows-safe writer, eleven emit sites in shared services and the runner; the board folds it and the live card is pushed over SSE. The board half is built (honest timeline, beat liveness); the stream is next Deferred by the Kawajiri retro (D21): the one event stream waits for a phase that owns the runner, prompt-builder and autopilot files together','missing','studio/progress_event.py · studio/progress_sink.py'),
+      U('','Run truth','APPROVED 2026-10-18: one stall, activity and lease rule for the board, the drive and the autopilot (GPU job, LLM call or the step’s full-run median sets the budget); the 60 s clock beat renews the lease','missing','studio/run_truth.py'),
+      U('','Rehearsal harness','OWNER ORDER 2026-10-21 (decision proof_harness): "proof-backed confidence". The REAL step code runs on a sandbox library (VISURENA_LIBRARY + rehearsal.json, fail-closed both ways) with every boundary answered from ep01\'s recordings and labelled exact / substituted / canned (canned refuses); an audit-hook fence refuses every write, launch, socket and SDK transport that would reach the real studio; swept faults count only distinct recovery traces; the time back-test and the proof report (CONFIDENCE_iterN.md: a pass count over distinct points with its Wilson bound, PROVEN / PARTIAL / FAILING / REAL-RUN) close it. Built: the sandbox + fence (P1), the recordings index, incident tally and ch2 precondition audit (P2), the time back-test and the report (P7); in build: fake ComfyUI, fakes, scenarios, face replay (P3-P6). Never on the real library; staged real runs SR-0..SR-5 wait for the owner','partial','studio/settings.py · studio/rehearsal/ · scripts/proof/ (rehearse.py, time_backtest.py, confidence.py, questions.yaml)')]},
+    {n:'Analysis',r:'Pre-production · unit: book · leader analysis.py',st:'built',kids:[
+      U('01','Ingest','EPUB → numbered chapters','built','step_01_ingest.py',[A('Book cartographer','real divisions'),A('Ingest validator','was the parse clean?','qc')]),
+      U('02','Extract','The crew, per chapter','built','step_02_extract.py',[A('Scene breakdown','1st AD: cuts the scenes'),A('Script supervisor','time, continuity'),A('Casting director','who is in scene'),A('Story analyst','what happens'),A('Dialogue editor','who speaks to whom'),A('Extraction auditor','completeness, faithfulness','qc')]),
+      U('03','Standardize','Canonical ids + coordinates','built','step_03_standardize.py',[A('Entity resolver','merge forms; geocode')]),
+      U('04','Timeline','Worldlines, contradictions','built','step_04_timeline.py',[A('Gap filler','a place and hour for every scene'),A('Journey tracer','a moving span is a route')]),
+      U('05','Consolidate','Per-entity files with evolution','built','step_05_consolidate.py',[A('Profile writer','from the dossier only')]),
+      U('06','Verify','Code only','built','step_06_verify.py')]},
+    {n:'Screenplay',r:'Pre-production · unit: book × target · leader screenplay.py',st:'built',kids:[
+      U('01','Dossier','Code only','built','step_01_dossier.py'),
+      U('02','Plan','What survives, in what order','built','step_02_plan.py',[A('Story editor','which scenes exist','reasoning')]),
+      U('03','Draft','Two calls per beat','built','step_03_draft.py',[A('Screenwriter','action + dialogue','reasoning'),A('Shot designer','camera on the frozen stream')]),
+      U('04','Render','Code only','built','step_04_render.py'),
+      U('05','Verify','Guards, then a sampled audit','built','step_05_verify.py',[A('Adaptation auditor','contradiction, never difference','qc')])]},
+    {n:'Refs & Cast',r:'Pre-production · unit: book × style · leader refs.py · the only writer of refs.json',st:'built',kids:[
+      U('01','Canon','Which entities this book binds','built','step_01_canon.py wraps cast_rows.py',[A('Casting director','rows: who appears')]),
+      U('01·b','Look timeline','BUILT 2026-10-10 (continuity slice, decision 2026-10-10; substep 01_03): refs/looks.json — each character’s looks on story time (chapter, scene), each ONE hop from the base sheet, never chained or composited; built from the script supervisor’s state_changes with every quote verified in the chapter at 0.85 (WotW’s wardrobe_by_chapter read as-is); the body carries no hair, beard or hat, the look does; each span cut to its own story track (a flashback chapter wears its own looks, else the base, 2026-10-11); a head the book never names is authored first in analysis/heads.json, every quote checked at 0.85, no two bound faces alike (author_heads.py)','built','scripts/refs/looks_table.py · scripts/refs/author_heads.py · studio/look_timeline.py · studio/head_author.py · studio/continuity_spec.py',[A('Look timeline writer','looks, intervals, layers, closed markers, quotes')]),
+      U('02','Sheets','One sheet per character and key prop; a character with no design.sheet_prompt draws its base from the look table (head layers first, body, form). Since 2026-10-12 every refs drawer (base sheet, fresh look, place master) draws in the BOOK’s declared look, refs/look.json (photoreal: Krea2 turbo, no LoRA, the owner’s lead; a drawn look, 2026-10-13: its own SDXL drawer from look.json refs — base, LoRAs, tag lead, negative, per-entity tags — a sheet is ONE portrait front figure); no declaration keeps the house look','built','step_02_sheets.py wraps build_pack · studio/book_look.py',[A('Trait reader','differs in ≥3 traits?'),A('Look back','does the picture show its prompt?')]),
+      U('03','Voices','A register nobody else holds','built','step_03_voices.py wraps cast_voices.py',[A('Voice director','region, body, speech')]),
+      U('04','Verdict','judge:look signs refs/verdict.json; a sheet failing a hard row is redrawn (seed, then defining state first); the terminal binds the best sheet flagged','built','step_04_verdict.py · studio/judges/look.py',[A('Look judge','must nouns, faces distinct (embedding), no lettering, limb count, style outlier','qc')])]},
+    {n:'Episode (TV)',r:'Production · unit: book × chapter(s) · leader episode.py · $0 local GPU',st:'built',kids:[
+      U('01','Bind','This unit’s cast, stamped','built','step_01 wraps cast_rows.py',[A('Cast rows (code)','who is in this chapter — from analysis')]),
+      U('02','Plan','The contract, gated before anything is voiced or drawn; the battery refuses (G-SETUP since 2026-09-28: a setup holds at most 50 s of picture; G-CROWD since 2026-09-30: crowd prose under a wide with no extras is a born contradiction; the expects-text set is listed), the critic lists, code judges. SELF-CURING since 2026-10-05: G-PHANTOM (no person in a setup), G-STAGE / G-FACE-KIND (a machine only as its drawn card), G-GHOST / G-TWICE (no unstaged limb, one position per person), G-HOLE (projected speech holes), G-TAKELINT (the take lint pre-sign), G-SOURCE span-snap; every fault has a cure, code first, one guarded workhorse rewrite second, re-run after every writer round; a battery-clean plan moved only by recorded cures re-signs free. Since 2026-10-11 (cycle 3) the climb checkpoints its best draft every rung (plan.climb.json, a killed climb resumes from its best), and at a spent clock the battery lines are tagged BUILDER (a downstream script repeats the refusal) or JUDGED: JUDGED-only signs keep_best flagged, a BUILDER line buys one climb past the ceiling, then a SAFETY stop. Since 2026-10-13 (Jekyll ep01 review): the BOOK\'s narrator (refs/narrator.json; a third-person book takes the dedicated narrator voice row) is read before any writer is asked, and an unset one STOPS the step; G-SPEAKER names the narrator, never the cast; a tale line kind (a character\'s own telling, voice-over); G-PACE (<= 310 words, >= 15 s of beats and codas, a line cut never a breath, 2.45 words/s for a book with no measure); G-ACTION (weather is not story); G-TALK and the held dialogue exchange (a spoken line is locked or over the shoulder); the critic also lists the chapter\'s threat and its key event (G-HOOK, G-SPIKE) and a nonscene row may fold. Since 2026-10-17 (the anime-TV grammar, owner: Go ahead with changes): a plan declares grammar anime_tv (set by code from the band) and the battery GRAMMAR row is hard on it until drawn: G-FACES (55 % of shots at close / medium close), G-WIDE (2 wides, 4 s, the opener 5 s), G-MEDIUM (7 s), G-INSERT (1-3 s impacts), G-PUSH (2 pushes, no amounts; no cure writes one), G-RISE (one rise from a wide or full, no line on it; shot framework 2026-10-21), G-HOLD (advisory: a silent locked hold of 5 s is cut, never pushed), G-LOCKED (half locked off), G-TWO (a two-person reaction a locked medium), G-PAYOFF (a locked close), G-OTS (never tighter than medium close), G-UNSUPPORTED (silhouette, Dutch, eye close-up in words), G-SHOTS (28 shots, studio/episode_capacity: 5.65 h), G-COLD (10 words, a sound at 0 s), G-ACT (one act_out at 35-55 %, held, the bed turning), G-CAPTION (now a wall), G-REACT (a silent face after each exchange), G-MA (3 holds of 1.2 s); new plan fields grammar, motif, tease; sections act_out and tease; the inner line kind; the dialogue ceiling follows the chapter (20-35 %); a grammar plan renders one take a shot; free cures strip amounts, hold extra pushes, widen an OTS close RETRO 2026-10-19 (Jekyll Kawajiri ep01, decision 2026-10-19_kawajiri_retro): a climb is spent at the first writer call; the plan ladder counts real rows (65 printed lines held 20); a stale flagged signature is re-signed over the rows it carries with one critic read and no writer round; a round that moves no row stops (desk.stuck); the first draft’s seconds are a learnings row; G-CROWD-ORPHAN and G-LIMB (advisory, body_clause cure) in the battery, lock_two_shot cures a medium G-TWO for $0; scripts/episode/downstream_replay.py replays step 05, the hold cure and the dry take lint at plan sign (advisory, D12). Since 2026-10-21 (craft ruling A19): G-END-NOUNS, an end is a picture, never a camera sentence (cleared free); a setup carries one closed hour, time (A17)','built','step_02 wraps plan_check · studio/book_narrator.py · studio/plan_tags.py · studio/judges/plan.py',[A('Episode writer','setups, shots, cells, moves, lines (narration, dialogue, tale, inner) under the anime-TV grammar','reasoning'),A('Plan critic','turn, answer, coverage, threat, spike, claims — each with a chapter span','qc')]),
+      U('03','Places','Location + view at this unit’s hour; then (03_03, built 2026-09-28) the cells written FROM the pictures: the vision model lists each place’s fixed things by third and band, code writes geometry and every at_rest behind the writer’s subject sentence, the battery re-judges, the verdict is re-signed; a refused rewrite keeps the writer’s cells','built','step_03 wraps places.py · studio/picture_read.py · studio/cells_from_picture.py',[A('Look back','landmark and hour present?'),A('Picture reader','what fixed thing stands at which third and band; a closed vocabulary, never a judgement','qc')]),
+      U('03·b','Looks and places','BUILT 2026-10-10 (continuity slice; substeps 03_04 looks, 03_05 variants): this unit’s new looks drawn just-in-time, one hop from the base sheet (edit for clothes, fresh from the base prompt and seed for a face change) and judged by LOOK-STATE (headwear, hair colour, facial hair HARD); a recurring place’s view is its master or a one-hop 2511 state edit of it, flagged by a same-place band; G-LOOK / G-PLACE cure a plan in code. G-LOOK-PANEL advisory, G-LOOK-TAKE a log. PROPOSED phase 2: G-LOOK-PANEL armed, panel-is-the-sheet, GeomCons, production designer, relight/multi-angle workflows','built','scripts/refs/looks.py · places.py · studio/judges/look_state.py · studio/continuity_place.py',[A('Look-state judge','lists headwear, hair, facial hair, top, dirt; code judges','qc')]),
+      U('04','Record','Every line measured and listened to; RETRO 2026-10-19: a 10 min lines wall (stages.yaml caps.lines) keeps every failing line’s best rightly heard try at once; a stable wrong transcript is tested for phoneme equality and filed in cast/ear_lexicon.json (cheque/check) with no render; VOICE BENCH 2026-10-21: the ear hears at 16 kHz (every score tagged ecapa16, an untagged one is the old ruler), every voice constant re-set on three books, and a line must lead every other cast voice by 0.06 (the cast margin) over a backstop floor, and the try kept at a redo or the terminal is the one that leads its cast','built','step_04 wraps say_lines, speaker_check',[A('Whisper (in say_lines)','what words are on this file?','qc'),A('ECAPA (in say_lines)','whose voice is this, and nobody else’s?','qc')]),
+      U('05','Timeline','Audio first: the animatic','built','step_05 wraps respot, timeline'),
+      U('06','Prompts','Built and linted for $0, before any grid; since 2026-10-18 (timeline debate P1) the grid prompts too -- grids.py --prompts, step 07\'s own wall run dry -- and the writer\'s camera heads read by camera_lint as advisories','built','step_06 wraps takes_r2v --prompts, no_last_frame, grids --prompts'),
+      U('07','Board','Layout by rule (G-GRID-SHAPE 2026-10-11: a grid is 1 or 4 cells, never a 2- or 3-cell strip — strips seamed 15/201 panels, square-ish 0/198; cols × rows = shots; at most four — sharpness measured 2026-09-28); storyboard grids from the plan’s prose; RETRO 2026-10-19: under a declared atmosphere every figure is drawn solid with the haze behind it; a repaired anchor re-cuts its room and keeps the old bytes when the place did not move, so its siblings stay valid','built','step_07 wraps grids.py · studio/grid_layout.py'),
+      U('07','One room per setup','BUILT 2026-09-28 (owner: “fix all that”) — the grid holding a setup’s widest shot is its anchor, drawn first; its cell is cut to storyboard/anchors/<setup>.png and every sibling grid stages it (“this exact room, already drawn”); the constancy sentence and the setup geometry are in the prompt; a redrawn anchor re-chains its siblings; the ladder’s copy/repeat cures name the same room','built','studio/grid_room.py · grids.py · step_07 · panel_ladder.py'),
+      U('08','Panels','Two machine gates, then the panel judges; a fault climbs seed → reprose, then the best panel is kept flagged; the SEAM RUNG (2026-10-11): a seam/stacked shot is isolated into its own 1×1 once, outside the cap, and a shot still seamed renders its take refs-only (storyboard/refs_only.json), ships, flagged in the audit sheet (owner ruling) RETRO 2026-10-19: the panel eye reads a panel once per proven input (bytes, words, reference bytes, ask and workflow sha), books its seconds, stops at its deadline listing unread panels (storyboard/eye_unread.json, never passed); orphan_limb and body kinds advisory until calibrated; a redraw that changed no panel byte refunds its round','built','step_08 wraps panels, panel_check, panel_content_check · studio/judges/panel_eye.py',[A('Panel reader','lists what is in the picture; J5 (2026-10-11, calibrated on the owner-judged ep05/07/08/09): hills on a flat place ADVISORY, mountains and non-pit cliffs HARD; no hour fault on a setup asking for the last daylight; an over-the-shoulder shot holds one more figure','qc'),A('Panel judges','hats, gutter, copy, posture, framing, clones, lettering, landmark; G-TWIN (2026-10-05): an extra cast-sized face fails, cured seed then a 1x1 isolate','qc'),A('panel_place (BUILT 2026-09-28, D4 ruled)','light profile + light side vs the staged room and its mirror; ADVISORY — never fails the verdict, no rung — until calibrated over five episodes','qc'),A('G-FRAME (BUILT 2026-10-11, cycle 2)','face height against the planned size in panel_dq.json; an MCU < 0.22 or a close < 0.32 is flagged; ADVISORY, uncalibrated — no cure, no wall, no rung','qc')]),
+      U('09','Shoot','Takes on the local video model; the take judges; ONE batched-cure round (2026-09-30): a router assigns every faulted take its measured cure — move type, free trim, free head cut — input-borne faults go straight to the terminal, cap 2 rounds across resumes; TWO LANES (2026-10-14, owner: “it shouldn’t wait, the GPU needs running”): the renders run back to back on the GPU while take_dq --cpu-only checks each take the moment it lands; a cure the dq rows alone order (move, seed) is queued right behind the first renders as the ladder’s round 1 (early: true); the GPU checks (VL content, a deferred leak) run once the GPU queue is empty and the CPU lane idle — never between renders, one VL load (replay: 22 % off step 09, GPU idle 1464 → 302 s); the 5 h ceiling spans resumes and a spent ceiling takes terminals, while the takes MISSING on disk always render (2026-10-11: a half-rendered round 0 was refused forever); terminal: a still from the panel or the best take flagged; G-TAIL (2026-10-11): a dialogue take whose mouth speaks into the guide’s silent tail fails — one reseed, then flagged; the take model follows the planned size (2026-10-18, main session on measured evidence): close..medium and inserts on Wuli 8-step HQ int8 + Spark-H3 attention, any wide or full segment on the Singularity 8-step with Spark attention (Wuli boils on a small face: G-WARP 4.13/7.22 vs 2.65/3.12), each model’s takes queued together; the take gate judges a take against the panel it staged (G-PANEL-BOARD) and a HARD camera-move row compares the planned move with the rendered scale (2026-10-13, walled on WotW ep01-03) RETRO 2026-10-19, the take ladder rule: a rung returns RungResult(changed, reason, seconds) and spends a round only when a take changed (NO ROUND otherwise); an unaffordable batch is trimmed worst-first; the router reads dated cure rates (gait → the plan verb, an Se-only warp → none, early clones → head cut); every kept fault is stamped settled; G-WARP is HARD on S only with one seed retake; the take crowd is judged against its own panel row; the first-render wall survives a relaunch','built','step_09 wraps takes_r2v, take_dq, take_content_check · studio/take_overlap.py (the two lanes) · take_schedule.py (the queue’s policy) · studio/judges/take_eye.py · take_ladder.route',[A('Panel reader','three frames, read alone','qc'),A('Take judges','identity, clones, pass-through, rotation, leak, lag; G-WARP face redraw on the CPU lane (2026-10-19, for owner veto: HARD on S > 2.5 only, one seed retake, then F2 for a face under 60 px, else shipped flagged; an Se-only score is the advisory eye); G-TWIN on three stills (2026-10-05); a retake is unjudged until remeasured; a spent clock ends at the terminal in the same run','qc')]),
+      U('09·b','Face refine','BUILT 2026-10-17 (owner: “I like face improvements a lot in wide shots, go ahead”; substep 09_07, paste in 10_05; widened 2026-10-19, owner: “fix that”): every take with a planned face but an insert, whose dq lets it ship, is tracked (face_yolov8m in a worker under the embedded python, GPU when idle, MTCNN behind it; centre smoothed over 21 frames, size over 51, cut at hard cuts) and every face under 120 px refined at a denoise that follows its size (0.45 at 60 px, 0.40-0.55), each track matched to the staged cast (facenet + the Lab colour of head and hat + the plan’s “at the SIDE”), and each crop re-rendered through H3 at denoise 0.45 with ONLY that person’s sheet (F2’s graph, a new manifest); gated — the render must differ from its source crop (collected from the SaveVideo node by id: v0.41.2 echoes the LoadVideo input first, 2026-10-18), identity to the sheet read on drawn faces, seam, face-region flicker, faces per crop — else the unrefined take; G-WARP routes a face tracked under 60 px here after its one seed retake (2026-10-19), per take in takes/r2v/refine.json; a fourth GPU job kind behind renders and retakes, ahead of the GPU checks; 110 s per face per take; CUT LAST for time (retro 2026-10-20, owner veto list V2 not vetoed): step 09 holds N takes x 81 s for it from its start, a re-measure of unchanged bytes is cut before it, and a take it still skips for time ships flagged with the episode NOT upload-ready (a FACE_REFINE terminal on the publish lock that no judge clears); an UNREAD outside-the-core measure refuses the paste (2026-10-20); FACE LIST (2026-10-20, V3): step 09 ends by writing every take’s smallest tracked face and whether a paste was accepted into refine.json `face_list`, the ones under 120 px with none listed and logged for step 11 QC (log only: routed to the refine, never a wall on the master; ep01 iter3 lists T01 T08 T09 T26); assemble pastes the kept, current crops at CUT scale, before the denoise and the one upscale (owner 2026-10-18, 24caaeb), through the cut’s own geometry RETRO 2026-10-19: the refine reads tracked face heights and declines a take whose every planned face is tracked at >= 60 px; a no_faces pick spends no round; the paste is at cut scale, before the one upscale; 2026-10-19: the plan size and face-at-end are no gate, the wall is 120 px (ep01: 11 takes instead of 2), none_found / all_readable replace no_faces; ROUND 2 2026-10-19: a weak face (0.3-0.6) only continues a track, a lost face re-acquires only its own head, people (person_yolov8m-seg) make far figures only; the crop is the face’s soft span (on under 120 px, off over 150) on H3’s 17k+5 grid inside its shot, one frozen side; FACE-WARP FIX 2026-10-19 (owner: “the face fix and eye fix is warping the video around”): only the face core is pasted (ROUND 2: brow to chin, cheek to cheek, 0.35 x 0.34 face heights, square-shouldered over the eyes, a 0.08 feather inside; each redraw frame put back on the take’s head first, H3 jitters 2-3 px at 384; the take’s low frequencies in the band), so hat, brim, hair, ears, jaw, collar and background stay the take’s, and the gate reads the paste the Paster makes and adds three walls: no pixel outside the core moves (<= 1 level), the band where the redraw meets the take warps <= 0.9 px at 384, the redraw may not turn the face (MTCNN eye line <= 4 deg; ep01 T08’s child, T09’s Hyde, T26’s Enfield refused); a decision made before them is regated on CPU before the cut (ep01 replay: brim flow 0.70-5.38 -> 0.10-0.34, face-vs-head shear 2.7 -> 0.9 on T18); the gate adds CCIP + clip_vision_h identity (a worker under the embedded python; CCIP rules, facenet and clip refuse only together), drift <= 35, the seam read where the paste mask falls <= 18 (a small face’s seam is never diluted by its window), and logs a drawn-eye score (ep01 round 1: 12 of 15 faces kept; T01 x2 and T07’s child still refused on the seam with either paste); detections join tracks by least cost (motion, size, head colour) and every head must read like its own track; TINY-FACE RUNG 2026-10-19 (09_08): a take whose refine refused a planned 20-40 px face (seam or drift) on the Spark graph draws once at 1024x1024, scaled back, kept only if every take gate passes it, then refined again (scripts/episode/tiny_face.py); the anime reader starts a dead worker afresh once','built','scripts/episode/face_refine.py · tiny_face.py · studio/face_refine.py · face_detect.py · face_detect_worker.py · anime_id.py · anime_id_worker.py · face_eye.py · face_track.py · face_gate.py · face_paste.py · take_schedule.REFINE · take_overlap.Refines · step_09.refine_rest · assemble.face_paste_wrap',[A('Face tracker','one track per face, matched to the staged cast'),A('Refine gate','changed from its source, identity by CCIP + clip_vision_h + facenet, drift, seam outside the head, flicker, faces per crop, nothing moved outside the face core, ring warp; eyes logged','qc')]),
+      U('10','Edit','The PRE-BAKED title card consumed (a book’s cards are all baked before its first episode — drive.py runs titles_batch book-wide, one i2v session, outside the episode’s clock; owner design 2026-09-30), measured bed, cut, mix; G-DEAD (2026-10-13): no still past 2.5 s, no failed take, no dead pair in a master — a free cut with slowed neighbours; a take the ladder settled keep_best ships flagged (owner option A, 2026-10-18), frozen rows stay dead; the master upscaled once, in process, by NVIDIA RTX Video Super Resolution 4x ULTRA to 3072 (owner 2026-10-14; rtx2x → 1536 selectable, Lanczos 2x the logged fallback; its own upscale row on the clock) RETRO 2026-10-19: G-DEAD admits a take the ladder settled keep_best or high, flagged and listed with its seconds in takes/work/flagged_takes.json; frozen rows stay dead; the upscale counts its frames (ShortPass), judges its own pace against its cap and asks the device router for the card; the encoder is recorded','built','step_10 wraps series_title, assemble · titles_batch.py · studio/master_upscale.py'),
+      U('11','QC','Measure the delivered master ONCE per set of bytes (a matching-sha8 report is reused, pass or fail); a master past the 180 s Shorts wall (or unmeasured) is not a pass (2026-09-30); the master ensemble fills the rubric in one resident-VL window; recut, then one retake; an n is flagged, never waived. Since 2026-10-11 (cycle 3) qc runs its cheap rows first and Whisper only on a master that can still pass; at a spent clock a fail outside the closed SAFETY list (gate_policy.SAFETY) ships flagged with an audit row, a SAFETY fail stops RETRO 2026-10-19: the edit gate reads the cut G-DEAD made; loudness runs ffmpeg once; QC measures on the CPU with no timeout; a master rung that changed no take takes no recut and no second eye; the master eye caches its frame reads and gives a flagged take three extra frames','built','step_11 wraps qc · studio/judges/master_eye.py',[A('Master ensemble','shadow, faces, board, repeats, story; 30-frame read; cross-take identity','qc')]),
+      U('12','Deliver','Manifest, the path first; never publishes. Both publish doors judge the FILE itself — a Short (≤ 180 s) and square (1:1) — past every override (2026-09-30)','built','step_12_deliver.py · youtube_publish.file_refusals'),
+      U('13','Publish','BUILT 2026-10-05: the last mile unattended under the owner’s standing hand (publish/standing.json, 2026-10-01; it uploads only the episodes its `episodes` list names, 2026-10-20): youtube.json from one guarded call, the sign-off rendered from measures only, the gated upload, the public flip, the /shorts/ poll; the public URL is the last line. G-INORDER (2026-10-21, after the growth apply): once YouTube returns the episode public, it joins its book’s playlist at its episode-order place (the id read from the book video’s youtube.json or the previous episode’s own block; a public playlist made only when the book has none anywhere), its description gains the “— Watch in order —” block and the previous episode a Next line, each once (recorded in uploads.jsonl); a failed upkeep is an advisory flag like the /shorts/ poll’s, never a stop, since the video is already public (decision 2026-10-21, for the owner’s veto), and a re-run of step 13 retries it; the book video’s title and intro code builds the live shape (book first, Full Story Adaptation, N Chapters), so a retitle never restores the old one','built','step_13_publish.py · scripts/publish/metadata.py · signoff.py · scripts/publish/youtube_playlist.py · studio/book_playlist.py',[A('Metadata writer','title from the series record; description and tags drafted')])]},
+    {n:'Trailer',r:'Production · unit: book · leader trailer.py · ordered by Marketing',st:'built',kids:[
+      U('01','Story','Lead, figure, turn; register, thesis','built','step_01_story.py',[A('Story','register + thesis')]),
+      U('02','Refs','Reference sheets, trait-card gate','built','step_02_refs.py',[A('Trait reader','VLM trait card')]),
+      U('03','Music','4 seeds, measured metre, ranked','built','step_03_music.py',[A('Cue author','the caption in register')]),
+      U('04','Lines','Four pools, iconicity, function labels','built','step_04_lines.py',[A('Function labeller','hook, answer, threat, title, button')]),
+      U('05','Voice','One reference per speaker; similarity gate','built','step_05_voice.py'),
+      U('06','Plan','Beat walk over the metre','built','step_06_plan.py'),
+      U('07','Clips','~11 min per take; trait gate per take','built','step_07_clips.py',[A('Trait reader','three frames vs the card','qc')]),
+      U('08','Assemble','Cut, grade, title, mix','built','step_08_assemble.py'),
+      U('09','QC','Reads the delivered master','built','step_09_qc.py'),
+      U('10','Deliver','Manifest, notify','built','step_10_deliver.py')]},
+    {n:'Shorts',r:'Production · unit: book × scene · paid credits · a slot until a Python client exists',st:'slot',kids:[
+      U('','Plan','Scene + shot list','slot','skills shorts-story, shorts-screenwriter'),
+      U('','Board','Start frames · spends','slot','skill shorts-art'),
+      U('','Shoot','Clips · spends','slot','skill shorts-cinematographer'),
+      U('','Edit','Sound plan, assembly','slot','skills shorts-sound, shorts-editor'),
+      U('','Desk','The showrunner skill loses the wallet to the runner','slot','skill shorts-showrunner → shorts.py')]},
+    {n:'Publish',r:'Distribution · unit: master × platform · leader publish.py · irreversible',st:'partial',kids:[
+      U('01','Intake','The finished-file registry','missing','step_01_intake.py'),
+      U('02','Versions','Each platform’s bundle','missing','step_02_versions.py',[A('Subject keeper','where to crop so the subject stays')]),
+      U('03','Metadata','Title from the series record; the rest drafted','partial','series_title() exists',[A('Metadata writer','description, tags, chapters')]),
+      U('04','Art','Thumbnail from the master’s own frames','missing','step_04_art.py',[A('Thumbnail director','one frame, three words')]),
+      U('05','Upload','Private insert; one adapter per platform','built','step_05 wraps youtube_upload.py · own platform: slot'),
+      U('06','Review','The master eye for this sha8','built','step_06 wraps the eye verdict'),
+      U('07','Release','ESCALATE — PUBLISH; the flip to public','built','step_07 wraps youtube_privacy.py',[],'PUBLISH'),
+      U('08','Catalog','The title record every platform derives from','missing','step_08_catalog.py'),
+      U('09','Notify','Link, path, spend, time','missing','step_09_notify.py'),
+      U('10','Compilation','BUILT 2026-10-10, title-first + main title 2026-10-11: the whole book as one regular video — the book main title, then each published Short (by ledger sha8) cut into its two videos and joined TITLE FIRST then main, by stream copy; chapters from 0:00 shifted by the title; thumbnail set; the replaced video made private','built','scripts/publish/book_compilation.py · studio/book_compilation.py'),
+      U('11','Main title','BUILT 2026-10-11: 7 s in a 2.39 band — cold open from the book\'s own shots, black on the sting\'s hit, PRESENTS, Krea2 text-free key art on H3, the title SET BY CODE (no model draws a letter); 16:9 thumbnail; judge G-BOOKTITLE; the book\'s own look (photoreal: no LoRA); the upload door (order, title pieces vs cards, verdict) and a per-book lock (retro 2026-10-11)','built','scripts/episode/book_title.py · studio/book_title.py'),
+      U('12','Playlist','BUILT 2026-10-21 (inside episode step 13, G-INORDER): one public playlist per book, the episodes in order; each new public episode inserted at its place, its “— Watch in order —” block, and a Next line on the episode before it, once; the playlist made only when the book has none','built','scripts/publish/youtube_playlist.py · studio/book_playlist.py')]},
+    {n:'Analytics',r:'Distribution · unit: master × platform · scheduled · never moves a gate',st:'missing',kids:[
+      U('01','Ingest','Views, retention, impressions, CTR','missing','step_01_ingest.py'),
+      U('02','Join','Numbers joined to the dossier','missing','step_02_join.py'),
+      U('03','Retrospect','What did the numbers say against the intention?','missing','step_03_retrospect.py',[A('Retrospect','rule candidates','reasoning')])]},
+    {n:'Promo',r:'Marketing · unit: release · leader promo.py · decides; never renders; never posts itself',st:'missing',kids:[
+      U('01','Campaign','Assets, dates, platforms, budget','missing','step_01_campaign.py',[A('Campaign planner','what carries this release?','reasoning')]),
+      U('02','Orders','Rows the scheduler turns into Production units','missing','step_02_orders.py'),
+      U('03','Key art','The pool, one picture per entity','missing','step_03_keyart.py'),
+      U('04','Cutdowns','ffmpeg on placed.json; no render','missing','step_04_cutdowns.py'),
+      U('05','Posts','Per platform; shipped through publish','missing','step_05_posts.py',[A('Copywriter','what does this post say?')],'PUBLISH')]}
+  ];
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function nodeHtml(x){
+    if(x.k==='lead'){
+      var cls='node lead '+(x.st||'');
+      if(x.st==='slot')cls='node slot';
+      if(x.st==='missing')cls='node missing';
+      return '<div class="'+cls+'"><div class="n">'+esc(x.n)+(x.owner?' <span class="chip qc">OWNER · '+x.owner+'</span>':'')+'</div><div class="r">'+esc(x.r)+'</div>'+(x.f?'<div class="f">'+esc(x.f)+'</div>':'')+(x.st?'<div class="st '+x.st+'">'+(x.st==='partial'?'wraps existing':x.st)+'</div>':'')+'</div>';
+    }
+    return '<div class="node '+x.k+'"><div class="n">'+esc(x.n)+'</div><div class="r">'+esc(x.r)+'</div><span class="chip '+(x.k==='think'?'think':x.k==='qc'?'qc':'')+'">'+(x.k==='qc'?'QC':x.chip)+'</span></div>';
+  }
+  function li(x){var h='<li>'+nodeHtml(x);if(x.kids&&x.kids.length){h+='<ul>'+x.kids.map(li).join('')+'</ul>';}return h+'</li>';}
+  function renderTeams(host,teams,prefix){
+    teams.forEach(function(T,i){
+      var d=document.createElement('div');
+      d.innerHTML='<div class="eyebrow">'+esc(T.n)+' · '+esc(T.r)+'</div><div class="chart-scroll"><div class="chart-fit" id="'+prefix+i+'"><div class="tree"><ul>'+
+        '<li><div class="node lead dept'+(T.st==='slot'?' slot':'')+'"><div class="n">'+esc(T.n)+'</div><div class="st '+T.st+'">'+(T.st==='partial'?'scripts exist':T.st)+'</div></div><ul>'+T.kids.map(li).join('')+'</ul></li>'+
+        '</ul></div></div></div>';
+      host.appendChild(d);
+    });
+  }
+  var hostF=document.getElementById('dept-trees-future'); if(hostF)renderTeams(hostF,TEAMS,'team');
+  var hostC=document.getElementById('dept-trees-current');
+  if(hostC)renderTeams(hostC,TEAMS.filter(function(T){return ['Refs & Cast','Episode (TV)','Trailer'].indexOf(T.n)>=0;}),'now');
+
+  /* ---------- org chart fit ---------- */
+  var fits=[].slice.call(document.querySelectorAll('.chart-fit'));
+  var mode='fit';
+  function layout(){
+    fits.forEach(function(el){
+      var tree=el.firstElementChild, parent=el.parentElement;
+      if(parent.offsetParent===null&&parent.clientWidth===0)return;
+      el.style.transform='none'; el.style.height='auto';
+      var w=tree.offsetWidth, h=tree.offsetHeight, avail=parent.clientWidth;
+      var s=(mode==='fit')?Math.min(1,avail/w):1;
+      el.style.transform='scale('+s+')';
+      el.style.height=(h*s)+'px';
+      el.style.width=w+'px';
+    });
+  }
+  [].forEach.call(document.querySelectorAll('[data-fit]'),function(b){
+    b.addEventListener('click',function(){
+      mode=b.dataset.fit;
+      [].forEach.call(document.querySelectorAll('[data-fit]'),function(x){x.setAttribute('aria-pressed',x.dataset.fit===mode?'true':'false');});
+      layout();
+    });
+  });
+  window.addEventListener('resize',layout);
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(layout);}
+
+  /* ---------- flow engine ---------- */
+  var NS='http://www.w3.org/2000/svg';
+  function el(n,a,txt){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
+
+  function buildFlow(root,cfg){
+    var q=function(r){return root.querySelector('[data-role="'+r+'"]');};
+    var svg=q('track'), subsEl=q('subs'), logEl=q('log'), statusEl=q('status'), prog=q('prog');
+    var inLane=q('lane'), inName=q('name'), inWhy=q('why'), playBtn=q('play');
+    var STEPS=cfg.steps, LANES=cfg.lanes;
+    var nodeW=cfg.nodeW||118, nodeH=46, gap=16, left=cfg.left||124, laneGap=cfg.laneGap||104, top=cfg.top||78;
+    var cols=0; var perLane={};
+    STEPS.forEach(function(s){perLane[s.lane]=perLane[s.lane]||0;s.col=perLane[s.lane]++;cols=Math.max(cols,perLane[s.lane]);});
+    var W=left+cols*(nodeW+gap)+12, H=top+(LANES.length-1)*laneGap+60;
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.style.minWidth=Math.max(760,Math.round(W*0.78))+'px';
+    LANES.forEach(function(L,i){svg.appendChild(el('text',{x:16,y:top+i*laneGap+5,'class':'lane-label '+(L.cls||'')},L.label));});
+    var edges=[],loops={};
+    function edge(d,cls){var p=el('path',{d:d,'class':cls});svg.insertBefore(p,svg.firstChild);return p;}
+    STEPS.forEach(function(s){
+      var li=LANES.findIndex(function(L){return L.key===s.lane;});
+      var x=left+s.col*(nodeW+gap), y=top+li*laneGap-nodeH/2;
+      var g=el('g',{'class':'nd '+(LANES[li].cls||'')+(s.owner?' owner':'')});
+      g.appendChild(el('rect',{x:x,y:y,width:nodeW,height:nodeH,rx:3}));
+      g.appendChild(el('text',{x:x+9,y:y+15,'class':'id'},s.id));
+      g.appendChild(el('text',{x:x+9,y:y+34,'class':'nm'},s.name));
+      g.appendChild(el('text',{x:x+nodeW-16,y:y+15,'class':'tick'},'✓'));
+      if(s.owner)g.appendChild(el('text',{x:x+nodeW/2,y:y-6,'text-anchor':'middle','class':'own'},'OWNER · '+s.owner));
+      svg.appendChild(g);
+      s.cx=x+nodeW/2; s.cy=top+li*laneGap; s.x=x; s.y=y; s.g=g; s.li=li;
+    });
+    STEPS.forEach(function(s,i){
+      var n=STEPS[i+1]; if(!n)return;
+      if(s.li===n.li){edges.push(edge('M'+(s.x+nodeW)+' '+s.cy+' L'+n.x+' '+n.cy,'edge'));}
+      else{
+        var d='M'+s.cx+' '+(s.y+nodeH)+' V'+(s.cy+laneGap/2)+' H'+n.cx+' V'+n.y;
+        edges.push(edge(d,'edge'));
+        if(s.bridge)svg.appendChild(el('text',{x:(s.cx+n.cx)/2,y:s.cy+laneGap/2-5,'text-anchor':'middle',style:'font-family:IBM Plex Mono,monospace;font-size:10px;fill:var(--ink-3)'},s.bridge));
+      }
+    });
+    (cfg.loops||[]).forEach(function(i){
+      var s=STEPS[i]; var d='M'+(s.x+nodeW-14)+' '+s.y+' C'+(s.x+nodeW-14)+' '+(s.y-26)+' '+(s.x+14)+' '+(s.y-26)+' '+(s.x+14)+' '+s.y;
+      loops[i]=edge(d,'loop');
+      var a=el('path',{d:'M'+(s.x+10)+' '+(s.y-6)+' L'+(s.x+14)+' '+s.y+' L'+(s.x+19)+' '+(s.y-5),'class':'loop'});svg.insertBefore(a,svg.firstChild);loops[i+'a']=a;
+    });
+    var dot=el('circle',{r:7,'class':'dot',cx:STEPS[0].x,cy:STEPS[0].cy});svg.appendChild(dot);
+
+    var flat=[]; STEPS.forEach(function(s,si){if(s.done)return;s.subs.forEach(function(u,ui){flat.push({s:si,u:ui});});});
+    var pos=-1, playing=false, speed=1, raf=null;
+
+    function renderStep(si){
+      var s=STEPS[si], L=LANES[s.li];
+      inLane.textContent=L.label+' · '+s.id;
+      inName.textContent=s.name; inWhy.textContent=s.why;
+      subsEl.innerHTML='';
+      s.subs.forEach(function(u){
+        var d=document.createElement('div'); d.className='sub '+u.k;
+        d.innerHTML='<span class="m">'+u.m+'</span><span>'+u.t+'</span><span class="who">'+u.who+'</span><span class="bar"><i></i></span>';
+        subsEl.appendChild(d);
+      });
+    }
+    function moveDot(s,cb){
+      if(reduce){dot.setAttribute('cx',s.cx);dot.setAttribute('cy',s.cy);cb();return;}
+      var x0=+dot.getAttribute('cx'),y0=+dot.getAttribute('cy'),t0=performance.now(),dur=420/speed;
+      function f(t){var k=Math.min(1,(t-t0)/dur);k=k*k*(3-2*k);dot.setAttribute('cx',x0+(s.cx-x0)*k);dot.setAttribute('cy',y0+(s.cy-y0)*k);if(k<1)raf=requestAnimationFrame(f);else cb();}
+      raf=requestAnimationFrame(f);
+    }
+    function setStatus(txt){statusEl.innerHTML='<b>'+txt+'</b> · '+(pos+1)+' / '+flat.length;prog.style.width=((pos+1)/flat.length*100)+'%';}
+    function log(html){var d=document.createElement('div');var st=STEPS[flat[pos].s];d.innerHTML='<span class="t">'+st.id+'</span> '+html;logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight;}
+
+    function advance(then){
+      if(pos>=flat.length-1){finish();return;}
+      var prev=pos>=0?flat[pos]:null; pos++;
+      var cur=flat[pos], s=STEPS[cur.s], u=s.subs[cur.u];
+      var newStep=!prev||prev.s!==cur.s;
+      function go(){
+        if(newStep){
+          if(prev){var ps=STEPS[prev.s];ps.g.classList.remove('on');ps.g.classList.add('done');edges[prev.s]&&edges[prev.s].classList.add('done');}
+          s.g.classList.add('on'); dot.setAttribute('class','dot '+(LANES[s.li].cls||''));
+          renderStep(cur.s);
+        }
+        var rows=subsEl.children;
+        for(var i=0;i<rows.length;i++){rows[i].classList.remove('on');if(i<cur.u)rows[i].classList.add('done');}
+        var row=rows[cur.u]; row.classList.add('on'); row.scrollIntoView({block:'nearest'});
+        if(u.loop){var L=loops[cur.s];if(L){L.classList.add('on');loops[cur.s+'a'].classList.add('on');}}
+        log(u.log); setStatus(u.who==='code'?'code':u.who);
+        var bar=row.querySelector('.bar i'), dur=u.d*1000/speed, t0=performance.now();
+        function tick(t){var k=Math.min(1,(t-t0)/dur);bar.style.width=(k*100)+'%';if(k<1&&playing)raf=requestAnimationFrame(tick);else if(playing){row.classList.remove('on');row.classList.add('done');then&&then();}}
+        if(playing)raf=requestAnimationFrame(tick); else bar.style.width='100%';
+      }
+      if(newStep&&playing)moveDot(s,go); else if(newStep){dot.setAttribute('cx',s.cx);dot.setAttribute('cy',s.cy);go();} else go();
+    }
+    function loop(){if(!playing)return;advance(function(){if(playing)loop();});}
+    function finish(){playing=false;playBtn.textContent='Play';var last=STEPS[STEPS.length-1];last.g.classList.remove('on');last.g.classList.add('done');setStatus('done');inName.textContent=cfg.endName;inWhy.textContent=cfg.endWhy;}
+    function reset(){
+      playing=false;playBtn.textContent='Play';if(raf)cancelAnimationFrame(raf);
+      pos=-1;STEPS.forEach(function(s){s.g.classList.remove('on','done');if(s.done)s.g.classList.add('done');});edges.forEach(function(e,i){e.classList.remove('done');if(STEPS[i].done)e.classList.add('done');});
+      for(var k in loops)loops[k].classList.remove('on');
+      var first=STEPS[flat[0].s];
+      dot.setAttribute('cx',first.x);dot.setAttribute('cy',first.cy);dot.setAttribute('class','dot');
+      subsEl.innerHTML='';logEl.innerHTML='';inLane.textContent='Inside the step';inName.textContent='Press play';inWhy.textContent=cfg.startWhy;
+      statusEl.innerHTML='<b>ready</b> · 0 / '+flat.length;prog.style.width='0%';
+    }
+    playBtn.addEventListener('click',function(){
+      if(pos>=flat.length-1){reset();}
+      playing=!playing;playBtn.textContent=playing?'Pause':'Play';
+      if(playing){ if(pos>=0){var row=subsEl.children[flat[pos].u];row&&(row.classList.remove('on'),row.classList.add('done'));} loop(); }
+      else if(raf)cancelAnimationFrame(raf);
+    });
+    q('step').addEventListener('click',function(){
+      playing=false;playBtn.textContent='Play';if(raf)cancelAnimationFrame(raf);
+      if(pos>=flat.length-1){finish();return;}
+      advance();
+    });
+    q('reset').addEventListener('click',reset);
+    [].forEach.call(root.querySelectorAll('.spd'),function(b){b.addEventListener('click',function(){speed=+b.dataset.s;[].forEach.call(root.querySelectorAll('.spd'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});});});
+    reset();
+  }
+
+  /* ---------- dataset: current run ---------- */
+  var CURRENT={
+    lanes:[{key:'A',label:'ANALYSIS',cls:''},{key:'S',label:'SCREENPLAY',cls:'invent'}],
+    left:110, laneGap:112, top:78, loops:[0,1,10],
+    startWhy:'The run starts at Analysis 01 with the EPUB and ends with screenplay.json handed to the trailer and episode departments.',
+    endName:'screenplay.json delivered', endWhy:'The trailer, episode and shorts departments read this file. Nothing in this stage generated a picture or a sound.',
+    steps:[
+    {lane:'A',id:'analysis/01',name:'Ingest',why:'EPUB in. Code establishes the (chapter, paragraph) grid every later claim anchors to.',subs:[
+      {m:'01_01',t:'read_source: open the EPUB, parse spine + TOC',who:'code',k:'code',d:1.2,log:'ingest: 14 spine docs, TOC 16 entries'},
+      {m:'01_02',t:'clean: drop cover/colophon, strip license boilerplate',who:'code',k:'code',d:1,log:'clean: 2 non-content docs dropped'},
+      {m:'01_03',t:'chapterize: which headings are real divisions?',who:'book cartographer',k:'agent',d:2,log:'<span class="a">book_cartographer</span> → BookMap: 2 parts, 14 chapters, 1 preface'},
+      {m:'01_04',t:'finalize: counts match TOC, contiguous numbering, sha256',who:'code',k:'code',d:1,log:'checks: 14/14 chapters, 1,204 paragraphs, book.json written'},
+      {m:'01_05',t:'agent_check: was the parse clean?',who:'ingest validator',k:'qc',d:1.8,log:'<span class="q">ingest_validator</span> → Verdict ok, 0 issues'},
+      {m:'01_06',t:'improve: skipped, nothing flagged',who:'code',k:'code',d:.5,log:'<span class="k">step 01 completed</span>'}]},
+    {lane:'A',id:'analysis/02',name:'Extract',why:'Per chapter: the 1st AD cuts the scenes, then four specialists work from those scene numbers, in this order.',subs:[
+      {m:'02_01',t:'ch 1 · breakdown: cut where the camera could not keep rolling',who:'scene breakdown',k:'agent',d:2,log:'ch 1 breakdown… <span class="a">scene_breakdown</span> → 7 scenes'},
+      {m:'02_02',t:'ch 1 · time evidence + continuity',who:'script supervisor',k:'agent',d:1.4,log:'ch 1 time… <span class="a">script_supervisor</span> → TimeReport'},
+      {m:'02_02',t:'ch 1 · who is in each scene',who:'casting director',k:'agent',d:1.4,log:'ch 1 characters… <span class="a">casting_director</span> → CastReport'},
+      {m:'02_02',t:'ch 1 · what happens (asserted realis only)',who:'story analyst',k:'agent',d:1.4,log:'ch 1 events… <span class="a">story_analyst</span> → EventReport'},
+      {m:'02_02',t:'ch 1 · who speaks to whom',who:'dialogue editor',k:'agent',d:1.4,log:'ch 1 dialogue… <span class="a">dialogue_editor</span> → DialogueReport'},
+      {m:'02_03',t:'ch 1 · assemble by scene number',who:'code',k:'code',d:.7,log:'ch 1 assembled → extraction/ch_01.json'},
+      {m:'02_04',t:'ch 1 · every quote verbatim in its paragraphs',who:'code',k:'code',d:.7,log:'ch 1 grounding: 41/41 quotes verbatim'},
+      {m:'—',t:'chapters 2 – 14: the same crew, the same order',who:'crew ×13',k:'agent',d:3,log:'ch 2…14 (resume skips chapters already extracted) · 13 × 5 calls'},
+      {m:'02_05',t:'audit: completeness + faithfulness per dimension',who:'extraction auditor',k:'qc',d:2,log:'<span class="q">extraction_auditor</span> → ch 5 dialogue: one exchange attributed to the wrong speaker'},
+      {m:'02_06',t:'improve round 1: re-run ONLY (ch 5 × dialogue), reassemble, re-check',who:'dialogue editor',k:'agent',d:1.8,loop:true,log:'improve: <span class="a">dialogue_editor</span> ch 5 re-run → re-check ok · <span class="k">step 02 completed</span> (round 1 of max 2)'}]},
+    {lane:'A',id:'analysis/03',name:'Standardize',why:'Surface forms become canonical ids with aliases and map coordinates. Never re-reads the book.',subs:[
+      {m:'03_01',t:'collect every character / location surface form',who:'code',k:'code',d:.8,log:'collect: 118 character forms, 52 location forms'},
+      {m:'03_02',t:'resolve characters: "the detective", "my companion", "Mr. …" → one id',who:'entity resolver',k:'agent',d:2,log:'<span class="a">entity_resolver</span> → CharacterRegistry: 23 canonical, 118 aliases'},
+      {m:'03_02',t:'resolve locations, with lat/lon',who:'entity resolver',k:'agent',d:1.6,log:'<span class="a">entity_resolver</span> → LocationRegistry: 24 places, 24 geocoded'},
+      {m:'03_03',t:'remap every scene to canonical ids',who:'code',k:'code',d:.7,log:'scenes.json: 92 scenes tagged'},
+      {m:'03_04',t:'coverage + coordinate + orphan-id checks',who:'code',k:'code',d:.6,log:'checks pass · <span class="k">step 03 completed</span>'}]},
+    {lane:'A',id:'analysis/04',name:'Timeline',why:'Code solves story time into worldlines. Two agents place what the solver cannot.',subs:[
+      {m:'04_01',t:'partition: main frame vs embedded flashback',who:'code',k:'code',d:.7,log:'2 narrative tracks'},
+      {m:'04_02',t:'day axis: merge per-chapter story days',who:'code',k:'code',d:.7,log:'day axis: 31 story days'},
+      {m:'04_03',t:'worldlines per character',who:'code',k:'code',d:.8,log:'worldlines: 23 characters'},
+      {m:'04_04',t:'contradictions: bilocation, travel feasibility',who:'code',k:'code',d:.7,log:'contradict: 0 bilocations, 1 travel warning'},
+      {m:'04_06',t:'3 scenes have no place or hour: place them from neighbours',who:'gap filler',k:'agent',d:2,log:'<span class="a">gap_filler</span> ×3 → Placement (inferred)'},
+      {m:'04',t:'1 span crosses several places: is it a route?',who:'journey tracer',k:'agent',d:1.4,log:'<span class="a">journey_tracer</span> → Journey, 4 legs'},
+      {m:'04_05',t:'emit timeline.json',who:'code',k:'code',d:.5,log:'timeline.json · <span class="k">step 04 completed</span>'}]},
+    {lane:'A',id:'analysis/05',name:'Consolidate',why:'One file per character and per place, with evolution over the story: the building blocks for voice, image and song.',subs:[
+      {m:'05_01',t:'gather per entity: journey, state changes, quotes, companions',who:'code',k:'code',d:.8,log:'dossiers: 23 characters, 24 locations'},
+      {m:'05_02',t:'profiles from the dossier only, never the book',who:'profile writer',k:'agent',d:3,log:'<span class="a">profile_writer</span> ×47 → CharacterProfile / LocationProfile'},
+      {m:'05_03',t:'emit characters/<id>.json, locations/<id>.json',who:'code',k:'code',d:.5,log:'47 files written'},
+      {m:'05_04',t:'every entity has a non-empty journey',who:'code',k:'code',d:.5,log:'checks pass · <span class="k">step 05 completed</span>'}]},
+    {lane:'A',id:'analysis/06',name:'Verify',why:'Whole-chain QC, code only, zero cost. Proves the acceptance test is answerable.',bridge:'analysis complete → one analysis feeds many screenplays',subs:[
+      {m:'06_01',t:'integrity: every artifact present, counts agree',who:'code',k:'code',d:.6,log:'integrity ok'},
+      {m:'06_02',t:'coverage: resolution rates, every location geocoded',who:'code',k:'code',d:.6,log:'coverage: scenes 100 %, places 100 %'},
+      {m:'06_03',t:'timeline: worldline queryable per story day',who:'code',k:'code',d:.6,log:'queryable: 31/31 days'},
+      {m:'06_04',t:'qc_report.json + verdict',who:'code',k:'code',d:.6,log:'<span class="k">analysis complete</span> — the book is a set of facts now'}]},
+    {lane:'S',id:'screenplay/01',name:'Dossier',why:'Code joins what analysis scattered into one record per source scene. Shared by every target of this book.',subs:[
+      {m:'01_01',t:'gather the six analysis families, hash them',who:'code',k:'code',d:.7,log:'<span class="v">screenplay</span> dossier: input_sha256 computed'},
+      {m:'01_02',t:'join: names → ids, attach int/ext, dialogue, events, pov',who:'code',k:'code',d:.9,log:'92 scenes joined'},
+      {m:'01_03',t:'checks: every scene has int_ext, place, DAY|NIGHT',who:'code',k:'code',d:.6,log:'checks pass (warn: 3 speakers lack a voice note)'},
+      {m:'01_04',t:'emit dossier.json',who:'code',k:'code',d:.4,log:'dossier.json · <span class="k">step 01 completed</span>'}]},
+    {lane:'S',id:'screenplay/02',name:'Plan',why:'What survives and in what order. One reasoning call per target; every source scene is either in a beat or listed as omitted with a reason.',subs:[
+      {m:'02_01',t:'brief: target config + a one-line-per-scene index',who:'code',k:'code',d:.7,log:'brief: 92 lines, ~5k tokens'},
+      {m:'02_02',t:'select: group scenes into sequences; decide what exists',who:'story editor',k:'think',d:3,log:'<span class="v">story_editor</span> (reasoning) → ScreenplayPlan: 22 beats, 16 scenes omitted with reasons'},
+      {m:'02_03',t:'checks: every beat exists, roster ⊂ registry, nothing silently dropped',who:'code',k:'code',d:.7,log:'checks: 92/92 scenes accounted for'},
+      {m:'02_04',t:'emit plan.json + source fingerprint',who:'code',k:'code',d:.4,log:'plan.json · <span class="k">step 02 completed</span>'}]},
+    {lane:'S',id:'screenplay/03',name:'Draft',why:'The paid work. Two calls per beat, in order. Each scene file is written the moment it exists, so a crash keeps everything before it.',subs:[
+      {m:'03_01',t:'beat 1 · write: action + dialogue, provenance on every line',who:'screenwriter',k:'think',d:2.2,log:'beat 1 <span class="v">screenwriter</span> (reasoning) → SceneDraft, 38 elements'},
+      {m:'03_02',t:'beat 1 · shoot: camera on the frozen stream',who:'shot designer',k:'agent',d:1.4,log:'beat 1 <span class="a">shot_designer</span> → ShotPlan, 11 shots'},
+      {m:'03_03',t:'beat 1 · assemble: sluglines, CONT’D, page eighths',who:'code',k:'code',d:.6,log:'scenes/sc_0001.json written'},
+      {m:'—',t:'beats 2 – 22: write, shoot, assemble',who:'×21',k:'think',d:3.5,log:'beats 2…22 · 21 × 2 calls · every file saved as it lands'},
+      {m:'—',t:'scene numbering across the whole draft',who:'code',k:'code',d:.5,log:'22 scenes numbered · <span class="k">step 03 completed</span>'}]},
+    {lane:'S',id:'screenplay/04',name:'Render',why:'Code, byte-stable, free. screenplay.json is THE artifact; Fountain and PDF are rendered from it, never parsed back.',subs:[
+      {m:'04_01',t:'screenplay.json',who:'code',k:'code',d:.5,log:'screenplay.json'},
+      {m:'04_02',t:'screenplay.fountain, rendered from the json',who:'code',k:'code',d:.5,log:'screenplay.fountain'},
+      {m:'04_03',t:'screenplay.pdf via screenplain',who:'code',k:'code',d:.7,log:'screenplay.pdf, 27 pages'},
+      {m:'04_04',t:'elements.json: flat shot list for the video stage',who:'code',k:'code',d:.4,log:'elements.json: 243 shots'},
+      {m:'04_05',t:'round-trip lint: parse our own output, assert the typing',who:'code',k:'code',d:.7,log:'lint: 0 misparsed lines, 24 min vs 22–33 target · <span class="k">step 04 completed</span>'}]},
+    {lane:'S',id:'screenplay/05',name:'Verify',why:'Deterministic guards first; one agent over a 3-scene sample second. It checks contradiction, never difference.',subs:[
+      {m:'05_01',t:'guards G1–G4: coordinates, roster, place-and-time, verbatim claims',who:'code',k:'code',d:1,log:'guards: 2 verbatim claims downgraded to adapted (counts, never fails)'},
+      {m:'05_02',t:'audit K=3 sampled scenes against their paragraphs',who:'adaptation auditor',k:'qc',d:2.2,log:'<span class="q">adaptation_auditor</span> ×3 → 1 issue, non-blocking'},
+      {m:'05_03',t:'improve: no blocking findings, skipped',who:'code',k:'code',d:.5,log:'improve: 0 rounds'},
+      {m:'05_04',t:'qc_report.json',who:'code',k:'code',d:.6,log:'<span class="k">screenplay complete</span> → hands off to trailer, episode, shorts'}]}
+  ]};
+
+  /* ---------- dataset: future run ---------- */
+  var O=function(t){return '<span class="q">OWNER</span> '+t;};
+  var FL=function(t){return '<span class="f">FLAGGED</span> '+t;};
+  var FUTURE={
+    lanes:[{key:'P',label:'PRE-PRODUCTION',cls:''},{key:'E',label:'PRODUCTION · episode',cls:'invent'},{key:'D',label:'DISTRIBUTION',cls:'dist'},{key:'M',label:'MARKETING',cls:'mkt'}],
+    left:150, laneGap:100, top:70, nodeW:104, loops:[4,10,11,13],
+    startWhy:'The scheduler finds a chapter whose requirements are complete and launches the line. Nothing in the line parks on a person: every taste gate is a judge with a priced ladder; a terminal rung signs flagged and writes an audit row. The owner reads the audit sheet when he likes.',
+    endName:'Release promoted; a trailer ordered', endWhy:'The order row becomes a Production unit on the trailer line, which ends at its own master and goes through the same Distribution steps. The loop closes when analytics reads the numbers into the next campaign brief.',
+    steps:[
+    {lane:'P',id:'analysis',name:'Analysis',done:true,subs:[]},
+    {lane:'P',id:'screenplay',name:'Screenplay',done:true,subs:[]},
+    {lane:'P',id:'refs',name:'Refs & Cast',why:'The reference bible: one sheet per character and key prop, one voice per speaker, per book × style. The only writer of refs.json. Judged, never parked.',bridge:'refs/04 complete → the line may start',subs:[
+      {m:'01',t:'canon: which entities this book binds; one row per character',who:'casting director',k:'agent',d:1.4,log:'<span class="a">casting_director</span> → CastList · code writes 6 refs.json rows'},
+      {m:'01_03',t:'looks: the book’s look table (refs/looks.json), each look one hop from the base sheet; quotes found at 0.85',who:'look timeline writer',k:'agent',d:1.2,log:'<span class="a">look_timeline_writer</span> → 3 looks for the lead · 1 dropped (its quote is not in the chapter)'},
+      {m:'02',t:'sheets: draw on the local image model (since 2026-10-11 a new draw runs the neutral-tile 2x: the tile pass on style words only, denoise 0.15, so no tile paints a face into a backdrop or trousers); trait card; look-back against the prompt; G-LINEAGE (2026-10-11, advisory): a new sheet version against the row\'s earlier staged versions, head-crop facenet < 0.60 writes an audit line',who:'trait reader · look back',k:'agent',d:2.6,log:'sheets ×6 · <span class="a">trait_reader</span>: every new face differs in ≥3 traits · <span class="a">look_back</span>: 1 redraw (defining state moved first) · G-LINEAGE 0 lines'},
+      {m:'03',t:'voices: a register nobody else holds; pairwise similarity wall',who:'voice director',k:'agent',d:1.8,log:'<span class="a">voice_director</span> ×3 → VoiceDesign · similarity 0.42 max, under the wall'},
+      {m:'04',t:'verdict: judge:look over every sheet; ladder; sign',who:'look judge',k:'judge',d:1.6,log:'<span class="q">judge:look@1</span> · 6 sheets · must nouns 6/6 · faces distinct · OCR 0 words · 1 style outlier '+FL('')+' · refs/verdict.json signed · <span class="k">refs complete</span>'}]},
+    {lane:'E',id:'episode/01',name:'Bind',why:'This unit’s cast. Rows stamped with the unit; a character with no refs row parks the unit and orders refs for it.',subs:[
+      {m:'01_01',t:'cast for the unit’s scenes',who:'cast lister',k:'agent',d:1.2,log:'unit <b>ch04</b> · <span class="a">cast_lister</span> → 4 characters, all in the registry'},
+      {m:'01_02',t:'stamp the bound rows',who:'code',k:'code',d:.5,log:'refs.json rows stamped ch04 · <span class="k">bind completed</span>'}]},
+    {lane:'E',id:'episode/02',name:'Plan',why:'The contract, gated before anything is voiced or drawn. The battery refuses; the critic lists in a closed vocabulary with chapter spans; code judges. Never parked: a battery refusal defers the unit, a critic fault ends in the best draft flagged. Self-curing (decision 2026-10-05): the battery also projects the timeline’s silences and runs the take-prompt lint pre-sign; every mechanical fault carries a cure — code first, a priced workhorse rewrite second — cures re-run after every writer round, and a clean battery re-signs without paying the writer. Ladder (2026-10-11, cycle 2): improve ×2 → model tier → terminal; the fresh-brief rung is gone (it produced the kept draft once in 40 terminal climbs). Since 2026-10-19: 3 writer rounds a climb, 2 climbs an episode, a climb spent at the first writer call, a stale flagged signature re-signed over its carried rows.',subs:[
+      {m:'02_01',t:'brief: the book\'s narrator (unset: STOP) + analysis rows + screenplay elements + bound rows + places + camera catalog + dq rules',who:'code',k:'code',d:.8,log:'narrator: narrator (third person) · brief assembled: 9 scenes, 4 bound rows, 3 places'},
+      {m:'02_02',t:'write the Episode: setups, shots, cells, camera moves, lines',who:'episode writer',k:'think',d:3,log:'<span class="v">episode_writer</span> (reasoning, local) → Episode: 6 setups, 23 shots, 2 spoken lines'},
+      {m:'02_03',t:'checks: plan_check + cell gates + G-MOVES + G-STILL + G-SOURCE + G-SPEAKER + G-PACE + G-ACTION + G-TALK + GRAMMAR (anime-TV framing, screenplay, shot cap; 2026-10-17) + take-path lint',who:'code',k:'code',d:1,log:'checks: 2 refusals (362 words against 310; extras 6 with no chapter span)'},
+      {m:'02_04',t:'improve round 1: refusals quoted back to the writer',who:'episode writer',k:'think',d:1.8,loop:true,log:'<span class="v">episode_writer</span> round 1 → 0 refusals'},
+      {m:'02_05',t:'critic: turn, answer, coverage, threat, spike, claims — listed with spans; code judges (G-HOOK, G-SPIKE)',who:'plan critic',k:'judge',d:1.6,log:'<span class="q">judge:plan@1</span> → turn = shot 14, two people, a hand verb · answer on line 12 · threat on shot 0 · spike shown on shot 10 · 0 claims without a span'},
+      {m:'02_06',t:'lock: write plan.json through write_plan; sign',who:'code',k:'code',d:.5,log:'plan.verdict.json · signed_by judge:plan@1 · <span class="k">plan completed</span>'}]},
+    {lane:'E',id:'episode/03',name:'Looks + places',why:'This unit’s character looks and place pictures (decision 2026-10-10): a look and a place state are one derivation of their base (the sheet, the place master); a recurring place’s view is its master or derived from it, never a fresh room from words.',subs:[
+      {m:'03_04',t:'looks: draw this unit’s new looks one hop from the base sheet; LOOK-STATE',who:'look-state judge',k:'judge',d:1.2,log:'looks ×1 drawn (edit) · <span class="q">judge:look_state@1</span>: hat, hair, beard met'},
+      {m:'03_01',t:'draw every setup’s place picture',who:'code · local GPU',k:'code',d:1.8,log:'places ×6 drawn (local image model)'},
+      {m:'03_02',t:'look-back: landmark and hour present?',who:'look back',k:'agent',d:1.2,log:'<span class="a">look_back</span> ×6 → 6 ok'},
+      {m:'03_05',t:'variants: a place state one hop from its master; same-place band',who:'code · local GPU',k:'code',d:.8,log:'villa abandoned ← master (2511 edit) · inside the band'}]},
+    {lane:'E',id:'episode/04',name:'Record',why:'Every line in its character’s voice, measured and listened to. Audio first.',subs:[
+      {m:'04_01',t:'say: local TTS per line; seconds measured from the file',who:'code · local TTS',k:'code',d:1.6,log:'lines ×14 · 148.2 s measured'},
+      {m:'04_02',t:'listen: read each clip back, words and voice (own design leads the cast by 0.06); re-roll once; refuse',who:'listener',k:'qc',d:1.4,log:'<span class="q">listener</span> (Whisper + ECAPA 16 kHz) → 13/14 word-perfect · every line nearest its own voice · 1 re-roll ok'},
+      {m:'04_03',t:'spread: one speaker, one voice across the unit',who:'code',k:'code',d:.5,log:'speaker spread ok · <span class="k">record completed</span>'}]},
+    {lane:'E',id:'episode/05',name:'Timeline',why:'The animatic. Every shot’s seconds derive from the measured voice; placed.json is fingerprinted to the plan and the voice.',subs:[
+      {m:'05_01',t:'respot cuts on the measured grid',who:'code',k:'code',d:.6,log:'23 cuts respotted'},
+      {m:'05_02',t:'place inside the picture budget (Shorts wall − tail); refuse a line off its shot’s start',who:'code',k:'code',d:.6,log:'placed.json 152.0 s, inside 120–174 (180 Shorts wall − 6 s card+chip) · <span class="k">timeline completed</span>'}]},
+    {lane:'E',id:'episode/06',name:'Prompts',why:'Every take prompt built and linted for $0 with no GPU, before any grid.',subs:[
+      {m:'06',t:'build + lint: length per block, style line, banned props, no last frame',who:'code',k:'code',d:.9,log:'23 prompts · lint 0 refusals · <span class="k">prompts completed</span>'}]},
+    {lane:'E',id:'episode/07',name:'Board',why:'Storyboard grids on the local image model from the plan’s prose, up to three references: cast sheets first, the setup’s place last.',subs:[
+      {m:'07_01',t:'layout by rule: grids of 1 or 4 cells, never a strip (G-GRID-SHAPE 2026-10-11), cols × rows = shots; the anchor grid first, siblings chained on its room',who:'code',k:'code',d:.5,log:'6 setups → 5 grids 2×2, 2 grids 1×1 · layout.json'},
+      {m:'07_02',t:'draw; manifest written after the render',who:'code · local GPU',k:'code',d:2.4,log:'grids ×6 drawn · manifests written'}]},
+    {lane:'E',id:'episode/08',name:'Panels',why:'One panel per shot, two machine gates, then the panel judges. A fault climbs seed → reprose (cell prose only, the timeline stays current); at most two grids climb; the terminal keeps the best panel flagged. The takes refuse without the three verdicts.',subs:[
+      {m:'08_01',t:'cut panels between measured gutters, crop square',who:'code',k:'code',d:.7,log:'23 panels cut'},
+      {m:'08_02',t:'dq: people vs faces, missing face, sharpness, ink, stacked (by thirds), seam (a paper-white line inside the staged h3 panel); G-FRAME records face height against the planned size (advisory, 2026-10-11)',who:'code',k:'code',d:.9,log:'panel dq: 22 pass, 1 fail (stacked)'},
+      {m:'08_03',t:'content: the reader lists, shown no plan; code judges',who:'panel reader',k:'qc',d:1.8,log:'<span class="q">panel_reader</span> ×23 → 1 mismatch (an extra person)'},
+      {m:'08_05',t:'judges: hats, copy, posture, framing, clones, lettering, landmark; one short size read as the second vote',who:'panel judges',k:'judge',d:1.6,log:'<span class="q">judge:panel_eye@1</span> · keypoints ×23 · boxes ×23 · OCR 0 strings · 1 clone pair (shot 04) · 1 held+worn hat (shot 11)'},
+      {m:'08_06',t:'ladder: redraw seed → reprose from the cure table; cap 2 grids',who:'code · local GPU',k:'code',d:1.4,loop:true,log:'grid A: seed → clones gone · grid B: reprose (held clause struck) → hat ok · 0 flags'},
+      {m:'08_04',t:'contact sheet; sign storyboard/eye_<sha8>.json',who:'code',k:'code',d:.5,log:'storyboard/contact.png · eye_3f9a1c2d.json signed_by judge:panel_eye@1 · <span class="k">panels completed</span>'}]},
+    {lane:'E',id:'episode/09',name:'Shoot',why:'The slow step, on two lanes: the GPU never waits on a check (2026-10-14). Takes on the local video model; the take judges; a cure-to-cause ladder priced under the GPU ceiling. Terminal: a still from the passed panel on a narration shot (at most two, never adjacent), else the best take kept flagged. Never a park, never a dropped shot. At a spent 5 h clock (2026-10-11, cycle 3) the missing takes still render (firsts are never refused, only repeats) and every retake is terminal. A local VL judge counts distinct people: an extra face or a twin (G-TWIN) fails, cured seed-first, then the shot isolated in its own cell, then kept-best flagged.',subs:[
+      {m:'09_01',t:'GPU lane: every live shot\u2019s take, back to back, grouped by model (Wuli for close..medium, Spark for wide/full; each loads once); ceiling checked first',who:'code · local GPU',k:'code',d:3,log:'ceiling 5 h · 4 h 10 left · 23 takes queued in one go'},
+      {m:'09_02',t:'CPU lane, BESIDE the renders: take_dq --cpu-only on each take as it lands — frozen, churn, zoom, camera-move, look, held (flow), jump (+ cut vote), rotation, gait, warp (G-WARP, 2026-10-18), leak; the staged panel as the board',who:'code',k:'code',d:1,log:'T00 landed → dq while T01 renders · 19 pass, 4 fail (2 frozen, 1 held, 1 leak → heads.json 9 frames)'},
+      {m:'09_02b',t:'early round: a cure the dq rows alone order (move, seed) queued behind the first renders — the ladder\u2019s round 1, recorded at launch',who:'code · local GPU',k:'code',d:1.2,loop:true,log:'2 frozen + 1 held → move types · retake job right behind T22, warm weights · ladder.json round 1 early'},
+      {m:'09_07',t:'face refine (owner 2026-10-17; every soft face 2026-10-19): every faced take but an insert — face_yolov8m tracks every face (worker, GPU when idle), each face under 120 px matched to the staged cast and its crop re-rendered on the GPU lane behind the renders (H3 at a denoise that follows the face, 0.40-0.55, only that person’s sheet; its soft span, one frozen side; only the face core is pasted, any size, put back on the take’s head frame by frame); gated: identity (CCIP + clip_vision_h beside facenet), drift, seam outside the head, flicker, face count, outside-the-core, band warp, face turn; eyes and core flow logged; a stale or unread decision regated before the cut; after the ladder whatever is still owed, once, cut LAST (N takes x 81 s held from 09’s start; a take still cut ships flagged and FACE_REFINE holds the publish); then the face list into refine.json for step 11 QC, log only (2026-10-20)',who:'code · local GPU',k:'code',d:1.2,log:'T01 2 faces, T06 2, T13 1, T18 2 queued behind T22 · T22 all_readable · gate: ccip, drift, seam, flicker, faces, band warp, turn · refine.json'},
+      {m:'09_03',t:'GPU window, lanes idle: content — three frames each, read alone, one VL load; framing and action named',who:'panel reader',k:'qc',d:1.6,log:'<span class="q">panel_reader</span> ×23 → 22 match, 1 posture (T18 standing for lying)'},
+      {m:'09_04',t:'judges: identity vs sheet, clones per frame, pass-through, mouth lag (advisory)',who:'take judges',k:'judge',d:1.4,log:'<span class="q">judge:take_eye@1</span> · faces 61 readable · 0 strangers · 1 drift (T09 0.71 vs 0.75) · 0 clone pairs'},
+      {m:'09_05',t:'ladder: route every fault to its cure by measured cure rate, render the union in ONE batched round on the same two lanes (round 2; cap 2); a round is spent only when a take changed (2026-10-19)',who:'code · local GPU',k:'code',d:2,loop:true,log:'routed: 2 move types (truck → push in), 1 head cut (0 GPU), 1 timeline trim (0 GPU) · content → terminal (panel-borne) → 4/5 pass · T09 '+FL('keep_best')},
+      {m:'09_08',t:'tiny-face rung (face-blur round 2, 2026-10-19): a take whose refine refused (seam or drift) a planned 20-40 px face, on the Spark graph of a square episode, draws ONCE on the Spark graph at 1024x1024 (takes_r2v --tiny-face; the retake’s seed and inputs; scaled back to the canvas); take_dq, take_content and the take eye judge it; kept only if they pass it, then refined again; else the old take, its verdicts and record return; one per take, retakes wall, cut first',who:'code · local GPU',k:'code',d:1.2,log:'T01 Utterson 36 px + Enfield 30 px refused (seam 19.1) → one 1024 draw, 180 s · dq pass · content pass · eye pass → kept · refined again'},
+      {m:'09_06',t:'strip; sign takes/r2v/eye_<sha8>.json; audit row',who:'code',k:'code',d:.6,log:'eye_7b21e0aa.json flagged · signed_by judge:take_eye@1 · audit row T09 · <span class="k">shoot completed</span>'}]},
+    {lane:'E',id:'episode/10',name:'Edit',why:'Title card, measured bed, cut, mix. Picture cut to the measured voice. master_iterN, never overwriting.',subs:[
+      {m:'10_01',t:'title: series base once per book; unit lettering read back by OCR',who:'code · local GPU',k:'code',d:1,log:'title card ok (OCR read-back)'},
+      {m:'10_02',t:'bed: tone spans → local music; metre measured and ranked',who:'code · local GPU',k:'code',d:1.6,log:'bed: 4 seeds, best fitness 0.81'},
+      {m:'10_03',t:'cut: takes trimmed to placed.json; lines at their at (an inner line through the close-mic chain, studio/inner_voice, 2026-10-17); mix; captions',who:'code',k:'code',d:1.2,log:'cut/master_iter1.mp4 · 152.0 s'},
+      {m:'10_04',t:'sound: the plan’s spot effects ON THE MEASURED MOMENT (studio/sfx_onset, 2026-10-17: footsteps one slice per heel strike, a single event on the take’s motion peak near its planned time, a voice or weather sound at its planned time) + a per-setup ambience, Stable Audio 3 SFX (local); lines offset by delivery',who:'code · local GPU',k:'code',d:.8,log:'sound: 9 cues (6 on measured onsets, 3 planned) + 5 ambiences laid · audio/sfx/onsets.json · shouts +3 dB'},
+      {m:'10_05',t:'upscale: the joined 768 cut → hqdn3d per shot (nothing blends across a cut) + Real-ESRGAN realesr-animevideov3 4x in ComfyUI’s embedded python (studio/master_av3.py worker) → 3072, x264 CRF 14 or NVENC when the GPU is idle (2026-10-18; RTX VSR 4x selectable); own clock row; the kept face-refine crops pasted at cut scale BEFORE the upscale (owner 2026-10-18); the pass counts its frames and judges its own pace against its cap (2026-10-19)',who:'code · local GPU',k:'code',d:.9,log:'upscale: av3 4x → 3072x3072 · 150 s · <span class="k">edit completed</span>'}]},
+    {lane:'E',id:'episode/11',name:'QC',why:'Measure the delivered master, never the intention. The master ensemble answers the five rubric questions from measurements and one 30-frame read; recut twice, one retake; an n is flagged with its evidence, never waived.',subs:[
+      {m:'11_01',t:'measure: loudness, every cut (+ scene-change vote), every line heard, every planned sound heard, silent-gap wall, title present',who:'code',k:'code',d:1.2,log:'qc: 23/23 cuts, 14/14 lines heard, -16.1 LUFS, no gap'},
+      {m:'11_03',t:'ensemble: shadow, faces, board, repeats, story; 30-frame read; cross-take identity',who:'master ensemble',k:'judge',d:1.8,log:'<span class="q">judge:master_eye@1</span> · p5 luma 6 · closes 0.27 · board 0.62 · repeats 0 unexplained · story: turn verb listed on shot 14 · rubric y y y y y'},
+      {m:'11_02',t:'ladder: retake one shot, then recut',who:'code',k:'code',d:.8,loop:true,log:'no rung taken'},
+      {m:'11_04',t:'dossier; audit sheet for this unit',who:'code',k:'code',d:.6,log:'dossier.html · audit/ch04.html: 1 flag (T09), 3 sampled passes per gate · <span class="k">qc completed</span>'}]},
+    {lane:'E',id:'episode/12',name:'Deliver',why:'manifest.json beside the master; the full path printed first; notify through the platform. Never publishes.',bridge:'a finished file → Distribution',subs:[
+      {m:'12',t:'manifest + notify',who:'code',k:'code',d:.8,log:'manifest.json · notify → owner channel · <span class="k">episode ch04 delivered</span>'}]},
+    {lane:'D',id:'publish/01',name:'Intake',why:'The finished-file registry: which master, its sha8, its qc, its master eye, its kind, its series position.',subs:[
+      {m:'01',t:'register the master; refuse if qc or eye is about other bytes',who:'code',k:'code',d:.7,log:'<span class="v">publish</span> unit <b>9c04d1f7@youtube</b> · qc + eye match sha8'}]},
+    {lane:'D',id:'publish/02',name:'Versions',why:'From the master, each platform’s bundle: aspect versions, platform loudness, sidecar captions.',subs:[
+      {m:'02',t:'aspect versions: where to crop so the subject stays',who:'subject keeper',k:'agent',d:1.4,log:'<span class="a">subject_keeper</span> → CropPath · 1:1 master, 9:16 version, captions.vtt'}]},
+    {lane:'D',id:'publish/03',name:'Metadata',why:'Title from the series record (code); description, tags and chapter markers drafted inside the platform’s walls; the synthetic declaration read, never generated. Generated by one priced call from the measured record; the sign-off written from measured claims only (decision 2026-10-05).',subs:[
+      {m:'03',t:'draft description, tags, chapters; lint',who:'metadata writer',k:'agent',d:1.6,log:'<span class="a">metadata_writer</span> → PlatformMetadata · lint ok · synthetic: true (from series.json)'}]},
+    {lane:'D',id:'publish/04',name:'Art',why:'Thumbnail from the master’s own frames plus the series lettering; OCR read-back; poster still for the catalogue.',subs:[
+      {m:'04',t:'pick one frame and at most three words',who:'thumbnail director',k:'agent',d:1.4,log:'<span class="a">thumbnail_director</span> → ThumbnailBrief · drawn locally · OCR ok'}]},
+    {lane:'D',id:'publish/05',name:'Upload',why:'Private insert, machine-gated; the ledger row written before the call; thumbnail, captions, playlist set. One adapter per platform, our own included.',subs:[
+      {m:'05',t:'private upload via the youtube adapter',who:'code',k:'code',d:1.4,log:'approval kind <b>publish</b> ok · private id written to uploads.jsonl'}]},
+    {lane:'D',id:'publish/06',name:'Review',why:'The human gate for anything a stranger will see: the master eye for this sha8, with its waivers.',subs:[
+      {m:'06',t:'read the master rubric for this sha8: judge, flags, waivers',who:'code',k:'code',d:.6,log:'review: eye_9c04d1f7 · judge:master_eye@1 · 0 waivers · 1 flag carried to uploads.jsonl'}]},
+    {lane:'D',id:'publish/07',name:'Release',owner:'PUBLISH',why:'ESCALATE — PUBLISH. The flip to public at the scheduled time re-checks every machine gate as it stands, reads the live status back.',subs:[
+      {m:'07',t:'flip to public at publish_at; re-check gates; record what the platform returned',who:'owner',k:'own',d:1.8,log:O('--approved=publish · public at 18:00 · status read back: public')}]},
+    {lane:'D',id:'publish/08',name:'Catalog',why:'The title record: every public artefact by kind, platform ids, dates, artwork set. The own platform reads this.',subs:[
+      {m:'08',t:'write catalog.json',who:'code',k:'code',d:.6,log:'catalog.json: +1 episode, 2 versions, 1 artwork'}]},
+    {lane:'D',id:'publish/09',name:'Notify',why:'The public link, the path, the spend and the time to the owner’s channel.',subs:[
+      {m:'09',t:'send',who:'code',k:'code',d:.5,log:'notify → owner channel · <span class="k">published</span>'}]},
+    {lane:'D',id:'analytics',name:'Analytics',why:'Read-only, on a schedule. Numbers joined to the dossier: which shot the drop-off lands on, which thumbnail won. Never moves a gate.',bridge:'a release exists → Marketing',subs:[
+      {m:'01',t:'ingest views, retention, impressions, click-through',who:'code',k:'code',d:.8,log:'stats: day 7 · 3,120 views · 61 % retention'},
+      {m:'02',t:'join to the dossier',who:'code',k:'code',d:.6,log:'reading.json: drop-off on shot 14'},
+      {m:'03',t:'retrospect: what did the numbers say against the intention?',who:'retrospect',k:'think',d:1.8,log:'<span class="v">retrospect</span> → 2 rule candidates appended to the casebook (R&amp;D decides)'}]},
+    {lane:'M',id:'promo/01',name:'Campaign',why:'Which assets, on which dates and platforms, inside the budget, reading the last analytics.',subs:[
+      {m:'01',t:'plan the campaign',who:'campaign planner',k:'think',d:2,log:'<span class="v">campaign_planner</span> → CampaignPlan: 1 trailer, 2 cutdowns, 4 stills, 6 posts · inside budget'}]},
+    {lane:'M',id:'promo/02',name:'Orders',why:'Order rows the scheduler turns into Production units, each with a format and a cost ceiling.',subs:[
+      {m:'02',t:'write order.json rows',who:'code',k:'code',d:.7,log:'order: trailer (ceiling: GPU time) → scheduler launches trailer.py'}]},
+    {lane:'M',id:'promo/03',name:'Key art',why:'The key-art pool: N candidates from the refs pack and the master’s frames, one picture per entity. Analytics reports the winner.',subs:[
+      {m:'03',t:'draw the pool locally',who:'code · local GPU',k:'code',d:1.4,log:'keyart: 4 candidates'}]},
+    {lane:'M',id:'promo/04',name:'Cutdowns',why:'Vertical and short cuts from the master’s best takes on placed.json. ffmpeg, no render. A cut that needs new pictures is a shorts order.',subs:[
+      {m:'04',t:'cut on placed.json',who:'code',k:'code',d:.9,log:'cutdowns ×2 (9:16, 28 s and 41 s)'}]},
+    {lane:'M',id:'promo/05',name:'Posts',owner:'PUBLISH',why:'Post per platform, claims lint, walls in code; shipped through publish with ESCALATE per platform account.',subs:[
+      {m:'05',t:'write the posts',who:'copywriter',k:'agent',d:1.4,log:'<span class="a">copywriter</span> ×6 → Post · claims lint ok'},
+      {m:'—',t:'ship through publish/05; ESCALATE per platform account',who:'owner',k:'own',d:1.6,log:O('posts approved for 2 accounts · 1 platform still private-only')+' · <span class="k">release promoted</span>'}]}
+  ]};
+
+  /* the current run continues from the screenplay into refs and the episode line (built 2026-09-24) */
+  var lastPre=CURRENT.steps[CURRENT.steps.length-1]; lastPre.bridge='screenplay complete → the reference bible binds identity';
+  var refsNow=Object.assign({},FUTURE.steps.filter(function(s){return s.id==='refs';})[0],{lane:'R',bridge:'refs/04 complete → the episode line'});
+  var epNow=FUTURE.steps.filter(function(s){return s.lane==='E';}).map(function(s){return Object.assign({},s);});
+  epNow[epNow.length-1].bridge=undefined;
+  var CURRENT_NOW={
+    lanes:[{key:'A',label:'ANALYSIS',cls:''},{key:'S',label:'SCREENPLAY',cls:'invent'},{key:'R',label:'REFS & CAST',cls:''},{key:'E',label:'EPISODE',cls:'invent'}],
+    left:150, laneGap:100, top:70, nodeW:104, loops:[0,1,10,13,19,20,22],
+    startWhy:'The run starts at Analysis 01 with the EPUB and ends with an episode master delivered by the episode line. Nothing in the line parks on a person; the owner reads the audit sheet when he likes.',
+    endName:'Episode master delivered', endWhy:'manifest.json sits beside the master with every gate verdict and timing total; the audit sheet for the unit sits beside the dossier, and the owner reads it when he likes. Publishing is the next department; today the upload scripts run by hand.',
+    steps:CURRENT.steps.concat([refsNow]).concat(epNow)
+  };
+  buildFlow(document.getElementById('flow1'),CURRENT_NOW);
+  buildFlow(document.getElementById('flow2'),FUTURE);
+
+  var initial='current';
+  try{var h=(location.hash||'').replace('#','');if(h==='future'||h==='current')initial=h;else{var s=localStorage.getItem('sd-tab');if(s==='future')initial=s;}}catch(e){}
+  showTab(initial);
+  setTimeout(layout,300);
+})();
+</script>
+
+</body>
+</html>

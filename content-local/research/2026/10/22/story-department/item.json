@@ -1,0 +1,38 @@
+{
+  "id": "res_story-department",
+  "section": "research",
+  "slug": "story-department",
+  "kind": "report",
+  "type": "system",
+  "status": "live",
+  "createdAt": "2026-10-12",
+  "publishAt": "2026-10-22",
+  "version": "1.0.0",
+  "updatedAt": "2026-10-21",
+
+  "title": "The Story Department: an AI film studio, read as a company",
+  "claim": "Code is management and agents are specialists: twenty agents in five departments turn a public-domain book into finished episodes, each agent gets one brief and returns one typed object, and no agent edits a file or reads another agent's answer.",
+  "headline": { "value": "20 agents", "label": "five departments, five QC judges, one typed object each" },
+  "summary": "An interactive description of the Visurena studio's architecture as of 2026-10-21. The org chart shows who reports to whom: step scripts are unit heads that order the work, write the briefs, assemble and check; agents are specialists validated by pydantic contracts before anything downstream sees their output. A work-order desk projects every event onto one row per unit, and an animated run follows one book from the EPUB to a delivered episode master. A second tab shows the proposed future architecture, a third the command center that runs it.",
+
+  "measuredOn": {
+    "date": "2026-10-21",
+    "hardware": "1x RTX 4090, all local",
+    "commit": "visurena-studio@c78fbc1"
+  },
+  "limitations": [
+    "A description of one studio's design, not a comparison against other designs.",
+    "The animated run uses illustrative numbers.",
+    "The page is a snapshot: the studio's architecture page in its repository is the living version."
+  ],
+
+  "accent": { "primary": "#6C9BFF" },
+  "tags": ["multi-agent systems", "AI pipelines", "architecture", "film production"],
+  "credits": { "author": "ViSuReNa" },
+  "license": { "text": "CC-BY-4.0", "code": "Apache-2.0" },
+  "doi": null,
+  "repo": "https://github.com/vishnusurya11/visurena-studio",
+  "changelog": [
+    { "version": "1.0.0", "date": "2026-10-22", "note": "First publication of the studio's architecture page as of commit c78fbc1." }
+  ]
+}

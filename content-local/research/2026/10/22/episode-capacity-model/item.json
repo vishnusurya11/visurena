@@ -1,0 +1,39 @@
+{
+  "id": "res_episode-capacity-model",
+  "section": "research",
+  "slug": "episode-capacity-model",
+  "kind": "note",
+  "type": "note",
+  "status": "live",
+  "createdAt": "2026-10-17",
+  "publishAt": "2026-10-22",
+  "version": "1.0.0",
+
+  "title": "A capacity model, one out-of-sample check",
+  "claim": "A linear model of an episode's machine time in its shot count, priced on one 26-shot run, projected 5.0 hours for a 23-shot episode; the episode measured 4.99 hours. One check sets a cap, it does not validate the model.",
+  "headline": { "value": "5.0 h → 4.99 h", "label": "projected vs measured, n = 1" },
+  "summary": "Every shot in an episode costs one render, one storyboard cell, one panel read and one take check, so machine time should grow linearly with the shot count. The model splits the studio's own step budget into steps that scale per shot and steps that do not, prices the per-shot part on one clean 26-shot run, and adds a retake margin from measured render times. Checked once on a different book and look, it projected 5.0 h and the run measured 4.99 h. The studio uses it for one thing: a hard cap of 28 shots per episode, chosen below the 30 that would fit, because a single agreement says little about the spread.",
+
+  "measuredOn": {
+    "date": "2026-10-17",
+    "hardware": "1x RTX 4090",
+    "n": 1,
+    "units": "out-of-sample episode"
+  },
+  "limitations": [
+    "n = 1. One agreement cannot estimate the model's error; a 1 % miss here may be luck.",
+    "Priced on one run (26 shots) and checked on one run (23 shots); both are near the middle of the range the cap allows, so the model is untested near 28.",
+    "Render times vary between seeds and shots; the retake margin is an average (a quarter of takes retaken twice), not a measured distribution for this episode.",
+    "The clock is the studio's own per-episode clock, not wall time on an otherwise idle machine."
+  ],
+
+  "accent": { "primary": "#6C9BFF" },
+  "tags": ["capacity planning", "pipeline", "measurement", "honest n"],
+  "credits": { "author": "ViSuReNa" },
+  "license": { "text": "CC-BY-4.0", "code": "Apache-2.0" },
+  "doi": null,
+  "repo": "https://github.com/vishnusurya11/visurena-studio",
+  "changelog": [
+    { "version": "1.0.0", "date": "2026-10-22", "note": "First publication." }
+  ]
+}

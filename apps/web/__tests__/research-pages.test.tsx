@@ -35,7 +35,7 @@ const env = { ...process.env };
 beforeAll(() => {
   root = fs.mkdtempSync(path.join(os.tmpdir(), "vr-rp-"));
   pub = fs.mkdtempSync(path.join(os.tmpdir(), "vr-rp-pub-"));
-  process.env.VR_CONTENT_LOCAL_DIR = root;
+  process.env.VR_RESEARCH_DIR = path.join(root, "research");
   process.env.VR_PUBLIC_DIR = pub;
   process.env.NEXT_PUBLIC_SITE_URL = "https://alpha.example.com/";
   delete process.env.VR_CONTENT_SOURCE;

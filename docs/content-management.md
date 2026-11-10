@@ -334,12 +334,12 @@ they exist.
 
 ## 🔬 Publishing a research article (D36/D37)
 
-Research articles are works like any other: one self-contained, dated folder in the content
-drop (`../website_data` locally, `s3://visurena-content-<env>/` once the S3 pull is on). They
-are **not** in git.
+Research articles are one self-contained, dated folder each, and **they live in git** at
+`content-local/research/` (owner, 2026-11-10), so they travel with the branch. Set
+`VR_RESEARCH_DIR` to read them from somewhere else. Stories and other works stay in S3.
 
 ```
-research/YYYY/MM/DD/<slug>/
+content-local/research/YYYY/MM/DD/<slug>/
 ├─ item.json      the manifest — the only required file (slug, title, claim, type, status, publishAt, version …)
 ├─ article.md     kind "note": Markdown body (GFM tables); front-matter optional, item.json wins
 ├─ report.html    kind "report": a self-contained HTML report, embedded in a sandboxed iframe

@@ -7,7 +7,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import {
   normaliseResearch, renderNote, scholarDate, citationMeta, researchJsonLd, bibtex, buildFeed,
   sortResearch, measuredLine, researchTypeLabel, toPublishIso, researchUrl,
-  getResearchList, getResearch, resetResearchCache, writeResearchFeed, type ResearchItem,
+  getResearchList, getResearch, resetResearchCache, writeResearchFeed, researchRoot, type ResearchItem,
 } from "../lib/research";
 
 const BASE = "https://visurena.com";
@@ -89,6 +89,20 @@ describe("small helpers", () => {
   });
 });
 
+describe("researchRoot", () => {
+  it("defaults to the repo's content-local/research (articles are versioned in git)", () => {
+    const saved = process.env.VR_RESEARCH_DIR;
+    delete process.env.VR_RESEARCH_DIR;
+    expect(researchRoot()).toBe(path.resolve(process.cwd(), "..", "..", "content-local", "research"));
+    process.env.VR_RESEARCH_DIR = "/tmp/elsewhere";
+    expect(researchRoot()).toBe("/tmp/elsewhere");
+    if (saved === undefined) delete process.env.VR_RESEARCH_DIR; else process.env.VR_RESEARCH_DIR = saved;
+  });
+  it("finds the committed articles in the repo", () => {
+    expect(fs.existsSync(path.join(researchRoot(), "2026", "10", "22", "anime-upscaler-jitter", "item.json"))).toBe(true);
+  });
+});
+
 describe("renderNote", () => {
   it("renders Markdown with tables and drops the front-matter", () => {
     const html = renderNote("---\ntitle: X\n---\n## Results\n\n| a | b |\n|---|---|\n| 1 | 2 |\n");
@@ -157,7 +171,7 @@ describe("getResearchList / getResearch (temp content drop)", () => {
   beforeAll(() => {
     root = fs.mkdtempSync(path.join(os.tmpdir(), "vr-research-"));
     pub = fs.mkdtempSync(path.join(os.tmpdir(), "vr-public-"));
-    process.env.VR_CONTENT_LOCAL_DIR = root;
+    process.env.VR_RESEARCH_DIR = path.join(root, "research");
     process.env.VR_PUBLIC_DIR = pub;
     delete process.env.VR_CONTENT_SOURCE;
     const dir = "research/2026/10/22/anime-upscaler-jitter";
@@ -210,10 +224,10 @@ describe("getResearchList / getResearch (temp content drop)", () => {
     expect(fs.readFileSync(path.join(pub, "research", "feed.xml"), "utf8").match(/<item>/g)).toHaveLength(2);
   });
   it("returns an empty list when the drop has no research folder", () => {
-    process.env.VR_CONTENT_LOCAL_DIR = path.join(root, "nope");
+    process.env.VR_RESEARCH_DIR = path.join(root, "nope");
     resetResearchCache();
     expect(getResearchList()).toEqual([]);
-    process.env.VR_CONTENT_LOCAL_DIR = root;
+    process.env.VR_RESEARCH_DIR = path.join(root, "research");
   });
 });
 

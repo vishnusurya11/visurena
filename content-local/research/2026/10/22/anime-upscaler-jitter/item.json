@@ -1,0 +1,45 @@
+{
+  "id": "res_anime-upscaler-jitter",
+  "section": "research",
+  "slug": "anime-upscaler-jitter",
+  "kind": "note",
+  "type": "benchmark",
+  "status": "live",
+  "createdAt": "2026-10-18",
+  "publishAt": "2026-10-22",
+  "version": "1.0.0",
+  "updatedAt": "2026-10-22",
+
+  "title": "The sharper upscaler made the walls boil",
+  "claim": "On AI-rendered anime video, a light temporal denoise followed by Real-ESRGAN animevideov3 x4 cuts background jitter by 51–58 % against NVIDIA RTX Video Super Resolution 4x and gives sharper faces, at the same ~4.8 minutes per episode.",
+  "headline": { "value": "−51 to −58 %", "label": "background jitter vs RTX VSR 4x ULTRA" },
+  "summary": "Four days after adopting RTX Video Super Resolution because it sharpened line art 1.9–2.7x over Lanczos, the background of every episode visibly boiled. A second benchmark added a flow-compensated jitter ruler and tested eight upscaler chains on three 124-frame takes (close, medium, wide) at 768² → 3072². RTX VSR doubled the source's background jitter (1.85–2.05x Lanczos) because it sharpens the renderer's frame-to-frame grain. A temporal hqdn3d prefilter followed by realesr-animevideov3 x4 was the steadiest arm (9–15 % below the plain Lanczos source) and the crispest on faces within the ten-minute budget. The studio switched its master upscale the same day. A sharpness metric alone picked the wrong upscaler.",
+
+  "measuredOn": {
+    "date": "2026-10-18",
+    "hardware": "1x RTX 4090",
+    "models": ["NVIDIA RTX VSR (nvidia-vfx 0.1/0.2)", "Real-ESRGAN realesr-animevideov3 x4", "SeedVR2 3B"],
+    "n": 3,
+    "units": "takes x 124 frames"
+  },
+  "limitations": [
+    "Three takes from one look (gothic anime, 768² renders from one video model). Other styles and photoreal footage were not tested.",
+    "The jitter and shimmer rulers are the studio's own (flow-compensated residual on a background mask). They have not been validated against human ratings; there was no blind preference test.",
+    "The halo ruler penalises the winner's darker ink lines. The claim that this is not ringing rests on one person's inspection at 100 % zoom.",
+    "The winning chain flattens fine plaster mottling into painted flats; that loss is visible and is a taste trade-off, not a free win.",
+    "One GPU; both fast arms are bound by the x264 encode, so the timing parity may not hold on other hardware or encoders."
+  ],
+
+  "accent": { "primary": "#6C9BFF" },
+  "tags": ["video upscaling", "anime", "temporal stability", "benchmark", "RTX VSR", "Real-ESRGAN"],
+  "credits": { "author": "ViSuReNa" },
+  "license": { "text": "CC-BY-4.0", "code": "Apache-2.0" },
+  "doi": null,
+  "repo": "https://github.com/vishnusurya11/visurena-studio",
+  "changelog": [
+    { "version": "1.0.0", "date": "2026-10-22", "note": "First publication, written up from the studio's 2026-10-14 and 2026-10-18 bench reports." }
+  ],
+  "related": [
+    { "toId": "mov_the-strange-case-of-dr-jekyll-and-mr-hyde", "type": "measured-on" }
+  ]
+}

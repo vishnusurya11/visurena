@@ -1,0 +1,23 @@
+{"src": "src/C.mp4", "engine": "rtx", "factor": 4, "pre": null, "frames": 124, "load_s": 5.89, "gpu_s": 0.74, "wall_s": 10.92, "peak_mb": 331}
+{"src": "src/M.mp4", "engine": "rtx", "factor": 4, "pre": null, "frames": 124, "load_s": 1.13, "gpu_s": 0.74, "wall_s": 6.28, "peak_mb": 331}
+{"src": "src/W.mp4", "engine": "rtx", "factor": 4, "pre": null, "frames": 124, "load_s": 1.1, "gpu_s": 0.74, "wall_s": 6.12, "peak_mb": 331}
+{"src": "src/C.mp4", "engine": "lanczos", "factor": 4, "pre": null, "wall_s": 2.43, "gpu_s": 0}
+{"src": "src/M.mp4", "engine": "lanczos", "factor": 4, "pre": null, "wall_s": 2.82, "gpu_s": 0}
+{"src": "src/W.mp4", "engine": "lanczos", "factor": 4, "pre": null, "wall_s": 2.73, "gpu_s": 0}
+{"src": "src/C.mp4", "engine": "av3", "factor": 4, "pre": null, "frames": 124, "load_s": 1.32, "gpu_s": 6.89, "wall_s": 11.28, "peak_mb": 407}
+{"src": "src/M.mp4", "engine": "av3", "factor": 4, "pre": null, "frames": 124, "load_s": 1.18, "gpu_s": 2.5, "wall_s": 7.06, "peak_mb": 407}
+{"src": "src/W.mp4", "engine": "av3", "factor": 4, "pre": null, "frames": 124, "load_s": 1.21, "gpu_s": 2.47, "wall_s": 6.92, "peak_mb": 407}
+{"src": "src/C.mp4", "engine": "rtx", "factor": 4, "pre": "hqdn3d=0:0:6:6", "frames": 124, "load_s": 0.69, "gpu_s": 0.26, "wall_s": 4.8, "peak_mb": 331}
+{"src": "src/M.mp4", "engine": "rtx", "factor": 4, "pre": "hqdn3d=0:0:6:6", "frames": 124, "load_s": 0.66, "gpu_s": 0.25, "wall_s": 5.26, "peak_mb": 331}
+{"src": "src/W.mp4", "engine": "rtx", "factor": 4, "pre": "hqdn3d=0:0:6:6", "frames": 124, "load_s": 0.66, "gpu_s": 0.25, "wall_s": 5.59, "peak_mb": 331}
+{"src": "src/C.mp4", "engine": "mix", "factor": 4, "pre": null, "mix_a": "0.35", "frames": 124, "load_s": 21.25, "gpu_s": 14.49, "wall_s": 45.3, "peak_mb": 440}
+{"src": "src/C.mp4", "mode": "HIGHBITRATE_ULTRA", "pre": null, "scale": 4.0, "frames": 124, "out": "3072x3072", "load_s": 12.536, "gpu_s": 253.353, "fps": 0.5, "wall_s": 278.28, "vram_peak_gb": 0.32}
+{"src": "src/M.mp4", "engine": "mix", "factor": 4, "pre": null, "mix_a": "0.35", "frames": 124, "load_s": 2.59, "gpu_s": 3.46, "wall_s": 10.26, "peak_mb": 440}
+{"src": "src/M.mp4", "mode": "HIGHBITRATE_ULTRA", "pre": null, "scale": 4.0, "frames": 124, "out": "3072x3072", "load_s": 0.778, "gpu_s": 0.367, "fps": 337.6, "wall_s": 10.6, "vram_peak_gb": 0.32}
+{"src": "src/W.mp4", "engine": "mix", "factor": 4, "pre": null, "mix_a": "0.35", "frames": 124, "load_s": 2.65, "gpu_s": 3.36, "wall_s": 10.13, "peak_mb": 440}
+{"src": "arms/C_seedvr2.mp4", "engine": "rtx", "factor": 2, "pre": null, "mix_a": null, "frames": 124, "load_s": 0.67, "gpu_s": 0.56, "wall_s": 5.24, "peak_mb": 352}
+{"src": "src/M.mp4", "engine": "av3", "factor": 4, "pre": "hqdn3d=0:0:4:4", "mix_a": null, "frames": 124, "load_s": 19.52, "gpu_s": 3.53, "wall_s": 27.94, "peak_mb": 407}
+{"src": "src/C.mp4", "engine": "av3", "factor": 4, "pre": "hqdn3d=0:0:4:4", "mix_a": null, "frames": 124, "load_s": 29.09, "gpu_s": 8.94, "wall_s": 43.38, "peak_mb": 407}
+{"src": "src/W.mp4", "engine": "av3", "factor": 4, "pre": "hqdn3d=0:0:4:4", "mix_a": null, "frames": 124, "load_s": 30.15, "gpu_s": 6.54, "wall_s": 40.8, "peak_mb": 407}
+{"timing_run": "slow preset, master encode","src": "src/W.mp4", "engine": "rtx", "factor": 4, "pre": null, "mix_a": null, "frames": 124, "load_s": 3.59, "gpu_s": 0.24, "wall_s": 13.1, "peak_mb": 331}
+{"timing_run": "slow preset, master encode","src": "src/W.mp4", "engine": "av3", "factor": 4, "pre": "hqdn3d=0:0:4:4", "mix_a": null, "frames": 124, "load_s": 16.68, "gpu_s": 3.06, "wall_s": 25.54, "peak_mb": 407}
